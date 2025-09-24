@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-accent="blue">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YourSite — Home</title>
+  <meta name="description" content="A clean, responsive homepage with contact, settings, and login." />
+  <style>
+    /* =========================
+       Design tokens / Theming
+       ========================= */
+    :root{
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow-1: 0 2px 8px rgba(0,0,0,.08);
+      --shadow-2: 0 8px 28px rgba(0,0,0,.12);
+      --maxw: 1080px;
+
+      /* Accent (set via [data-accent]) */
+      --accent-hue: 220; /* blue default */
+      --accent: hsl(var(--accent-hue) 90% 55%);
+      --accent-600: hsl(var(--accent-hue) 85% 48%);
+      --accent-700: hsl(var(--accent-hue) 80% 40%);
+      --accent-100: hsl(var(--accent-hue) 95% 92%);
+
+      /* Light theme */
+      --bg:#b9400dff;
+      --bg-soft: #3d1909ff;
+      --panel:#db4d10ff;;
+      --text: #dab061ff;
+      --text-soft: #9f8b69ff;
+      --border: #351207ff;
+      --focus: var(--accent);
+    }
+    html[data-theme="dark"]{
+      --bg: #0f1115;
+      --bg-soft: #141821;
+      --panel: #161a24;
+      --text: #f8f857ff;
+      --text-soft: #ffe32cff;
+      --border: #242a38;
+      --accent-100: hsl(var(--accent-hue) 30% 20%);
+      --shadow-1: 0 2px 8px rgba(146, 49, 14, 0.4);
+      --shadow-2: 0 12px 30px rgba(0,0,0,.55);
+    }
+
+    /* Accent palette */
+    html[data-accent="blue"]{ --accent-hue: 220; }
+
+    html[data-accent="orange"]{ --accent-hue: 30; }
+    html[data-accent="red"]{ --accent-hue: 4; }
+
+    /* Reduced motion toggle */
+    @media (prefers-reduced-motion: reduce){
+      :root{ --motion: 0; }
+    }
+    :root{ --motion: 1; }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color .3s ease, color .3s ease;
+    }
+
+    a { color: var(--accent-700); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container{ max-width: var(--maxw); margin-inline:auto; padding: 0 20px; }
+
+    /* Skip link */
+    .skip-link{
+      position: absolute; left: -999px; top: auto; width:1px; height:1px; overflow:hidden;
+    }
+    .skip-link:focus{
+      left: 16px; top: 16px; width: auto; height: auto; padding:10px 14px; background: var(--accent);
+      color:white; border-radius: var(--radius-sm); box-shadow: var(--shadow-1);
+      z-index:1000;
+    }
+
+    /* =========================
+       Navbar
+       ========================= */
+    header{
+      position: sticky; top:0; z-index: 50;
+      backdrop-filter: saturate(180%) blur(10px);
+      background: color-mix(in oklab, var(--bg) 82%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between; height:64px;
+    }
+    .brand{
+      display:flex; gap:10px; align-items:center; font-weight: 700;
+      letter-spacing:.2px;
+    }
+    .brand .logo{
+      display:inline-grid; place-items:center; width:36px; height:36px; border-radius:10px;
+      background: var(--accent-100); color: var(--accent-700);
+      box-shadow: inset 0 0 0 1px var(--border);
+    }
+    nav ul{
+      list-style:none; display:flex; gap:10px; margin:0; padding:0;
+    }
+    nav a{
+      display:inline-flex; align-items:center; gap:8px; padding:10px 12px; border-radius: 10px;
+      color: var(--text); text-decoration:none;
+    }
+    nav a[aria-current="page"],
+    nav a:hover{ background: var(--bg-soft); }
+    .login-btn{
+      border: 1px solid var(--border); background: var(--panel);
+      padding: 10px 14px; border-radius: 10px; box-shadow: var(--shadow-1);
+    }
+    .login-btn:hover{ background: var(--bg-soft); }
+
+    /* Mobile nav */
+    .nav-toggle{
+      display:none; border:1px solid var(--border); background: var(--panel);
+      padding:10px 12px; border-radius:10px;
+    }
+    @media (max-width: 840px){
+      nav{ position: fixed; inset: 64px 0 auto 0; background: var(--bg); border-bottom:1px solid var(--border); display:none; }
+      nav.open{ display:block; }
+      nav ul{ flex-direction: column; padding:14px; }
+      .nav-right{ display:flex; align-items:center; gap:10px; }
+      .nav-toggle{ display:inline-flex; }
+    }
+
+    /* =========================
+       Hero (Home)
+       ========================= */
+    .hero{
+      display:grid; align-items:center; min-height: 64svh; padding: 48px 0;
+      grid-template-columns: 1.2fr .8fr; gap: 24px;
+    }
+    .hero .card{
+      border:1px solid var(--border); background: var(--panel); border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow-1);
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius: 999px;
+      background: var(--accent-100); color: var(--accent-700); font-weight: 600; font-size:.9rem;
+      box-shadow: inset 0 0 0 1px var(--border);
+    }
+    .hero h1{ margin: 14px 0 10px; font-size: clamp(1.8rem, 3vw + .8rem, 3rem); line-height:1.15; }
+    .lead{ color: var(--text-soft); max-width: 60ch; }
+    .cta-row{ display:flex; gap:10px; flex-wrap: wrap; margin-top:18px; }
+    .btn{
+      appearance: none; border:1px solid transparent; background: var(--accent);
+      color:white; padding:12px 16px; border-radius: 12px; font-weight:600; cursor:pointer;
+      box-shadow: var(--shadow-1);
+      transition: transform calc(.15s * var(--motion)) ease, background-color .2s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); background: var(--accent-600);}
+    .btn.ghost{ background: var(--panel); color: var(--text); border-color: var(--border); }
+    .btn.ghost:hover{ background: var(--bg-soft); }
+
+    @media (max-width: 980px){
+      .hero{ grid-template-columns: 1fr; }
+    }
+
+    /* =========================
+       Forms
+       ========================= */
+    form{ display:grid; gap: 12px; }
+    label{ font-weight: 600; }
+    .row{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px){ .row{ grid-template-columns: 1fr; } }
+    input[type="text"], input[type="email"], input[type="password"], textarea, select{
+      width:100%; padding:12px 12px; border:1px solid var(--border); background: var(--panel);
+      color: var(--text); border-radius: 10px; outline: none;
+    }
+    textarea{ min-height: 120px; resize: vertical; }
+    .form-help{ color: var(--text-soft); font-size: .92rem; }
+    .error{ color: #652502ed; font-size:.92rem; display:none; }
+    .notice{
+      display:none; border:1px solid var(--border); background: var(--bg-soft);
+      padding: 12px; border-radius: var(--radius-sm);
+    }
+    .notice.show{ display:block; }
+
+    /* =========================
+       Sections
+       ========================= */
+    section{ padding: 48px 0; }
+    section h2{ margin:0 0 12px; font-size: 1.6rem; }
+    .panel{
+      border:1px solid var(--border); background: var(--panel); border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow-1);
+    }
+
+    /* =========================
+       Login Modal
+       ========================= */
+    .modal{
+      position: fixed; inset:0; display:none; place-items:center; background: rgba(0,0,0,.45);
+      z-index: 100;
+    }
+    .modal.open{ display:grid; }
+    .modal .dialog{
+      width:min(480px, calc(100vw - 32px));
+      background: var(--panel); border:1px solid var(--border); border-radius: 16px;
+      box-shadow: var(--shadow-2); padding: 18px;
+    }
+    .modal header{
+      position: unset; backdrop-filter:none; background: transparent; border-bottom: none;
+    }
+    .modal .dialog h3{ margin: 0 0 8px; }
+    .modal .close{
+      border:1px solid var(--border); background: var(--panel); border-radius: 8px; padding: 8px 10px;
+    }
+
+    /* =========================
+       Settings
+       ========================= */
+    .swatches{ display:flex; gap:8px; flex-wrap: wrap; }
+    .swatch{
+      width:28px; height:28px; border-radius: 999px; border:1px solid var(--border); cursor:pointer;
+      display:inline-block;
+    }
+  
+   
+    
+    .swatch[data-accent="orange"]{ background:hsl(30 95% 55%); }
+    .swatch[data-accent="red"]{ background:hsla(19, 81%, 18%, 0.85); }
+
+    /* =========================
+       Footer & utilities
+       ========================= */
+    footer{ padding: 24px 0; color: var(--text-soft); border-top:1px solid var(--border); }
+    .top-btn{
+      position: fixed; right: 16px; bottom: 16px; padding:10px 12px; border-radius: 999px;
+      border:1px solid var(--border); background: var(--panel); box-shadow: var(--shadow-1);
+      display:none;
+    }
+    .top-btn.show{ display:inline-flex; }
+    .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header>
+    <div class="container nav" role="navigation" aria-label="Primary">
+      <a class="brand" href="#home">
+        <span class="logo" aria-hidden="true">★</span>
+        <span>Amilirs pawathenthic bites</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle menu">☰</button>
+
+      <nav id="primary-nav">
+        <ul>
+          <li><a href="#home" data-nav="home" aria-current="page">Home</a></li>
+          <li><a href="#contact" data-nav="contact">Contact</a></li>
+          <li><a href="#settings" data-nav="settings">Settings</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-right">
+        <button class="login-btn" id="openLogin" aria-haspopup="dialog" aria-controls="loginModal">Log in</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Home / Hero -->
+    <section id="home" class="container hero" aria-labelledby="home-heading">
+      <div>
+        <span class="badge">Welcome</span>
+        <h1 id="home-heading">Amilirs pawthentic bites</h1>
+        <p class="lead">Love yur pet as you love your self</p>
+        <div class="cta-row">
+          <a href="#contact" class="btn">Contact us</a>
+          <button class="btn ghost" id="openLogin2">Open login</button>
+        </div>
+      </div>
+
+      <div class="card" aria-describedby="home-card-desc">
+        <h3 style="margin:0 0 6px;">OUR PROMISE TO YOU</h3>
+        <p id="home-card-desc" class="form-help"> At Amilir's Pawthenthic Bites, we promise to treat your dog with the love, care, and respect they deserve. From healthy grooming to a safe and friendly environment, your pet’s well-being is always our top priority. We’re committed to giving your dog real benefits—because happy dogs make happy owners..</p>
+        <ul style="margin: 0; padding-left: 18px;">
+        
+        </ul>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="container" aria-labelledby="contact-heading">
+      <h2 id="contact-heading">Contact</h2>
+      <div class="panel">
+        <form id="contactForm" novalidate>
+          <div class="row">
+            <div>
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" autocomplete="name" required />
+              <div class="error" id="err-name">Please enter your name.</div>
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" required />
+              <div class="error" id="err-email">Please enter a valid email.</div>
+            </div>
+          </div>
+          <div>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required></textarea>
+            <div class="error" id="err-message">Please write a message.</div>
+          </div>
+          <button class="btn" type="submit">Send message</button>
+          <div class="notice" id="contactNotice" role="status" aria-live="polite"></div>
+          <p class="form-help">This demo doesn’t send emails. Hook it up to your backend (see comments in JS).</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section id="settings" class="container" aria-labelledby="settings-heading">
+      <h2 id="settings-heading">Settings</h2>
+      <div class="panel" role="group" aria-labelledby="theme-legend">
+        <h3 id="theme-legend" style="margin-top:0">Appearance</h3>
+        <div class="row">
+          <fieldset>
+            <legend class="form-help">Theme</legend>
+            <label><input type="radio" name="theme" value="system" /> System</label><br />
+            <label><input type="radio" name="theme" value="light" /> Light</label><br />
+            <label><input type="radio" name="theme" value="dark" /> Dark</label>
+          </fieldset>
+          <fieldset>
+            <legend class="form-help">Accent color</legend>
+            <div class="swatches" id="accentPicker" aria-label="Pick accent color">
+              <button type="button" class="swatch" data-accent="orange" aria-label="Orange"></button>
+              <button type="button" class="swatch" data-accent="red" aria-label="Red"></button>
+            </div>
+          </fieldset>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:8px; margin-top: 8px;">
+          <input type="checkbox" id="reduceMotion" />
+          Reduce motion animations
+        </label>
+        <p class="form-help">Your choices are saved in your browser. “System” follows your OS theme.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="year"></span> YourSite. All rights reserved.
+    </div>
+  </footer>
+
+  <button class="top-btn" id="toTop" aria-label="Back to top">↑</button>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" aria-describedby="loginDesc">
+    <div class="dialog">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 id="loginTitle" style="margin:0;">Log in</h3>
+        <button class="close" id="closeLogin" aria-label="Close">✕</button>
+      </div>
+      <p id="loginDesc" class="form-help" style="margin: 8px 0 14px;">Use any values—this is a front‑end demo.</p>
+      <form id="loginForm" novalidate>
+        <label for="login-identifier">Email or username</label>
+        <input id="login-identifier" name="identifier" type="text" autocomplete="username" required />
+        <div class="error" id="err-identifier">Please enter your email or username.</div>
+
+        <label for="login-password" style="margin-top:8px;">Password</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required style="flex:1;" />
+          <button type="button" class="btn ghost" id="togglePwd" aria-pressed="false" aria-controls="login-password">Show</button>
+        </div>
+        <div class="error" id="err-password">Please enter your password.</div>
+
+        <label style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+          <input type="checkbox" name="remember" id="remember" /> Remember me
+        </label>
+
+        <div class="cta-row" style="margin-top:14px;">
+          <button class="btn" type="submit">Log in</button>
+          <a href="#" class="btn ghost" id="forgotLink" aria-disabled="true">Forgot password?</a>
+        </div>
+
+        <div class="notice" id="loginNotice" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Live region for toasts -->
+  <div class="sr-only" aria-live="polite" id="toast"></div>
+
+  <script>
+    (function(){
+      const $ = (sel, root=document) => root.querySelector(sel);
+      const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+      const html = document.documentElement;
+
+      /* Year */
+      $('#year').textContent = new Date().getFullYear();
+
+      /* In-page nav current state (IntersectionObserver) */
+      const sections = ['home','contact','settings'].map(id => document.getElementById(id));
+      const navLinks = Object.fromEntries($$('#primary-nav a').map(a => [a.dataset.nav, a]));
+      const io = new IntersectionObserver(entries => {
+        for (const e of entries){
+          if (e.isIntersecting){
+            const id = e.target.id;
+            for (const k in navLinks) navLinks[k].removeAttribute('aria-current');
+            (navLinks[id] || navLinks['home']).setAttribute('aria-current','page');
+          }
+        }
+      }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+      sections.forEach(s => io.observe(s));
+
+      /* Mobile menu toggle */
+      const nav = $('#primary-nav');
+      const navToggle = $('.nav-toggle');
+      navToggle.addEventListener('click', () => {
+        const open = nav.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', String(open));
+      });
+      // Close mobile menu after clicking a link
+      $$('#primary-nav a').forEach(a => a.addEventListener('click', () => {
+        nav.classList.remove('open');
+        navToggle.setAttribute('aria-expanded','false');
+      }));
+
+      /* Back to top button */
+      const toTop = $('#toTop');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 600) toTop.classList.add('show'); else toTop.classList.remove('show');
+      });
+      toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+      /* =====================
+         Theme & Settings
+         ===================== */
+      const THEME_KEY = 'pref-theme';
+      const ACCENT_KEY = 'pref-accent';
+      const RM_KEY = 'pref-reduce-motion';
+
+      function applyTheme(pref){
+        if (pref === 'system'){
+          const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        }else{
+          html.setAttribute('data-theme', pref);
+        }
+      }
+      function initThemeRadios(){
+        const stored = localStorage.getItem(THEME_KEY) || 'system';
+        $$('input[name="theme"]').forEach(r => {
+          r.checked = (r.value === stored);
+          r.addEventListener('change', () => {
+            localStorage.setItem(THEME_KEY, r.value);
+            applyTheme(r.value);
+          });
+        });
+        applyTheme(stored);
+        // Update on system change when "system" selected
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+          if ((localStorage.getItem(THEME_KEY) || 'system') === 'system') applyTheme('system');
+        });
+      }
+      function initAccent(){
+        const stored = localStorage.getItem(ACCENT_KEY) || 'blue';
+        html.setAttribute('data-accent', stored);
+        $('#accentPicker').addEventListener('click', (e) => {
+          const btn = e.target.closest('.swatch');
+          if (!btn) return;
+          const color = btn.dataset.accent;
+          html.setAttribute('data-accent', color);
+          localStorage.setItem(ACCENT_KEY, color);
+        });
+      }
+      function initReduceMotion(){
+        const stored = localStorage.getItem(RM_KEY);
+        const checkbox = $('#reduceMotion');
+        if (stored !== null) checkbox.checked = stored === '1';
+        if (checkbox.checked){ html.style.setProperty('--motion', 0); }
+        checkbox.addEventListener('change', () => {
+          const on = checkbox.checked;
+          html.style.setProperty('--motion', on ? 0 : 1);
+          localStorage.setItem(RM_KEY, on ? '1' : '0');
+        });
+      }
+      initThemeRadios(); initAccent(); initReduceMotion();
+
+      /* =====================
+         Login Modal
+         ===================== */
+      const modal = $('#loginModal');
+      const openers = ['#openLogin', '#openLogin2'].map(sel => $(sel));
+      const closer = $('#closeLogin');
+      const form = $('#loginForm');
+      const idField = $('#login-identifier');
+      const pwdField = $('#login-password');
+      const idErr = $('#err-identifier');
+      const pwdErr = $('#err-password');
+      const loginNotice = $('#loginNotice');
+      const pwdToggle = $('#togglePwd');
+      let lastFocus = null;
+
+      function trapFocus(e){
+        if (e.key !== 'Tab') return;
+        const focusables = $$('a[href],button:not([disabled]),textarea,input,select,[tabindex]:not([tabindex="-1"])', modal)
+          .filter(el => el.offsetParent !== null);
+        if (!focusables.length) return;
+        const first = focusables[0], last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first){ last.focus(); e.preventDefault(); }
+        else if (!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
+      }
+      function openModal(){
+        lastFocus = document.activeElement;
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        idField.focus();
+        document.addEventListener('keydown', onKeydown);
+        modal.addEventListener('keydown', trapFocus);
+        modal.addEventListener('click', onBackdrop);
+      }
+      function closeModal(){
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+        document.removeEventListener('keydown', onKeydown);
+        modal.removeEventListener('keydown', trapFocus);
+        modal.removeEventListener('click', onBackdrop);
+        if (lastFocus) lastFocus.focus();
+      }
+      function onKeydown(e){ if (e.key === 'Escape') closeModal(); }
+      function onBackdrop(e){ if (e.target === modal) closeModal(); }
+
+      openers.forEach(btn => btn.addEventListener('click', openModal));
+      closer.addEventListener('click', closeModal);
+
+      pwdToggle.addEventListener('click', () => {
+        const isText = pwdField.type === 'text';
+        pwdField.type = isText ? 'password' : 'text';
+        pwdToggle.setAttribute('aria-pressed', String(!isText));
+        pwdToggle.textContent = isText ? 'Show' : 'Hide';
+        pwdField.focus();
+      });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Basic validation
+        let ok = true;
+        if (!idField.value.trim()){ idErr.style.display='block'; ok=false; } else idErr.style.display='none';
+        if (!pwdField.value.trim()){ pwdErr.style.display='block'; ok=false; } else pwdErr.style.display='none';
+        if (!ok) return;
+        // Demo submit — replace with your API call
+        // Example:
+        // fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({identifier: idField.value, password: pwdField.value, remember: $('#remember').checked}) })
+        //   .then(r => r.json()).then(handleLogin).catch(showError);
+        loginNotice.textContent = 'Logged in (demo). Replace with your backend call.';
+        loginNotice.classList.add('show');
+        setTimeout(() => { loginNotice.classList.remove('show'); closeModal(); }, 900);
+      });
+
+      /* =====================
+         Contact form demo
+         ===================== */
+      const contactForm = $('#contactForm');
+      const contactNotice = $('#contactNotice');
+      contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = $('#name').value.trim();
+        const email = $('#email').value.trim();
+        const message = $('#message').value.trim();
+        $('#err-name').style.display = name ? 'none' : 'block';
+        $('#err-email').style.display = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'none' : 'block';
+        $('#err-message').style.display = message ? 'none' : 'block';
+        if (!name || !email || !message) return;
+
+        // Demo only — replace with your email/send endpoint
+        // fetch('/api/contact', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name, email, message}) })
+        //   .then(r => r.json()).then(showThanks).catch(showError);
+        contactNotice.textContent = 'Thanks! Your message was captured (demo).';
+        contactNotice.classList.add('show');
+        contactForm.reset();
+        setTimeout(() => contactNotice.classList.remove('show'), 1600);
+      });
+
+      /* Keyboard: open login with "l" when not typing */
+      document.addEventListener('keydown', (e) => {
+        const tag = document.activeElement.tagName;
+        const typing = (tag === 'INPUT' || tag === 'TEXTAREA');
+        if (!typing && (e.key.toLowerCase() === 'l')) openModal();
+      });
+    })();
+  </script>
+</body>
+</html>
