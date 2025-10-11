@@ -44,3 +44,4 @@ class WebapplicationController extends AbstractController
         return $this->render('webapplication/register.html.twig');
     }
 }
+

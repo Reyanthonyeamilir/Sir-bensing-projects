@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pet Orders | Amilirs Pawthenthic Bytes{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/orders.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="orders-page">
+    <div class="orders-header">
+        <h1>Pet Orders</h1>
+        <div class="profile-section">
+            <img src="{{ asset('assets/img/user.jpg') }}" alt="Admin" class="profile-avatar">
+            <span class="username">Admin</span>
+        </div>
+    </div>
+
+    <div class="orders-layout">
+        <!-- LEFT SIDE: Order List -->
+        <div class="order-list">
+            <div class="order-tabs">
+                <button class="tab active">Order In</button>
+                <button class="tab">Prepared</button>
+                <button class="tab">Delivered</button>
+            </div>
+
+            {% for order in orders %}
+                <div class="order-card {% if loop.first %}active{% endif %}">
+                    <div class="order-info">
+                        <h4>{{ order.id }}</h4>
+                        <small>{{ order.date|date('F j, Y, g:i a') }}</small>
+                    </div>
+                    <div class="order-total">${{ order.total|number_format(2) }}</div>
+                </div>
+            {% else %}
+                <p class="no-orders">No pet orders available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- RIGHT SIDE: Order Details -->
+        <div class="order-details">
+            {% if orders|length > 0 %}
+                {% set order = orders[0] %}
+                <div class="details-header">
+                    <div>
+                        <h3>{{ order.id }}</h3>
+                        <small>{{ order.date|date('F j, Y, g:i a') }}</small>
+                    </div>
+                    <div class="customer">
+                        <img src="{{ asset('assets/img/user.jpg') }}" alt="Ruby Roben">
+                        <div>
+                            <h4>Ruby Roben</h4>
+                            <small>User since 2020</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-grid">
+                    <p><strong>Address:</strong> {{ order.address }}</p>
+                    <p><strong>Est. Time:</strong> {{ order.eta }} mins</p>
+                    <p><strong>Payment:</strong> {{ order.paymentMethod }}</p>
+                    <p><strong>Status:</strong> {{ order.status }}</p>
+                </div>
+
+                <div class="order-items">
+                    {% for item in order.items %}
+                        <div class="item">
+                            <img src="{{ asset('assets/img/' ~ item.image) }}" alt="{{ item.name }}">
+                            <div class="item-info">
+                                <p>{{ item.name }}</p>
+                                <small>x{{ item.qty }}</small>
+                            </div>
+                            <span class="price">+${{ item.price|number_format(2) }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="total-line">
+                    <strong>Total:</strong> <span>${{ order.total|number_format(2) }}</span>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-reject">Reject Order</button>
+                    <button class="btn btn-accept">Accept Order</button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

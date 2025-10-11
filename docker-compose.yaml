@@ -1,0 +1,35 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${demorootpassword}
+      MYSQL_DATABASE: ${demodb}
+      MYSQL_USER: ${demouser}
+      MYSQL_PASSWORD: ${demopassword}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - demonetwork
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: ${demouser}
+      PMA_PASSWORD: ${demopassword}
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - demonetwork
+
+volumes:
+  mysql_data:
+
+networks:
+  demonetwork:

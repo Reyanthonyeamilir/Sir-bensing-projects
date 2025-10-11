@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Producto{% endblock %}
+
+{% block body %}
+    <style>
+        body {
+            background: linear-gradient(135deg, #a0522d, #ff8c00);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #d2691e;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 600px;
+        }
+        .card-header {
+            background-color: #ff7f50;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-align: center;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        table {
+            width: 100%;
+            margin: 0 auto;
+            border-collapse: separate;
+            border-spacing: 0 8px; /* spacing between rows */
+        }
+        th {
+            width: 40%;
+            text-align: left;
+            color: #ffd699;
+            padding: 8px 12px;
+        }
+        td {
+            width: 60%;
+            text-align: left;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+        }
+        a.btn-custom {
+            background-color: #d2691e;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: white;
+            text-decoration: none;
+            margin-right: 8px;
+            transition: 0.3s;
+        }
+        a.btn-custom:hover {
+            background-color: #ff8c00;
+            text-decoration: none;
+        }
+    </style>
+
+    <div class="card">
+        <div class="card-header">
+            Pet Product
+        </div>
+        <div class="card-body">
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ producto.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Petname</th>
+                        <td>{{ producto.Petname }}</td>
+                    </tr>
+                    <tr>
+                        <th>Age</th>
+                        <td>{{ producto.Age }}</td>
+                    </tr>
+                    <tr>
+                        <th>Product Name</th>
+                        <td>{{ producto.ProductName }}</td>
+                    </tr>
+                    <tr>
+                        <th>Price</th>
+                        <td>{{ producto.Price }}</td>
+                    </tr>
+                    <tr>
+                        <th>Quantity</th>
+                        <td>{{ producto.quantity }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="mt-4 text-center">
+                <a href="{{ path('app_producto_index') }}" class="btn-custom">⬅ Back to list</a>
+                <a href="{{ path('app_producto_edit', {'id': producto.id}) }}" class="btn-custom">✏ Edit</a>
+            </div>
+
+            <div class="mt-3 text-center">
+                {{ include('producto/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

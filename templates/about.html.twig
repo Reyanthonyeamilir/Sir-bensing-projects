@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}About Us | Amilir’s Pawthentic Bites{% endblock %}
+
+{% block body %}
+
+<!-- === HERO SECTION === -->
+<section class="about-hero" style="background-image: url('{{ asset('images/3sizes.png') }}');">
+  <div class="hero-overlay">
+    <div class="hero-content">
+      <h1>Crafted with Care, Loved by Tails 🐾</h1>
+      <p>At Amilir’s Pawthentic Bites, every bite tells a story of love, nutrition, and tail-wagging happiness.</p>
+    </div>
+  </div>
+</section>
+
+<!-- === STORY SECTION === -->
+<section class="about-story">
+  <div class="story-container">
+    <div class="story-text">
+      <h2>Our Story</h2>
+      <p>
+        Founded with a passion for dogs and a commitment to quality, 
+        <strong>Amilir’s Pawthentic Bites</strong> began as a dream to create healthy, natural dog treats that your furry 
+        friends can enjoy without worry.
+      </p>
+      <p>
+        We believe in feeding pets the same way we feed our families — with care, love, and honesty. Every product we make is crafted with premium ingredients, no artificial preservatives, and a whole lot of tail-wagging joy.
+      </p>
+    </div>
+    <div class="story-image">
+      <img src="{{ asset('images/dogie.jpg') }}" alt="Happy Dog with Treats">
+    </div>
+  </div>
+</section>
+
+<!-- === SERVICES & CARE SECTION === -->
+<section class="about-services">
+  <h2>More Than Just Treats — We Care For Dogs!</h2>
+  <p class="service-intro">
+    Beyond premium pet food, Amilir’s Pawthentic Bites is proud to offer additional services for your furry friends.
+  </p>
+
+  <div class="services-grid">
+    <div class="service-card">
+      <!-- Inline paw icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="paw-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 22s-4-4.35-4-7.5 1.79-4 4-4 4 1.79 4 4-4 7.5-4 7.5zm-6.5-10c-.83 0-1.5-.67-1.5-1.5S4.67 9 5.5 9 7 9.67 7 10.5 5.83 12 5.5 12zm13 0c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9 20 9.67 20 10.5 19.33 12 18.5 12zm-9.5-6c-.83 0-1.5-.67-1.5-1.5S8.17 3 9 3s1.5.67 1.5 1.5S9.83 6 9 6zm6 0c-.83 0-1.5-.67-1.5-1.5S14.17 3 15 3s1.5.67 1.5 1.5S15.83 6 15 6z"/>
+      </svg>
+      <h3>Dog Adoption & Sales</h3>
+      <p>
+        Looking for a new furry friend? We offer dog adoption and sales, helping pets find loving homes while connecting families with their perfect companions.
+      </p>
+    </div>
+
+    <div class="service-card">
+      <svg xmlns="http://www.w3.org/2000/svg" class="paw-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 22s-4-4.35-4-7.5 1.79-4 4-4 4 1.79 4 4-4 7.5-4 7.5zm-6.5-10c-.83 0-1.5-.67-1.5-1.5S4.67 9 5.5 9 7 9.67 7 10.5 5.83 12 5.5 12zm13 0c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9 20 9.67 20 10.5 19.33 12 18.5 12zm-9.5-6c-.83 0-1.5-.67-1.5-1.5S8.17 3 9 3s1.5.67 1.5 1.5S9.83 6 9 6zm6 0c-.83 0-1.5-.67-1.5-1.5S14.17 3 15 3s1.5.67 1.5 1.5S15.83 6 15 6z"/>
+      </svg>
+      <h3>Dog Doctor Consultation</h3>
+      <p>
+        Our certified dog specialists and vets are available for consultations, ensuring your pet stays happy, healthy, and full of energy!
+      </p>
+    </div>
+
+    <div class="service-card">
+      <svg xmlns="http://www.w3.org/2000/svg" class="paw-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 22s-4-4.35-4-7.5 1.79-4 4-4 4 1.79 4 4-4 7.5-4 7.5zm-6.5-10c-.83 0-1.5-.67-1.5-1.5S4.67 9 5.5 9 7 9.67 7 10.5 5.83 12 5.5 12zm13 0c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9 20 9.67 20 10.5 19.33 12 18.5 12zm-9.5-6c-.83 0-1.5-.67-1.5-1.5S8.17 3 9 3s1.5.67 1.5 1.5S9.83 6 9 6zm6 0c-.83 0-1.5-.67-1.5-1.5S14.17 3 15 3s1.5.67 1.5 1.5S15.83 6 15 6z"/>
+      </svg>
+      <h3>Pet Wellness & Training</h3>
+      <p>
+        From obedience lessons to nutrition advice, we’re here to support your dog’s journey to a healthier, more balanced life.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- === CTA / COMMITMENT === -->
+<section class="about-commitment" style="background-image: url('{{ asset('images/dry-dog-food-backgound.avif') }}');">
+  <div class="overlay">
+    <div class="commitment-content">
+      <h2>Our Commitment to You and Your Dog</h2>
+      <p>
+        We’re more than a pet food company — we’re a family of dog lovers who understand how much your pet means to you.
+        That’s why every Pawthentic Bite is made to deliver nutrition, joy, and the promise of a healthier, happier life.
+      </p>
+      <a href="{{ path('product') }}" class="btn-primary">Explore Our Products</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,195 @@
+.orders-page {
+    background: #f9f9f9;
+    padding: 2rem;
+    border-radius: 20px;
+}
+
+.orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.orders-header h1 {
+    font-size: 1.8rem;
+    color: #2c2c2c;
+    font-weight: 700;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+}
+
+.username {
+    font-weight: 600;
+}
+
+/* Layout */
+.orders-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.5rem;
+}
+
+/* Order list */
+.order-list {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.order-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.tab {
+    flex: 1;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: #ff8800;
+    color: #fff;
+}
+
+.order-card {
+    background: #fafafa;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    transition: 0.3s ease;
+}
+
+.order-card.active {
+    border: 1.5px solid #ff8800;
+    background: #fff6eb;
+}
+
+.order-card:hover {
+    background: #fffaf3;
+}
+
+.order-total {
+    font-weight: bold;
+    color: #ff8800;
+}
+
+/* Order details */
+.order-details {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 24px;
+}
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.customer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.customer img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 20px;
+    margin-bottom: 1rem;
+}
+
+.order-items .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.item-info {
+    flex: 1;
+    margin-left: 10px;
+}
+
+.price {
+    font-weight: 600;
+    color: #ff8800;
+}
+
+.total-line {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-reject {
+    background: #fff;
+    border: 2px solid #ff6600;
+    color: #ff6600;
+}
+
+.btn-accept {
+    background: #ff6600;
+    color: white;
+}
+
+.btn-reject:hover {
+    background: #fff2e0;
+}
+
+.btn-accept:hover {
+    background: #cc5200;
+}

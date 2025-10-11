@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PetSale index{% endblock %}
+
+{% block body %}
+    <h1>PetSale index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Image</th>
+                <th>Dogbreed</th>
+                <th>Dogage</th>
+                <th>Datepurchased</th>
+                <th>Datetosale</th>
+                <th>Discription</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for pet_sale in pet_sales %}
+            <tr>
+                <td>{{ pet_sale.id }}</td>
+                <td>{{ pet_sale.image }}</td>
+                <td>{{ pet_sale.dogbreed }}</td>
+                <td>{{ pet_sale.dogage }}</td>
+                <td>{{ pet_sale.datepurchased ? pet_sale.datepurchased|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ pet_sale.datetosale ? pet_sale.datetosale|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ pet_sale.discription }}</td>
+                <td>
+                    <a href="{{ path('app_pet_sale_show', {'id': pet_sale.id}) }}">show</a>
+                    <a href="{{ path('app_pet_sale_edit', {'id': pet_sale.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_pet_sale_new') }}">Create new</a>
+{% endblock %}

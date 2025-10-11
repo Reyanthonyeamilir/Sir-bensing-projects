@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Product{% endblock %}
+
+{% block body %}
+<style>
+/* Background */
+body {
+    background: linear-gradient(135deg, #ff8c42, #cc6600);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Main container */
+.crud-container {
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    width: 95%;
+    max-width: 750px;
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Fade in effect */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Title */
+.crud-container h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 28px;
+    color: #333;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #ff6600;
+    padding-bottom: 10px;
+}
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+form input, form select, form textarea {
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+form input:focus, form select:focus, form textarea:focus {
+    border-color: #ff6600;
+    box-shadow: 0 0 6px rgba(255, 102, 0, 0.4);
+    outline: none;
+}
+
+/* Submit button */
+form button {
+    background-color: #ff6600;
+    border: none;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+form button:hover {
+    background-color: #cc5200;
+    transform: translateY(-2px);
+}
+
+/* Table styling */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0 25px;
+}
+
+.table th, .table td {
+    padding: 12px 16px;
+    border: 1px solid #eee;
+    text-align: center;
+}
+
+.table th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+    color: #444;
+}
+
+/* Back button */
+.actions {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-create {
+    padding: 12px 20px;
+    background: #ff6600;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-create:hover {
+    background-color: #cc5200;
+    transform: translateY(-2px);
+}
+</style>
+
+<div class="crud-container">
+    <h1>Create New Pet Product</h1>
+
+    {{ include('producto/_form.html.twig') }}
+
+    <div class="actions">
+        <a href="{{ path('app_producto_index') }}" class="btn-create">⬅ Back to list</a>
+    </div>
+</div>
+{% endblock %}

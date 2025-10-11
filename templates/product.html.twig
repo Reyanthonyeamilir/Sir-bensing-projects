@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products - Amilir’s Pawthentic Bites{% endblock %}
+
+{% block body %}
+<section class="products-section">
+  <h2>Our Pawthentic Treats</h2>
+
+  <div class="product-grid">
+    <div class="product-card">
+      <img src="{{ asset('images/treat1.png') }}" alt="Treat 1">
+      <h3>Beef Crunchies</h3>
+      <p>Rich in protein and flavor your dog will love!</p>
+    </div>
+
+    <div class="product-card">
+      <img src="{{ asset('images/treat2.png') }}" alt="Treat 2">
+      <h3>Chicken Bites</h3>
+      <p>Crafted with real chicken and natural ingredients.</p>
+    </div>
+
+    <div class="product-card">
+      <img src="{{ asset('images/treat3.png') }}" alt="Treat 3">
+      <h3>Peanut Butter Bones</h3>
+      <p>A crunchy snack packed with energy and love.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

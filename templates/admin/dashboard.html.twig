@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard | Bella's Dog Boutique{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('styles/admin.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+  <aside class="sidebar">
+    <h2>Bella's Admin</h2>
+    <ul>
+      <li><a href="#"><i class="fa fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="#"><i class="fa fa-paw"></i> Appointments</a></li>
+      <li><a href="#"><i class="fa fa-users"></i> Clients</a></li>
+      <li><a href="#"><i class="fa fa-images"></i> Gallery</a></li>
+      <li><a href="#"><i class="fa fa-gear"></i> Settings</a></li>
+      <li><a href="#"><i class="fa fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <header>
+      <h1>Dashboard Overview</h1>
+    </header>
+    <section class="stats">
+      <div class="card">
+        <i class="fa fa-calendar-check"></i>
+        <h3>Bookings</h3>
+        <p>24 Today</p>
+      </div>
+      <div class="card">
+        <i class="fa fa-users"></i>
+        <h3>Clients</h3>
+        <p>180 Total</p>
+      </div>
+      <div class="card">
+        <i class="fa fa-star"></i>
+        <h3>Reviews</h3>
+        <p>4.8/5 Avg</p>
+      </div>
+    </section>
+  </main>
+</div>
+{% endblock %}

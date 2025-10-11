@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit PetSale{% endblock %}
+
+{% block body %}
+    <h1>Edit PetSale</h1>
+
+    {{ include('pet_sale/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_pet_sale_index') }}">back to list</a>
+
+    {{ include('pet_sale/_delete_form.html.twig') }}
+{% endblock %}

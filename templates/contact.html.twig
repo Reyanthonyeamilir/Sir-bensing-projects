@@ -1,0 +1,192 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact Us - Amilir’s Pawthentic Bites{% endblock %}
+
+{% block body %}
+<style>
+/* === CONTACT PAGE STYLES (BROWN & ORANGE THEME) === */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.contact-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  padding: 20px;
+}
+
+.contact-card {
+  display: flex;
+  flex-wrap: wrap;
+  background: #fff;
+  color: #2e1504;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  max-width: 900px;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* === Left Side (Form Section) === */
+.contact-form {
+  flex: 1;
+  background: linear-gradient(135deg, #cc5404, #5c2b05);
+  color: #fff;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact-form h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.contact-form input,
+.contact-form textarea {
+  margin-bottom: 15px;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 0.95rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.contact-form textarea {
+  resize: none;
+  height: 100px;
+}
+
+.contact-form button {
+  background: #ffe6c9;
+  color: #2e1504;
+  border: none;
+  padding: 12px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.contact-form button:hover {
+  background: #2e1504;
+  color: #fff;
+}
+
+/* === Right Side (Contact Info) === */
+.contact-info {
+  flex: 1;
+  background: #fff;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact-info h2 {
+  font-size: 1.5rem;
+  color: #2e1504;
+  margin-bottom: 20px;
+}
+
+.contact-info p {
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+  color: #5c2b05;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  color: #2e1504;
+}
+
+.info-item i {
+  color: #cc5404;
+  font-size: 1.2rem;
+  width: 25px;
+}
+
+.contact-info a {
+  color: #cc5404;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contact-info a:hover {
+  text-decoration: underline;
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .contact-card {
+    flex-direction: column;
+  }
+
+  .contact-form,
+  .contact-info {
+    width: 100%;
+  }
+
+  .contact-form {
+    padding: 30px;
+  }
+
+  .contact-info {
+    padding: 30px;
+  }
+}
+</style>
+
+<div class="contact-wrapper">
+  <div class="contact-card">
+    <!-- Left: Contact Form -->
+    <div class="contact-form">
+      <h2>Send us a message</h2>
+      <form>
+        <input type="text" placeholder="Name" required>
+        <input type="email" placeholder="Email" required>
+        <input type="text" placeholder="Subject" required>
+        <textarea placeholder="Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+
+    <!-- Right: Contact Info -->
+    <div class="contact-info">
+      <h2>Contact us</h2>
+      <p>We’re open for any suggestion or just to have a chat.</p>
+      <div class="info-item">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>198 West 21th Street, Suite 721, New York NY 10016</span>
+      </div>
+      <div class="info-item">
+        <i class="fa-solid fa-phone"></i>
+        <span>+1 235 2355 98</span>
+      </div>
+      <div class="info-item">
+        <i class="fa-solid fa-envelope"></i>
+        <span>info@pawthenticbites.com</span>
+      </div>
+      <div class="info-item">
+        <i class="fa-solid fa-globe"></i>
+        <a href="#">www.pawthenticbites.com</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}

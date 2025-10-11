@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home | Amilir’s Pawthentic Bites{% endblock %}
+
+{% block body %}
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1>Keep Your Dog Happy and Healthy!</h1>
+      <p>Crafted with care, love by Talles — discover the taste of Pawthentic Bites.</p>
+      <a href="{{ path('product') }}" class="btn-primary">Shop Now</a>
+    </div>
+    <div class="hero-image">
+      <img src="{{ asset('images/digitalposter.jpg') }}" alt="Happy Dog with Treats">
+    </div>
+  </div>
+</section>
+
+<!-- === FEATURED SECTION === -->
+<section class="featured">
+  <h2>For All Your Pet's Nutrition Needs</h2>
+  <p>We bring you premium, vet-approved dog treats and meals your pet will love!</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <img src="{{ asset('images/flyer.png') }}" alt="Nutritious">
+      <h3>Nutritious Recipes</h3>
+      <p>High-quality ingredients blended for a balanced diet.</p>
+    </div>
+
+    <div class="feature-card">
+      <img src="{{ asset('images/icon-fresh.png') }}" alt="Fresh">
+      <h3>Freshly Made</h3>
+      <p>Prepared in small batches to ensure freshness and quality.</p>
+    </div>
+
+    <div class="feature-card">
+      <img src="{{ asset('images/icon-happy.png') }}" alt="Happy Pets">
+      <h3>Happy Pets</h3>
+      <p>Made with love to keep tails wagging every day!</p>
+    </div>
+  </div>
+</section>
+
+<!-- === CALL TO ACTION === -->
+<section class="cta">
+  <h2>Join Our Pawthentic Family!</h2>
+  <p>Sign up for exclusive discounts and dog care tips straight to your inbox.</p>
+  <a href="{{ path('register') }}" class="btn-primary">Register Now</a>
+</section>
+{% endblock %}

@@ -1,20 +1,93 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Amilir’s Pawthentic Bites{% endblock %}</title>
 
-        {% block stylesheets %}
-        {% endblock %}
+  <!-- Fonts & Styles -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ asset('styles/index.css') }}">
+  {% block stylesheets %}{% endblock %}
+</head>
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        <script src = "{{ asset('js/bootstrap.bundle.min.js') }}"></script>
-    </body>
+<body>
+  <!-- Full-page background wrapper -->
+  <div class="page-bg">
+    
+    <!-- ===== Banner Slideshow ===== -->
+    <section class="banner-slider">
+      <div class="slide fade">
+        <img src="{{ asset('images/BANNER.png') }}" alt="Banner 1">
+      </div>
+      <div class="slide fade">
+        <img src="{{ asset('images/BANNER.png') }}" alt="Banner 2">
+      </div>
+    </section>
+
+    <!-- ===== Navigation Bar ===== -->
+    <nav class="nav">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <img src="{{ asset('images/mylogo.png') }}" alt="Pawthentic Logo">
+          <span>Amilir’s Pawthentic Bites</span>
+        </div>
+        <ul class="nav-links">
+          <li><a href="{{ path('home') }}">Home</a></li>
+          <li><a href="{{ path('about') }}">About</a></li>
+          <li><a href="{{ path('product') }}">Products</a></li>
+          <li><a href="{{ path('contact') }}">Contact</a></li>
+          <li><a href="{{ path('login') }}" class="btn">Login</a></li>
+          <li><a href="{{ path('register') }}" class="btn">Register</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ===== Main Content ===== -->
+    <main>
+      {% block body %}{% endblock %}
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer>
+      <p>&copy; {{ "now"|date("Y") }} Amilir’s Pawthentic Bites | Crafted with Care, Love by Talles</p>
+    </footer>
+  </div>
+
+  <!-- ===== JS for Slideshow ===== -->
+  <script>
+    let slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+      let slides = document.getElementsByClassName("slide");
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1 }
+      slides[slideIndex - 1].style.display = "block";
+      setTimeout(showSlides, 4000);
+    }
+
+    // Hamburger responsive toggle
+    document.addEventListener("DOMContentLoaded", function() {
+      const hamburger = document.createElement("div");
+      hamburger.classList.add("hamburger");
+      hamburger.innerHTML = "<div></div><div></div><div></div>";
+
+      const navContainer = document.querySelector(".nav-container");
+      const navLinks = document.querySelector(".nav-links");
+
+      if (navContainer) {
+        navContainer.prepend(hamburger);
+        hamburger.addEventListener("click", () => {
+          navLinks.classList.toggle("active");
+        });
+      }
+    });
+  </script>
+
+  {% block javascripts %}{% endblock %}
+</body>
 </html>
