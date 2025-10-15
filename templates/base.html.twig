@@ -15,33 +15,33 @@
   <!-- Full-page background wrapper -->
   <div class="page-bg">
     
-    <!-- ===== Banner Slideshow ===== -->
-    <section class="banner-slider">
-      <div class="slide fade">
-        <img src="{{ asset('images/BANNER.png') }}" alt="Banner 1">
-      </div>
-      <div class="slide fade">
-        <img src="{{ asset('images/BANNER.png') }}" alt="Banner 2">
-      </div>
-    </section>
-
-    <!-- ===== Navigation Bar ===== -->
-    <nav class="nav">
-      <div class="nav-container">
-        <div class="nav-logo">
-          <img src="{{ asset('images/mylogo.png') }}" alt="Pawthentic Logo">
-          <span>Amilir’s Pawthentic Bites</span>
-        </div>
-        <ul class="nav-links">
-          <li><a href="{{ path('home') }}">Home</a></li>
-          <li><a href="{{ path('about') }}">About</a></li>
-          <li><a href="{{ path('product') }}">Products</a></li>
-          <li><a href="{{ path('contact') }}">Contact</a></li>
-          <li><a href="{{ path('login') }}" class="btn">Login</a></li>
-          <li><a href="{{ path('register') }}" class="btn">Register</a></li>
-        </ul>
-      </div>
-    </nav>
+   <!-- ===== Banner Slideshow ===== -->
+<!-- ===== Banner Slideshow ===== -->
+<section class="banner-slider">
+  <div class="slide fade">
+    <img src="{{ asset('images/BANNER-removebg-preview.png') }}" alt="Banner 1">
+  </div>
+  <div class="slide fade">
+    <img src="{{ asset('images/BANNER-removebg-preview.png') }}" alt="Banner 2">
+  </div>
+</section>
+<!-- ===== Navigation Bar ===== -->
+<nav class="nav">
+  <div class="nav-container">
+    <div class="nav-logo">
+      <img src="{{ asset('images/mylogo.png') }}" alt="Pawthentic Logo">
+      <span>Amilir’s Pawthentic Bites</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="{{ path('home') }}">Home</a></li>
+      <li><a href="{{ path('about') }}">About</a></li>
+      <li><a href="{{ path('product') }}">Products</a></li>
+      <li><a href="{{ path('contact') }}">Contact</a></li>
+      <li><a href="{{ path('login') }}" class="btn">Login</a></li>
+      <li><a href="{{ path('register') }}" class="btn">Register</a></li>
+    </ul>
+  </div>
+</nav>
 
     <!-- ===== Main Content ===== -->
     <main>
@@ -88,6 +88,9 @@
     });
   </script>
 
-  {% block javascripts %}{% endblock %}
+  {% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+  {% endblock %}
+
 </body>
 </html>

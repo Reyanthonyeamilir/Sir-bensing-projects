@@ -1,0 +1,292 @@
+/* ==========================================================
+   🧭 ADMIN DASHBOARD — CLEAN RESPONSIVE DESIGN
+   THEME COLOR: #cc5404 (VIBRANT ORANGE)
+   ========================================================== */
+
+/* ---------- Root Variables ---------- */
+:root {
+  --primary: #cc5404;
+  --primary-dark: #9b3c03;
+  --accent: #663300;
+  --text: #333;
+  --bg: #f8f8f8;
+  --white: #ffffff;
+  --shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
+}
+
+/* ---------- Base Styling ---------- */
+body {
+  margin: 0;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ==========================================================
+   🧭 LAYOUT STRUCTURE (SIDEBAR + CONTENT SIDE BY SIDE)
+   ========================================================== */
+.dashboard-container {
+  display: flex;
+  flex-direction: row;  /* ✅ Sidebar (left) + Main content (right) */
+  align-items: stretch;
+  justify-content: flex-start;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* ==========================================================
+   🧭 SIDEBAR (LEFT FIXED ON DESKTOP)
+   ========================================================== */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  padding: 1.5rem 1.2rem;
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-top-right-radius: 14px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Sidebar Title */
+.logo {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+/* Sidebar Navigation */
+.nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav li {
+  margin-bottom: 0.8rem;
+}
+
+.nav a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: var(--transition);
+}
+
+.nav a:hover,
+.nav a.active {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateX(4px);
+}
+
+/* ==========================================================
+   📊 MAIN CONTENT AREA (RIGHT SIDE)
+   ========================================================== */
+.main-content {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  background: var(--white);
+  box-sizing: border-box;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Header Section */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.8rem;
+}
+
+.header h1 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.search-bar {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 6px rgba(204, 84, 4, 0.3);
+}
+
+/* ==========================================================
+   🧾 DASHBOARD CARDS
+   ========================================================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  border-left: 6px solid var(--primary);
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(204, 84, 4, 0.25);
+}
+
+.card h3 {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.card .number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.growth {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #28a745;
+}
+
+/* ==========================================================
+   🧾 TABLE STYLING (CRUD)
+   ========================================================== */
+.table-container {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-container th,
+.table-container td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.table-container th {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.table-container tr:hover {
+  background: #fff3e0;
+  transition: background 0.2s ease;
+}
+
+/* ==========================================================
+   📱 RESPONSIVE DESIGN (TOGGLE SIDEBAR ON MOBILE)
+   ========================================================== */
+
+/* Hide toggle on desktop */
+.sidebar-toggle {
+  display: none;
+}
+
+/* Mobile and Tablet (max-width: 992px) */
+@media (max-width: 992px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  /* Show ☰ toggle button */
+  .sidebar-toggle {
+    display: block;
+    position: fixed;
+    top: 90px;
+    left: 20px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    font-size: 1.6rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    z-index: 1100;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .sidebar-toggle:hover {
+    background: var(--primary-dark);
+  }
+
+  /* Sidebar hidden by default on mobile */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    height: 100vh;
+    width: 260px;
+    background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+  }
+
+  /* When sidebar is open */
+  .sidebar.open {
+    left: 0;
+  }
+
+  /* Dim overlay */
+  body.sidebar-active::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 900;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 1.5rem;
+  }
+}
+
+/* Small screen refinements */
+@media (max-width: 576px) {
+  .nav a {
+    flex: 1 1 45%;
+    text-align: center;
+  }
+}

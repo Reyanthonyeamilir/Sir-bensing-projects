@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ petproduct.productName }}{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('styles/product_view.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="product-detail-page">
+  <div class="product-detail-card">
+    <div class="image-section">
+      {% if petproduct.imageUrl %}
+       <img src="{{ asset('uploads/' ~ petproduct.imageUrl) }}" alt="{{ petproduct.productName }}">
+      {% else %}
+        <img src="{{ asset('images/no-image.png') }}" alt="No Image">
+      {% endif %}
+    </div>
+    <div class="info-section">
+      <h1>{{ petproduct.productName }}</h1>
+      <p class="category"><strong>Category:</strong> {{ petproduct.category }} → {{ petproduct.subCategory }}</p>
+      <p class="description">{{ petproduct.description }}</p>
+      <p class="price"><strong>Price:</strong> ${{ petproduct.price }}</p>
+      <p class="brand"><strong>Brand:</strong> {{ petproduct.brand }}</p>
+      <p class="stock"><strong>Available Stock:</strong> {{ petproduct.stock }}</p>
+      <div class="action-section">
+        <button class="btn order-btn">Order Now</button>
+        <a href="{{ path('product') }}" class="btn back-btn">← Back to Products</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

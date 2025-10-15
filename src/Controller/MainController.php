@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Repository\PetproductsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MainController extends AbstractController
 {
@@ -33,9 +36,42 @@ class MainController extends AbstractController
     }
 
     #[Route('/product', name: 'product')]
-    public function product(): Response
+    public function product(PetproductsRepository $petproductsRepository, Request $request): Response
     {
-        return $this->render('product.html.twig');
+        $category = $request->query->get('category');
+        $subCategory = $request->query->get('subCategory');
+
+        $allProducts = $petproductsRepository->findAll();
+        $petproducts = $allProducts;
+
+        if ($category) {
+            $criteria = ['category' => $category];
+            if ($subCategory) {
+                $criteria['sub_category'] = $subCategory; // ✅ matches entity
+            }
+            $petproducts = $petproductsRepository->findBy($criteria);
+        }
+
+        return $this->render('product.html.twig', [
+            'petproducts' => $petproducts,
+            'allProducts' => $allProducts,
+            'currentCategory' => $category,
+            'currentSubCategory' => $subCategory,
+        ]);
+    }
+
+    #[Route('/product/view/{id}', name: 'product_view')]
+    public function productView(int $id, PetproductsRepository $petproductsRepository): Response
+    {
+        $petproduct = $petproductsRepository->find($id);
+
+        if (!$petproduct) {
+            throw new NotFoundHttpException('Product not found.');
+        }
+
+        return $this->render('product_view.html.twig', [
+            'petproduct' => $petproduct,
+        ]);
     }
 
     #[Route('/login', name: 'login')]

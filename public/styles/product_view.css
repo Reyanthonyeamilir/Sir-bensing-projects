@@ -1,0 +1,107 @@
+.product-detail-page {
+  background-color: #fff8f2;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 40px 5%;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.product-detail-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  padding: 25px;
+}
+
+.image-section {
+  flex: 1 1 300px;
+  text-align: center;
+}
+
+.image-section img {
+  max-width: 100%;
+  border-radius: 12px;
+  transition: transform 0.4s ease;
+}
+
+.image-section img:hover {
+  transform: scale(1.03);
+}
+
+.info-section {
+  flex: 1 1 350px;
+}
+
+.info-section h1 {
+  color: #a0522d;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.category, .description, .price, .brand, .stock {
+  margin: 10px 0;
+  color: #5a4636;
+  font-size: 1rem;
+}
+
+.price {
+  font-size: 1.2rem;
+  color: #d2691e;
+  font-weight: bold;
+}
+
+.action-section {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.order-btn {
+  background: #d2691e;
+}
+
+.order-btn:hover {
+  background: #e07b39;
+  transform: scale(1.05);
+}
+
+.back-btn {
+  background: #a0522d;
+}
+
+.back-btn:hover {
+  background: #b3541e;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .product-detail-card {
+    flex-direction: column;
+  }
+
+  .info-section {
+    text-align: center;
+  }
+
+  .action-section {
+    justify-content: center;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

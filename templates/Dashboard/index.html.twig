@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('styles/dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+{# =====================================================
+   🧭 Admin Dashboard
+   - Sidebar stays separate and starts below your navbar
+   - No navbar design changes at all
+   ===================================================== #}
+
+<div class="dashboard-container">
+
+  {# Include the Sidebar Partial #}
+  {% include 'dashboard/sidebar.html.twig' %}
+
+  <!-- MAIN DASHBOARD SECTION -->
+  <main class="main-content">
+    <header class="header">
+      <h1>Dashboard Overview</h1>
+      <input type="text" class="search-bar" placeholder="Search..." />
+    </header>
+
+    <!-- DASHBOARD STATISTICS -->
+    <section class="stats-grid">
+      <div class="card">
+        <h3>Total Products</h3>
+        <p class="number">{{ totalProducts }}</p>
+        {% if priceGrowth is defined %}
+          <span class="growth positive">+{{ priceGrowth }}%</span>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h3>Total Prices</h3>
+        <p class="number">${{ totalPrice|number_format(2, '.', ',') }}</p>
+      </div>
+
+      <div class="card">
+        <h3>Users Registered</h3>
+        <p class="number">{{ totalUsers }}</p>
+      </div>
+
+      <div class="card">
+        <h3>Service Bookings</h3>
+        <p class="number">{{ bookingsCount }}</p>
+      </div>
+    </section>
+
+    <!-- PLACEHOLDER CHART SECTION -->
+    <section class="chart-area">
+      <div class="chart-box">📈 Product Price Trend (Coming Soon)</div>
+      <div class="chart-box">📊 Bookings Overview (Coming Soon)</div>
+    </section>
+  </main>
+</div>
+{% endblock %}

@@ -1,29 +1,106 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Products - Amilir’s Pawthentic Bites{% endblock %}
+{% block title %}Pet Products{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('styles/product.css') }}">
+{% endblock %}
 
 {% block body %}
-<section class="products-section">
-  <h2>Our Pawthentic Treats</h2>
+<div class="product-layout">
 
-  <div class="product-grid">
-    <div class="product-card">
-      <img src="{{ asset('images/treat1.png') }}" alt="Treat 1">
-      <h3>Beef Crunchies</h3>
-      <p>Rich in protein and flavor your dog will love!</p>
-    </div>
 
-    <div class="product-card">
-      <img src="{{ asset('images/treat2.png') }}" alt="Treat 2">
-      <h3>Chicken Bites</h3>
-      <p>Crafted with real chicken and natural ingredients.</p>
-    </div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+  <h2 class="sidebar-title">Categories</h2>
+  <ul class="category-list">
 
-    <div class="product-card">
-      <img src="{{ asset('images/treat3.png') }}" alt="Treat 3">
-      <h3>Peanut Butter Bones</h3>
-      <p>A crunchy snack packed with energy and love.</p>
+    {% set seenCategories = [] %}
+    {% set categories = [] %}
+    {% for p in allProducts %}
+      {% if p.category not in seenCategories %}
+        {% set categories = categories|merge([p.category]) %}
+        {% set seenCategories = seenCategories|merge([p.category]) %}
+      {% endif %}
+    {% endfor %}
+
+    {% for category in categories %}
+      <li class="category-item">
+        <button class="category-toggle" data-target="sub-{{ loop.index }}">
+          <span class="icon">🐾</span>
+          <span class="label">{{ category }}</span>
+          <span class="arrow">›</span>
+        </button>
+
+        {% set seenSubs = [] %}
+        {% set subcats = [] %}
+        {% for p in allProducts %}
+          {% if p.category == category and p.subCategory not in seenSubs %}
+            {% set subcats = subcats|merge([p.subCategory]) %}
+            {% set seenSubs = seenSubs|merge([p.subCategory]) %}
+          {% endif %}
+        {% endfor %}
+
+        {% if subcats is not empty %}
+          <ul class="subcategory-list" id="sub-{{ loop.index }}">
+            {% for sub in subcats %}
+              <li>
+                <a href="{{ path('product', {'category': category, 'subCategory': sub}) }}"
+                   class="subcategory-link {% if sub == currentSubCategory %}active{% endif %}">
+                  <span class="icon">🐾</span> {{ sub }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</aside>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.category-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.target;
+        const list = document.getElementById(id);
+        list.classList.toggle('open');
+        btn.classList.toggle('open');
+      });
+    });
+  });
+</script>
+
+  
+
+  <!-- MAIN PRODUCT LIST -->
+  <main class="product-page">
+    <h1 class="page-title">🐾 Pet Products</h1>
+
+    <div class="product-grid">
+      {% for petproduct in petproducts %}
+        <div class="product-card">
+          <div class="image-container">
+            {% if petproduct.imageUrl %}
+              <img src="{{ asset('uploads/' ~ petproduct.imageUrl) }}" alt="{{ petproduct.productName }}">
+            {% else %}
+              <img src="{{ asset('images/no-image.png') }}" alt="No Image">
+            {% endif %}
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">{{ petproduct.productName}}</h3>
+            <p class="category">{{ petproduct.category }} — {{ petproduct.subCategory }}</p>
+            <p class="price">$ {{ petproduct.price }}</p>
+            <p class="brand">Brand: {{ petproduct.brand }}</p>
+            <div class="button-group">
+              <a href="{{ path('product_view', {'id': petproduct.id}) }}" class="btn view-btn">View</a>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <p class="no-products">No products found.</p>
+      {% endfor %}
     </div>
-  </div>
-</section>
+  </main>
+</div>
 {% endblock %}
