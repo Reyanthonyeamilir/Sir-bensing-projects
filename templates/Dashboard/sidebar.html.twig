@@ -17,15 +17,29 @@
         📊 Dashboard
       </a>
     </li>
+
     <li>
       <a href="{{ path('app_petproducts_index') }}"
          class="{% if app.request.attributes.get('_route') starts with 'app_petproducts' %}active{% endif %}">
         🛍 Products
       </a>
     </li>
-    <li><a href="#">👥 Users List</a></li>
-    <li><a href="#">➕ Add User</a></li>
-    <li><a href="#">🧾 Service Booking</a></li>
+
+    {# ✅ Inventory Section #}
+    <li>
+      <a href="{{ path('app_inventory_index') }}"
+         class="{% if app.request.attributes.get('_route') starts with 'app_inventory' %}active{% endif %}">
+        📦 Inventory
+      </a>
+    </li>
+
+    {# ✅ Users Section - Linked to User Index #}
+    <li>
+      <a href="{{ path('app_user_index') }}"
+         class="{% if app.request.attributes.get('_route') starts with 'app_user' %}active{% endif %}">
+        👥 Users
+      </a>
+    </li>
   </ul>
 </aside>
 

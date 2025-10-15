@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Inventory{% endblock %}
+{% block title %}New Inventory{% endblock %}
 
 {% block stylesheets %}
   <style>
     html, body {
       min-height: 100%;
       margin: 0;
-      background: #f8f9fa;
+      background: #f8f9fa; /* light neutral background */
+      overflow-x: hidden;
     }
 
     .dashboard-container {
@@ -15,23 +16,25 @@
       min-height: 100vh;
     }
 
-    .edit-container {
+    /* ✅ Main area next to sidebar */
+    .create-container {
       flex: 1;
       display: flex;
       justify-content: flex-start;
       padding: 2rem;
     }
 
-    .edit-card {
+    .create-card {
       width: 100%;
       max-width: 650px;
       background: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
       border-radius: 8px;
-      overflow: hidden;
     }
 
-    .edit-card h1 {
+    .create-card h1 {
       color: #cc5404;
       font-weight: 700;
       font-size: 1.8rem;
@@ -41,8 +44,9 @@
       margin: 0;
     }
 
-    .form-body {
+    .form-scroll {
       padding: 1.5rem 2rem;
+      background: #ffffff;
     }
 
     form {
@@ -78,17 +82,6 @@
       margin-top: 1.5rem;
     }
 
-    .btn-back {
-      color: #333;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s ease;
-    }
-
-    .btn-back:hover {
-      color: #cc5404;
-    }
-
     .btn-submit {
       background: #cc5404;
       color: #fff;
@@ -105,24 +98,15 @@
       transform: translateY(-2px);
     }
 
-    .delete-form {
-      margin-top: 1rem;
-      text-align: center;
+    .btn-back {
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
     }
 
-    .delete-form button {
-      background: #dc3545;
-      color: #fff;
-      padding: 0.6rem 1.2rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.3s ease;
-    }
-
-    .delete-form button:hover {
-      background: #b02a37;
+    .btn-back:hover {
+      color: #cc5404;
     }
 
     @media (max-width: 768px) {
@@ -130,11 +114,11 @@
         flex-direction: column;
       }
 
-      .edit-container {
+      .create-container {
         padding: 1rem;
       }
 
-      .edit-card {
+      .create-card {
         max-width: 100%;
       }
 
@@ -154,23 +138,19 @@
 <div class="dashboard-container">
   {% include 'dashboard/sidebar.html.twig' %}
 
-  <div class="edit-container">
-    <div class="edit-card">
-      <h1>✏️ Edit Inventory</h1>
+  <div class="create-container">
+    <div class="create-card">
+      <h1>📦 Create New Inventory Entry</h1>
 
-      <div class="form-body">
+      <div class="form-scroll">
         {{ form_start(form) }}
           {{ form_widget(form) }}
 
           <div class="btn-group">
-            <a href="{{ path('app_inventory_index') }}" class="btn-back">← Back to list</a>
-            <button type="submit" class="btn-submit">Update</button>
+            <a href="{{ path('app_inventory_index') }}" class="btn-back">← Back to List</a>
+            <button type="submit" class="btn-submit">Create</button>
           </div>
         {{ form_end(form) }}
-
-        <div class="delete-form">
-          {{ include('inventory/_delete_form.html.twig') }}
-        </div>
       </div>
     </div>
   </div>

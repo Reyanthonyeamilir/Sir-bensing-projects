@@ -14,7 +14,6 @@ class PetproductsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('product_id')
             ->add('product_name')
             ->add('category')
             ->add('sub_category')
@@ -38,6 +37,7 @@ class PetproductsType extends AbstractType
             ]);
     }
 
+    
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

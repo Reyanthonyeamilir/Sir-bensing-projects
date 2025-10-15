@@ -3,162 +3,152 @@
 {% block title %}New Pet Product{% endblock %}
 
 {% block stylesheets %}
-  <link rel="stylesheet" href="{{ asset('styles/dashboard.css') }}">
-  <style>
-    /* ✅ Make the whole page scrollable and keep white background */
-    html, body {
-      min-height: 100%;
-      margin: 0;
-      background: var(--white);
-      overflow-x: hidden; /* Allow vertical scroll but prevent horizontal overflow */
-    }
+<link rel="stylesheet" href="{{ asset('styles/dashboard.css') }}">
+<style>
+  html, body {
+    min-height: 100%;
+    margin: 0;
+    background: #f8f9fa; /* light neutral background */
+    overflow-x: hidden;
+  }
 
+  .dashboard-container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ✅ Main area next to sidebar */
+  .create-container {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start; /* align left */
+    padding: 2rem;
+  }
+
+  .create-card {
+    width: 100%;
+    max-width: 650px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+  }
+
+  .create-card h1 {
+    color: #cc5404;
+    font-weight: 700;
+    font-size: 1.8rem;
+    text-align: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    margin: 0;
+  }
+
+  .form-scroll {
+    padding: 1.5rem 2rem;
+    background: #ffffff;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  form input,
+  form select,
+  form textarea {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  form input:focus,
+  form select:focus,
+  form textarea:focus {
+    outline: none;
+    border-color: #cc5404;
+    box-shadow: 0 0 5px rgba(204, 84, 4, 0.3);
+  }
+
+  .image-preview-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    height: 200px;
+    background: #f9fafb;
+    border: 1px dashed #ddd;
+    border-radius: 8px;
+  }
+
+  .image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    display: none;
+  }
+
+  .btn-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+
+  .btn-submit {
+    background: #cc5404;
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .btn-submit:hover {
+    background: #a63d03;
+    transform: translateY(-2px);
+  }
+
+  .btn-back {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .btn-back:hover {
+    color: #cc5404;
+  }
+
+  @media (max-width: 768px) {
     .dashboard-container {
-      display: flex;
-      min-height: 100vh;
+      flex-direction: column;
     }
 
-    /* ✅ White background fills the content area */
     .create-container {
-      flex: 1;
-      background: var(--white);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 2rem 0;
-    }
-
-    /* ✅ Remove fixed height — let it grow naturally */
-    .create-card {
-      width: 100%;
-      max-width: 650px;
-      background: var(--white);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      border-radius: 8px;
-      min-height: 100%;
-    }
-
-    .create-card h1 {
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 1.8rem;
-      text-align: center;
       padding: 1rem;
-      border-bottom: 1px solid #eee;
     }
 
-    /* ✅ No fixed scroll area — form grows with content */
-    .form-scroll {
-      padding: 1.5rem 2rem;
-      background: var(--white);
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    form label {
-      font-weight: 500;
-      color: var(--accent);
-    }
-
-    form input,
-    form select,
-    form textarea {
-      width: 100%;
-      padding: 0.7rem 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      background: white;
-    }
-
-    form input:focus,
-    form select:focus,
-    form textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 5px rgba(204, 84, 4, 0.3);
-    }
-
-    .image-preview-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
-      height: 200px;
-      background: #f9fafb;
-      border: 1px dashed #ddd;
-      border-radius: 8px;
-    }
-
-    .image-preview {
+    .create-card {
       max-width: 100%;
-      max-height: 100%;
-      object-fit: cover;
-      border-radius: 8px;
-      display: none;
     }
-
-    .btn-group {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 1.5rem;
-    }
-
-    .btn-submit {
-      background: var(--primary);
-      color: #fff;
-      padding: 0.8rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-
-    .btn-submit:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-    }
-
-    .btn-back {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s ease;
-    }
-
-    .btn-back:hover {
-      color: var(--primary);
-    }
-
-    @media (max-width: 576px) {
-      .create-card {
-        max-width: 100%;
-        border-radius: 0;
-        box-shadow: none;
-      }
-      .btn-group {
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-      .btn-submit {
-        width: 100%;
-      }
-    }
-  </style>
+  }
+</style>
 {% endblock %}
 
 {% block body %}
-  {% include 'Dashboard/sidebar.html.twig' %}
+<div class="dashboard-container">
+  {% include 'dashboard/sidebar.html.twig' %}
 
   <div class="create-container">
     <div class="create-card">
@@ -166,7 +156,6 @@
 
       <div class="form-scroll">
         {{ form_start(form, { 'attr': { 'id': 'petproducts_form' } }) }}
-
           {{ form_widget(form) }}
 
           <div class="image-preview-wrapper">
@@ -177,34 +166,33 @@
             <a href="{{ path('app_petproducts_index') }}" class="btn-back">← Back to List</a>
             <button type="submit" class="btn-submit">Create</button>
           </div>
-
         {{ form_end(form) }}
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    // ✅ Live image preview
-    document.addEventListener('DOMContentLoaded', () => {
-      const fileInput = document.querySelector('input[type="file"]');
-      const previewImg = document.getElementById('imagePreview');
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.querySelector('input[type="file"]');
+    const previewImg = document.getElementById('imagePreview');
 
-      if (fileInput) {
-        fileInput.addEventListener('change', event => {
-          const file = event.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = e => {
-              previewImg.src = e.target.result;
-              previewImg.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-          } else {
-            previewImg.src = '';
-            previewImg.style.display = 'none';
-          }
-        });
-      }
-    });
-  </script>
+    if (fileInput) {
+      fileInput.addEventListener('change', event => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = e => {
+            previewImg.src = e.target.result;
+            previewImg.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          previewImg.src = '';
+          previewImg.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}

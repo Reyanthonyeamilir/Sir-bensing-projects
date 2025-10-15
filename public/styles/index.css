@@ -126,6 +126,14 @@ body, html {
   letter-spacing: 0.5px;
 }
 
+.logo-text {
+  font-family: 'Schewy', cursive;
+  font-size: 1.6rem;   /* adjust to taste */
+  color: #ffe6c9;      /* optional color to match theme */
+  letter-spacing: 1px;
+}
+
+
 /* === NAV LINKS === */
 .nav-links {
   list-style: none;

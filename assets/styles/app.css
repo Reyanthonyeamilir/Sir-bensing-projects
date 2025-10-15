@@ -1,0 +1,22 @@
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* keeps it responsive */
+  margin-bottom: 10px;
+}
+
+.dt_length {
+  order: 1;
+}
+
+.dt_filter {
+  order: 2;
+  text-align: right;
+}
+
+.dt_filter label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
