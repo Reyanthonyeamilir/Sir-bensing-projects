@@ -18,7 +18,6 @@
 
 /* ---------- Overall Layout ---------- */
 body {
-  font-family: "Poppins", "Segoe UI", sans-serif;
   background-color: #fef8f2;
   color: var(--text);
   margin: 0;

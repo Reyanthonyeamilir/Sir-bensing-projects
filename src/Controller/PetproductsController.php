@@ -107,16 +107,21 @@ final class PetproductsController extends AbstractController
             'petproduct' => $petproduct,
         ]);
     }
+#[Route('/{id}', name: 'app_petproducts_delete', methods: ['POST'])]
+public function delete(Request $request, Petproducts $petproduct, EntityManagerInterface $em): Response
+{
+    if ($this->isCsrfTokenValid('delete'.$petproduct->getId(), $request->getPayload()->getString('_token'))) {
 
-    #[Route('/{id}', name: 'app_petproducts_delete', methods: ['POST'])]
-    public function delete(Request $request, Petproducts $petproduct, EntityManagerInterface $em): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$petproduct->getId(), $request->request->get('_token'))) {
-            $em->remove($petproduct);
-            $em->flush();
-            $this->addFlash('success', 'Product deleted successfully!');
+        // Remove related inventory records first
+        foreach ($petproduct->getInventories() as $inventory) {
+            $em->remove($inventory);
         }
 
-        return $this->redirectToRoute('app_petproducts_index');
+        $em->remove($petproduct);
+        $em->flush();
     }
+
+    return $this->redirectToRoute('app_petproducts_index');
+}
+
 }

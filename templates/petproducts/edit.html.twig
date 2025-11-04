@@ -163,8 +163,8 @@
         <div class="form-actions">
           <button class="btn action-btn">{{ button_label|default('Update') }}</button>
           <a href="{{ path('app_petproducts_index') }}" class="btn edit-btn">← Back to List</a>
-          {{ include('petproducts/_delete_form.html.twig', { 'button_label': 'Delete', 'attr': { 'class': 'btn delete-btn' } }) }}
-        </div>
+        
+                </div>
       {{ form_end(form) }}
     </div>
   </main>

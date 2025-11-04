@@ -1,72 +1,118 @@
-body {
+/* ===============================
+   PET PRODUCTS PAGE STYLES
+   (scoped to .petproducts-page)
+================================== */
+.petproducts-page {
   font-family: 'Segoe UI', sans-serif;
-  background: #fff7f0;
+  background-color: #fffaf4;
+  padding: 30px;
+  animation: fadeIn 1s ease-in-out;
 }
 
-h1 {
-  color: #b3541e;
+.petproducts-page h1 {
   text-align: center;
-  animation: fadeIn 1.2s ease-in-out;
+  color: #a0522d;
+  font-size: 2rem;
+  margin-bottom: 25px;
 }
 
-.table {
+.table-container {
+  overflow-x: auto;
+  margin: 0 auto;
+  max-width: 1100px;
+}
+
+.pet-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
   background: #fff;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  animation: slideUp 0.7s ease;
 }
 
-.table th {
-  background: #f2a65a;
+.pet-table thead {
+  background-color: #d2691e;
   color: #fff;
-  padding: 12px;
-  text-transform: uppercase;
 }
 
-.table td {
-  padding: 12px;
-  border-bottom: 1px solid #e8d5c4;
+.pet-table th,
+.pet-table td {
+  padding: 12px 14px;
+  text-align: center;
+  border-bottom: 1px solid #ffe4c4;
 }
 
-.table tr:hover {
-  background-color: #ffe8d6;
-  transition: background-color 0.3s ease;
+.pet-table tr:hover {
+  background-color: #fff1e6;
+  transition: background 0.3s ease;
 }
 
-.form-group {
-  margin: 12px 0;
-}
-
-.input, .input-file {
-  width: 100%;
-  padding: 10px;
-  border: 2px solid #e8d5c4;
+.pet-table img {
   border-radius: 8px;
-  transition: border-color 0.3s;
+  object-fit: cover;
+  transition: transform 0.2s ease;
 }
 
-.input:focus, .input-file:focus {
-  border-color: #f2a65a;
+.pet-table img:hover {
+  transform: scale(1.05);
+}
+
+.no-image {
+  color: #888;
+  font-style: italic;
 }
 
 .btn {
-  background-color: #b3541e;
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
+  display: inline-block;
+  padding: 6px 12px;
   border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.btn:hover {
-  background-color: #d87b47;
+.action-btn {
+  background-color: #a0522d;
+}
+
+.action-btn:hover {
+  background-color: #b95c34;
+  transform: scale(1.05);
+}
+
+.edit-btn {
+  background-color: #d2691e;
+}
+
+.edit-btn:hover {
+  background-color: #e07b39;
+  transform: scale(1.05);
+}
+
+.create-btn {
+  background-color: #b3541e;
+  padding: 10px 20px;
+  font-size: 1rem;
+}
+
+.create-btn:hover {
+  background-color: #e07b39;
+}
+
+.new-btn-container {
+  text-align: center;
+  margin-top: 20px;
 }
 
 @keyframes fadeIn {
-  from {opacity: 0; transform: translateY(-10px);}
-  to {opacity: 1; transform: translateY(0);}
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }

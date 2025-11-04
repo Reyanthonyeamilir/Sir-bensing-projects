@@ -20,3 +20,31 @@
   align-items: center;
   gap: 5px;
 }
+
+
+
+
+
+
+
+
+
+
+/* ============================
+   🌟 Global Typography
+   ============================ */
+
+/* Use Chewy for headings */
+h1, h2, h3,h4, h5, h6 {
+  font-family: 'Chewy', cursive;
+  font-weight: normal; /* Chewy doesn't need bold */
+  color: #5a3922;      /* Optional: your theme color */
+  letter-spacing: 0.5px;
+}
+
+/* Use Poppins for body text */
+body, p, a, li, span, input, textarea, button {
+  font-family: 'Poppins', sans-serif;
+}
+
+

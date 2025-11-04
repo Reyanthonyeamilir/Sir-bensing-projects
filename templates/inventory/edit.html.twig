@@ -167,7 +167,8 @@
         </div>
 
         <div class="delete-form">
-          {{ include('inventory/_delete_form.html.twig') }}
+      {{ include('inventory/_delete_form.html.twig', {'inventory': inventory}) }}
+
         </div>
       </div>
     </div>

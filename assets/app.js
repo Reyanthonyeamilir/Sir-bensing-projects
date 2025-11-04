@@ -10,7 +10,8 @@ import 'datatables.net-dt/css/dataTables.dataTables.css';
 
 document.addEventListener('DOMContentLoaded', () => {
   // ✅ Initialize DataTable
-  const table = document.querySelector('#petTable');
+  const table = document.querySelector('#petTable',
+                '#userTable');
   if (table) {
     new DataTable(table, {
       responsive: true,
@@ -33,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent = text.classList.contains('expanded') ? 'Read less' : 'Read more';
     });
   });
+
+  
 });
 
 import './styles/app.css';

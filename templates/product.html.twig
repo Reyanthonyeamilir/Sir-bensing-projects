@@ -4,6 +4,7 @@
 
 {% block stylesheets %}
   <link rel="stylesheet" href="{{ asset('styles/product.css') }}">
+    {{ encore_entry_link_tags('app') }}
 {% endblock %}
 
 {% block body %}
@@ -70,8 +71,6 @@
     });
   });
 </script>
-
-  
 
   <!-- MAIN PRODUCT LIST -->
   <main class="product-page">

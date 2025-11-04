@@ -145,7 +145,7 @@
     <h1>👥 User Index</h1>
 
     <div class="table-container">
-      <table class="pet-table">
+      <table class="pet-table" id="userTable">
         <thead>
           <tr>
             <th>Id</th>
@@ -187,4 +187,20 @@
     </div>
   </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script>
+
+  document.addEventListener('DOMContentLoaded', () => {
+    $('#userTable').DataTable({
+      pageLength: 10,
+      order: [[0, 'desc']],
+      language: {
+        search: "🔍 Search:",
+        lengthMenu: "Show _MENU_ entries",
+        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+      }
+    });
+  });
+</script>
 {% endblock %}
