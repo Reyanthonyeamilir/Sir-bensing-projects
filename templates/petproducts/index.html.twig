@@ -4,32 +4,11 @@
 
 {% block body %}
 <style>
-  /* === Page Layout === */
-  body, html {
-    background: transparent !important;
-  }
-
-  .dashboard-container {
-    display: flex;
-    min-height: 100vh;
-    background: transparent;
-  }
-
-  .main-content {
-    flex: 1;
-    padding: 2rem;
-    background: transparent;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 1.5rem;
-    text-align: center;
-  }
-
-  /* === Table Styling === */
+  body, html { background: transparent !important; }
+  .dashboard-container { display: flex; min-height: 100vh; background: transparent; }
+  .main-content { flex: 1; padding: 2rem; background: transparent; }
+  h1 { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem; text-align: center; }
+  
   .table-container {
     overflow-x: auto;
     background: rgba(255, 255, 255, 0.9);
@@ -38,13 +17,13 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     padding: 1rem;
   }
-
+  
   .pet-table {
     width: 100%;
     border-collapse: collapse;
     min-width: 850px;
   }
-
+  
   .pet-table th, .pet-table td {
     padding: 0.75rem;
     text-align: left;
@@ -53,7 +32,7 @@
     font-size: 0.95rem;
     color: #333;
   }
-
+  
   .pet-table th {
     background: #f6f6f6;
     font-weight: 600;
@@ -61,12 +40,9 @@
     font-size: 0.85rem;
     letter-spacing: 0.5px;
   }
-
-  .pet-table tr:hover {
-    background: rgba(0,0,0,0.03);
-    transition: background 0.2s ease;
-  }
-
+  
+  .pet-table tr:hover { background: rgba(0,0,0,0.03); transition: background 0.2s ease; }
+  
   .product-img {
     width: 60px;
     height: 60px;
@@ -74,13 +50,9 @@
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   }
-
-  .no-image {
-    font-style: italic;
-    color: #888;
-  }
-
-  /* === Buttons === */
+  
+  .no-image { font-style: italic; color: #888; }
+  
   .btn {
     padding: 0.45rem 0.8rem;
     font-size: 0.85rem;
@@ -93,37 +65,17 @@
     text-align: center;
     transition: background 0.3s ease, transform 0.2s ease;
   }
-
-  .btn:hover {
-    transform: translateY(-2px);
-  }
-
-  .action-btn {
-    background-color: #cc5404;
-  }
-  .action-btn:hover {
-    background-color: #a63e00;
-  }
-
-  .edit-btn {
-    background-color: #5a3922;
-  }
-  .edit-btn:hover {
-    background-color: #402816;
-  }
-
-  .actions-cell {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-  }
-
-  /* === Create New Button === */
-  .new-btn-container {
-    text-align: center;
-    margin-top: 1.5rem;
-  }
-
+  
+  .btn:hover { transform: translateY(-2px); }
+  .action-btn { background-color: #cc5404; }
+  .action-btn:hover { background-color: #a63e00; }
+  .edit-btn { background-color: #5a3922; }
+  .edit-btn:hover { background-color: #402816; }
+  
+  .actions-cell { display: flex; gap: 6px; justify-content: center; }
+  
+  .new-btn-container { text-align: center; margin-top: 1.5rem; }
+  
   .create-btn {
     background-color: #cc5404;
     padding: 0.7rem 1.5rem;
@@ -133,17 +85,10 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     transition: background 0.3s ease, transform 0.2s ease;
   }
-
-  .create-btn:hover {
-    background-color: #a63e00;
-    transform: translateY(-2px);
-  }
-
-  /* === Description Toggle === */
-  .description-container {
-    max-width: 220px;
-  }
-
+  
+  .create-btn:hover { background-color: #a63e00; transform: translateY(-2px); }
+  
+  .description-container { max-width: 220px; }
   .description-text {
     max-height: 50px;
     overflow: hidden;
@@ -154,12 +99,9 @@
     font-size: 0.85rem;
     color: #555;
   }
-
-  .description-text.expanded {
-    max-height: none;
-    -webkit-line-clamp: unset;
-  }
-
+  
+  .description-text.expanded { max-height: none; -webkit-line-clamp: unset; }
+  
   .toggle-btn {
     background: none;
     border: none;
@@ -170,19 +112,11 @@
     margin-top: 4px;
     text-decoration: underline;
   }
-
-  /* === Responsive === */
+  
   @media (max-width: 768px) {
-    .pet-table th, .pet-table td {
-      font-size: 0.8rem;
-    }
-    .product-img {
-      width: 45px;
-      height: 45px;
-    }
-    .actions-cell {
-      flex-direction: column;
-    }
+    .pet-table th, .pet-table td { font-size: 0.8rem; }
+    .product-img { width: 45px; height: 45px; }
+    .actions-cell { flex-direction: column; }
   }
 </style>
 
@@ -221,10 +155,10 @@
                 <span class="no-image">No image</span>
               {% endif %}
             </td>
-            <td>{{ petproduct.productName }}</td>
+            <td>{{ petproduct.product_name }}</td>
             <td>{{ petproduct.category }}</td>
-            <td>{{ petproduct.subCategory }}</td>
-            <td>{{ petproduct.price }}</td>
+            <td>{{ petproduct.sub_category }}</td>
+            <td>${{ petproduct.price|number_format(2) }}</td>
             <td>{{ petproduct.stock }}</td>
             <td>{{ petproduct.brand }}</td>
             <td>{{ petproduct.isActive ? '✅' : '❌' }}</td>
@@ -232,7 +166,9 @@
             <td>
               <div class="description-container">
                 <p class="description-text">{{ petproduct.description }}</p>
-                <button type="button" class="toggle-btn">Read more</button>
+                {% if petproduct.description and petproduct.description|length > 50 %}
+                  <button type="button" class="toggle-btn">Read more</button>
+                {% endif %}
               </div>
             </td>
             <td>
@@ -244,7 +180,9 @@
           </tr>
         {% else %}
           <tr>
-            <td colspan="12">No records found</td>
+            <td colspan="12" style="text-align: center; padding: 2rem;">
+              No products found. <a href="{{ path('app_petproducts_new') }}">Create your first product</a>
+            </td>
           </tr>
         {% endfor %}
         </tbody>
@@ -258,7 +196,6 @@
 </div>
 
 <script>
-  // ✅ Toggle description behavior
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.toggle-btn').forEach(btn => {
       btn.addEventListener('click', () => {

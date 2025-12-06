@@ -18,8 +18,9 @@ final class PetproductsController extends AbstractController
     #[Route(name: 'app_petproducts_index', methods: ['GET'])]
     public function index(PetproductsRepository $repo): Response
     {
+        $products = $repo->findAll();
         return $this->render('petproducts/index.html.twig', [
-            'petproducts' => $repo->findAll(),
+            'petproducts' => $products,
         ]);
     }
 
@@ -53,6 +54,11 @@ final class PetproductsController extends AbstractController
                 $petproduct->setCreatedAt(new \DateTime());
             }
 
+            // Ensure isActive has a default value
+            if ($petproduct->isActive() === null) {
+                $petproduct->setIsActive(true);
+            }
+
             $em->persist($petproduct);
             $em->flush();
 
@@ -61,7 +67,7 @@ final class PetproductsController extends AbstractController
         }
 
         return $this->render('petproducts/new.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
             'petproduct' => $petproduct,
         ]);
     }
@@ -95,7 +101,7 @@ final class PetproductsController extends AbstractController
         }
 
         return $this->render('petproducts/edit.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
             'petproduct' => $petproduct,
         ]);
     }
@@ -107,21 +113,20 @@ final class PetproductsController extends AbstractController
             'petproduct' => $petproduct,
         ]);
     }
-#[Route('/{id}', name: 'app_petproducts_delete', methods: ['POST'])]
-public function delete(Request $request, Petproducts $petproduct, EntityManagerInterface $em): Response
-{
-    if ($this->isCsrfTokenValid('delete'.$petproduct->getId(), $request->getPayload()->getString('_token'))) {
 
-        // Remove related inventory records first
-        foreach ($petproduct->getInventories() as $inventory) {
-            $em->remove($inventory);
+    #[Route('/{id}', name: 'app_petproducts_delete', methods: ['POST'])]
+    public function delete(Request $request, Petproducts $petproduct, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$petproduct->getId(), $request->getPayload()->getString('_token'))) {
+            // Remove related inventory records first
+            foreach ($petproduct->getInventories() as $inventory) {
+                $em->remove($inventory);
+            }
+
+            $em->remove($petproduct);
+            $em->flush();
         }
 
-        $em->remove($petproduct);
-        $em->flush();
+        return $this->redirectToRoute('app_petproducts_index');
     }
-
-    return $this->redirectToRoute('app_petproducts_index');
-}
-
 }
