@@ -3,9 +3,7 @@
     "@tailwindcss/postcss": "^4.1.13",
     "datatables.net": "^2.3.4",
     "datatables.net-dt": "^2.3.4",
-    "postcss": "^8.5.6",
-    "postcss-loader": "^8.2.0",
-    "tailwindcss": "^4.1.13"
+    "postcss-loader": "^8.2.0"
   },
   "scripts": {
     "dev": "encore dev",
@@ -16,9 +14,12 @@
     "@hotwired/stimulus": "^3.2.2",
     "@symfony/stimulus-bridge": "^4.0.1",
     "@symfony/ux-turbo": "^2.30.0",
-    "@symfony/webpack-encore": "^5.2.0",
+    "@symfony/webpack-encore": "^5.3.1",
+    "autoprefixer": "^10.4.22",
     "core-js": "^3.46.0",
+    "postcss": "^8.5.6",
     "stimulus": "^3.2.2",
+    "tailwindcss": "^4.1.17",
     "webpack-notifier": "^1.15.0"
   }
 }

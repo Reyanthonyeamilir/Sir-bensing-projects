@@ -3,17 +3,201 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <h1>Create Account</h1>
+        </div>
+        
+        <div class="register-body">
+            {% if form_errors(registrationForm) %}
+                <div class="register-error">
+                    {{ form_errors(registrationForm) }}
+                </div>
+            {% endif %}
 
-    {{ form_errors(registrationForm) }}
+            <form method="post" class="register-form">
+                <!-- Username Field -->
+                <div class="register-form-group">
+                    {{ form_label(registrationForm.username, 'Username', {'label_attr': {'class': 'register-form-label'}}) }}
+                    {{ form_widget(registrationForm.username, {'attr': {
+                        'class': 'register-form-control',
+                        'placeholder': 'Enter your username'
+                    }}) }}
+                </div>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+                <!-- Password Field -->
+                <div class="register-form-group">
+                    {{ form_label(registrationForm.plainPassword, 'Password', {'label_attr': {'class': 'register-form-label'}}) }}
+                    {{ form_widget(registrationForm.plainPassword, {'attr': {
+                        'class': 'register-form-control',
+                        'placeholder': 'Enter your password'
+                    }}) }}
+                </div>
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+                <!-- Agree Terms Checkbox -->
+                <div class="register-terms">
+                    {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'register-checkbox'}}) }}
+                    {{ form_label(registrationForm.agreeTerms, 'I agree to the terms and conditions') }}
+                </div>
+
+                <button type="submit" class="register-btn">
+                    Register
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Main Container */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Register Card */
+.register-card {
+    width: 100%;
+    max-width: 450px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(176, 125, 70, 0.15);
+    overflow: hidden;
+    border: 1px solid #d4a574;
+}
+
+/* Header */
+.register-header {
+    background: linear-gradient(135deg, #2e1504 0%, #301707ff 100%);
+    padding: 35px 30px;
+    text-align: center;
+}
+
+.register-header h1 {
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Body */
+.register-body {
+    padding: 40px 35px;
+}
+
+/* Error Messages */
+.register-error {
+    background-color: #fdf2f2;
+    border: 1px solid #301707ff;
+    color: #9b2c2c;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+/* Form Styles */
+.register-form {
+    margin-top: 10px;
+}
+
+.register-form-group {
+    margin-bottom: 25px;
+}
+
+.register-form-label {
+    display: block;
+    color: #2e1504;
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.register-form-control {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #d4a574;
+    border-radius: 10px;
+    font-size: 15px;
+    background-color: #fdf6e3;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.register-form-control:focus {
+    outline: none;
+    border-color: #b07d46;
+    box-shadow: 0 0 0 3px rgba(211, 165, 116, 0.25);
+    background-color: white;
+}
+
+/* Terms Checkbox */
+.register-terms {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 25px 0 30px;
+}
+
+.register-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: #d4a574;
+    cursor: pointer;
+}
+
+.register-terms label {
+    color: #2e1504;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Register Button */
+.register-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #301707ff 0%, #4b230bff 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(176, 125, 70, 0.3);
+    background: linear-gradient(135deg, #cc5404, #ff9100ff 100%);
+}
+
+/* Form Errors */
+.register-form-group + .form-error {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 5px;
+    padding-left: 5px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .register-card {
+        max-width: 100%;
+    }
+    
+    .register-body {
+        padding: 30px 25px;
+    }
+    
+    .register-header {
+        padding: 25px 20px;
+    }
+}
+</style>
 {% endblock %}

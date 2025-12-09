@@ -3,32 +3,235 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
-
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h1>Please Sign In</h1>
         </div>
-    {% endif %}
+        
+        <div class="login-body">
+            {% if error %}
+                <div class="login-error">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
 
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputUsername">Username</label>
-    <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+            {% if app.user %}
+                <div class="login-warning">
+                    <div>
+                        <i class="bi bi-person-check"></i>
+                        Logged in as <strong>{{ app.user.userIdentifier }}</strong>
+                    </div>
+                    <a href="{{ path('app_logout') }}" class="logout-link">
+                        Logout
+                    </a>
+                </div>
+            {% endif %}
 
-    <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" name="_remember_me"> Remember me
-        </label>
+            <form method="post" class="login-form">
+                <div class="form-group">
+                    <label for="inputUsername" class="form-label">Username</label>
+                    <input type="text" value="{{ last_username }}" name="username" id="inputUsername" 
+                           class="form-control" 
+                           autocomplete="username" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputPassword" class="form-label">Password</label>
+                    <input type="password" name="password" id="inputPassword" 
+                           class="form-control"
+                           autocomplete="current-password" required>
+                </div>
+
+                <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+                <div class="remember-me">
+                    <input type="checkbox" name="_remember_me" id="rememberMe" class="remember-checkbox">
+                    <label for="rememberMe">Remember me</label>
+                </div>
+
+                <button class="login-btn" type="submit">
+                    Sign in
+                </button>
+            </form>
+        </div>
     </div>
+</div>
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
-</form>
+<style>
+/* Main Container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Login Card */
+.login-card {
+    width: 100%;
+    max-width: 450px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(176, 125, 70, 0.15);
+    overflow: hidden;
+    border: 1px solid #d4a574;
+}
+
+/* Header */
+.login-header {
+    background: linear-gradient(135deg, #2e1504 0%, #301707ff 100%);
+    padding: 35px 30px;
+    text-align: center;
+}
+
+.login-header h1 {
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Body */
+.login-body {
+    padding: 40px 35px;
+}
+
+/* Error Messages */
+.login-error {
+    background-color: #fdf2f2;
+    border: 1px solid #301707ff;
+    color: #9b2c2c;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.login-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.logout-link {
+    background-color: #d4a574;
+    color: white;
+    padding: 6px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.logout-link:hover {
+    background-color: #b07d46;
+    transform: translateY(-1px);
+}
+
+/* Form Styles */
+.login-form {
+    margin-top: 10px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    color:  #2e1504;
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #d4a574;
+    border-radius: 10px;
+    font-size: 15px;
+    background-color: #fdf6e3;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #b07d46;
+    box-shadow: 0 0 0 3px rgba(211, 165, 116, 0.25);
+    background-color: white;
+}
+
+/* Remember Me */
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 25px 0 30px;
+}
+
+.remember-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: #d4a574;
+    cursor: pointer;
+}
+
+.remember-me label {
+    color: #8b4513;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Login Button */
+.login-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #301707ff 0%, #4b230bff 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(176, 125, 70, 0.3);
+    background: linear-gradient(135deg,  #cc5404, #ff9100ff 100%);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-card {
+        max-width: 100%;
+    }
+    
+    .login-body {
+        padding: 30px 25px;
+    }
+    
+    .login-header {
+        padding: 25px 20px;
+    }
+}
+</style>
 {% endblock %}

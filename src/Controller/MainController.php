@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class MainController extends AbstractController
 {
@@ -47,7 +48,7 @@ class MainController extends AbstractController
         if ($category) {
             $criteria = ['category' => $category];
             if ($subCategory) {
-                $criteria['sub_category'] = $subCategory; // ✅ matches entity
+                $criteria['sub_category'] = $subCategory;
             }
             $petproducts = $petproductsRepository->findBy($criteria);
         }
@@ -75,14 +76,22 @@ class MainController extends AbstractController
     }
 
     #[Route('/login', name: 'login')]
-    public function login(): Response
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        return $this->render('login.html.twig');
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('security/login.html.twig', [
+            'error' => $error,
+            'last_username' => $lastUsername,
+        ]);
     }
 
-    #[Route('/register', name: 'register')]
-    public function register(): Response
-    {
-        return $this->render('register.html.twig');
-    }
+   // In MainController.php
+#[Route('/register', name: 'register')]
+public function register(): Response
+{
+    // Instead of redirecting, forward to the RegistrationController
+    return $this->forward('App\Controller\RegistrationController::register');
+}
 }

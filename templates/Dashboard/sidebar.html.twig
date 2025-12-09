@@ -1,56 +1,730 @@
-{# ==========================================================
-   🧭 Responsive Sidebar Component
-   ========================================================== #}
-{% block stylesheets %}
-  <link rel="stylesheet" href="{{ asset('styles/dashboard.css') }}">
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if app.user %}{% if 'ROLE_ADMIN' in app.user.roles %}Admin{% elseif 'ROLE_staff' in app.user.roles %}Staff{% endif %} Dashboard{% else %}Dashboard{% endif %}</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ==========================================================
+           🧭 SIDEBAR-ONLY STYLES - Does NOT affect other pages
+           ========================================================== */
+           
+        /* CSS Reset for sidebar elements only */
+        .sidebar-container *,
+        .sidebar-container *::before,
+        .sidebar-container *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<!-- Sidebar Toggle Button (Visible on Mobile) -->
-<button class="sidebar-toggle" id="sidebarToggle">☰</button>
+        /* Sidebar-specific variables */
+        .sidebar-container {
+            --sidebar-bg: #2c1810;
+            --text-light: #f5e9dd;
+            --accent-primary: #ff7b35;
+            --accent-secondary: #ff9c5a;
+            --accent-hover: #ff6a1a;
+            --sidebar-width: 280px;
+            --transition-speed: 0.35s;
+            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --shadow-medium: 0 6px 30px rgba(0, 0, 0, 0.25);
+            --border-radius: 10px;
+            
+            /* ONLY applies to sidebar elements */
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            z-index: 1000;
+        }
 
-<aside class="sidebar" id="sidebarMenu">
-  <h2 class="logo">🐾Admin Dashboard</h2>
-  <ul class="nav">
-    <li>
-      <a href="{{ path('app_dashboard') }}"
-         class="{% if app.request.attributes.get('_route') == 'app_dashboard' %}active{% endif %}">
-        📊 Dashboard
-      </a>
-    </li>
+        /* Sidebar Toggle Button */
+        .sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1100;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            width: 48px;
+            height: 48px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+            font-family: 'Poppins', sans-serif;
+        }
 
-    <li>
-      <a href="{{ path('app_petproducts_index') }}"
-         class="{% if app.request.attributes.get('_route') starts with 'app_petproducts' %}active{% endif %}">
-        🛍 Products
-      </a>
-    </li>
+        .sidebar-toggle:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 123, 53, 0.4);
+        }
 
-    {# ✅ Inventory Section #}
-    <li>
-      <a href="{{ path('app_inventory_index') }}"
-         class="{% if app.request.attributes.get('_route') starts with 'app_inventory' %}active{% endif %}">
-        📦 Inventory
-      </a>
-    </li>
+        /* Sidebar Container */
+        .sidebar-container .sidebar {
+            background: var(--sidebar-bg);
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.3);
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
 
-    {# ✅ Users Section - Linked to User Index #}
-    <li>
-      <a href="{{ path('app_adminusers_index') }}"
-         class="{% if app.request.attributes.get('_route') starts with 'app_user' %}active{% endif %}">
-        👥 Users
-      </a>
-    </li>
-  </ul>
-</aside>
+        /* Sidebar when hidden */
+        .sidebar-container .sidebar:not(.open) {
+            transform: translateX(-100%);
+        }
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const toggleBtn = document.getElementById('sidebarToggle');
-    const sidebar = document.getElementById('sidebarMenu');
+        /* When sidebar is active */
+        .sidebar-active .sidebar-toggle {
+            left: calc(var(--sidebar-width) + 20px);
+        }
 
-    toggleBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
-      document.body.classList.toggle('sidebar-active');
-    });
-  });
-</script>
+        /* Logo Section */
+        .sidebar-container .logo {
+            padding: 28px 24px 24px;
+            margin: 0;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(to right, rgba(255, 123, 53, 0.15), transparent);
+            justify-content: center;
+            text-align: center;
+        }
+
+        .sidebar-container .logo-icon {
+            font-size: 1.8rem;
+            color: var(--accent-primary);
+            filter: drop-shadow(0 2px 3px rgba(255, 123, 53, 0.3));
+            font-family: 'Chewy', cursive;
+        }
+
+        /* User Role Badge */
+        .sidebar-container .user-role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 5px;
+            display: inline-block;
+            border: 1px solid;
+        }
+
+        .sidebar-container .user-role-badge.admin {
+            background: rgba(76, 217, 100, 0.2);
+            border-color: rgba(76, 217, 100, 0.3);
+            color: #4cd964;
+        }
+
+        .sidebar-container .user-role-badge.staff {
+            background: rgba(90, 200, 250, 0.2);
+            border-color: rgba(90, 200, 250, 0.3);
+            color: #5ac8fa;
+        }
+
+        /* Navigation Container */
+        .sidebar-container .nav {
+            list-style: none;
+            padding: 20px 16px;
+            flex-grow: 1;
+        }
+
+        .sidebar-container .nav li {
+            margin-bottom: 6px;
+            position: relative;
+        }
+
+        /* Navigation Links */
+        .sidebar-container .nav a {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            color: var(--text-light) !important;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: all 0.25s ease;
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+            letter-spacing: 0.2px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .sidebar-container .nav a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%) translateX(-10px);
+            height: 70%;
+            width: 4px;
+            background: var(--accent-primary);
+            transition: all 0.3s ease;
+            border-radius: 0 4px 4px 0;
+            opacity: 0;
+        }
+
+        .sidebar-container .nav a i {
+            margin-right: 16px;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        /* Icon colors */
+        .sidebar-container .nav a[href*="dashboard"] i { color: var(--accent-primary); }
+        .sidebar-container .nav a[href*="products"] i { color: #4cd964; }
+        .sidebar-container .nav a[href*="inventory"] i { color: #5ac8fa; }
+        .sidebar-container .nav a[href*="users"] i { color: #af52de; }
+        .sidebar-container .nav a[href*="settings"] i { color: #a8a8a8; }
+        .sidebar-container .nav a[href*="support"] i { color: #ff3b30; }
+
+        /* Hover State */
+        .sidebar-container .nav a:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff !important;
+            transform: translateX(5px);
+        }
+
+        .sidebar-container .nav a:hover::before {
+            transform: translateY(-50%) translateX(0);
+            opacity: 1;
+        }
+
+        .sidebar-container .nav a:hover i {
+            transform: scale(1.05);
+            filter: brightness(1.3);
+        }
+
+        /* Active State */
+        .sidebar-container .nav a.active {
+            background: rgba(255, 123, 53, 0.2);
+            color: #ffffff !important;
+            font-weight: 600;
+            box-shadow: 0 3px 15px rgba(255, 123, 53, 0.2);
+            border: 1px solid rgba(255, 123, 53, 0.3);
+        }
+
+        .sidebar-container .nav a.active::before {
+            transform: translateY(-50%) translateX(0);
+            opacity: 1;
+            width: 4px;
+            height: 60%;
+            background: var(--accent-secondary);
+        }
+
+        .sidebar-container .nav a.active i {
+            color: var(--accent-primary);
+            transform: scale(1.05);
+            filter: brightness(1.5);
+        }
+
+        /* Menu Item Text */
+        .sidebar-container .menu-text {
+            flex-grow: 1;
+            font-size: 1.05rem;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-light) !important;
+        }
+
+        /* Section Indicator */
+        .sidebar-container .section-indicator {
+            padding: 16px 24px 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: rgba(245, 233, 221, 0.8);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            font-family: 'Poppins', sans-serif;
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Logout Button */
+        .sidebar-container .logout-btn {
+            background: rgba(255, 59, 48, 0.2);
+            color: #ff3b30;
+            border: 1px solid rgba(255, 59, 48, 0.3);
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .sidebar-container .logout-btn:hover {
+            background: rgba(255, 59, 48, 0.3);
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+        /* Footer Section */
+        .sidebar-container .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            margin-top: auto;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .sidebar-container .user-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-container .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(255, 123, 53, 0.3);
+        }
+
+        .sidebar-container .user-info {
+            text-align: center;
+        }
+
+        .sidebar-container .user-info h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .sidebar-container .user-info p {
+            font-size: 0.9rem;
+            color: rgba(245, 233, 221, 0.8);
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 8px;
+        }
+
+        /* Status Badge */
+        .sidebar-container .status-badge {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--accent-secondary);
+            color: white !important;
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(255, 123, 53, 0.3);
+            min-width: 24px;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Info Panel */
+        .sidebar-container .info-panel {
+            padding: 16px 20px;
+            margin: 10px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--accent-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-container .info-panel h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-light);
+            font-family: 'Chewy', cursive;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-container .info-panel p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.4;
+            opacity: 0.9;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Focus states */
+        .sidebar-container .nav a:focus {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(255, 123, 53, 0.2);
+        }
+
+        /* Mobile overlay */
+        .sidebar-container .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Responsive Design */
+        @media (min-width: 1200px) {
+            .sidebar-container .sidebar-toggle {
+                display: none;
+            }
+            
+            .sidebar-container .sidebar {
+                transform: translateX(0) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-container .sidebar {
+                width: 100%;
+                max-width: 300px;
+                box-shadow: 8px 0 40px rgba(0, 0, 0, 0.4);
+            }
+            
+            .sidebar-container .nav a {
+                padding: 16px 18px;
+                font-size: 1.1rem;
+            }
+            
+            .sidebar-toggle {
+                left: 15px;
+                top: 15px;
+            }
+            
+            .sidebar-active .sidebar-toggle {
+                left: calc(300px - 40px);
+            }
+        }
+
+        /* Custom Scrollbar */
+        .sidebar-container .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar-container .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .sidebar-container .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 123, 53, 0.3);
+            border-radius: 10px;
+        }
+
+        .sidebar-container .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 123, 53, 0.5);
+        }
+
+        /* Animation for sidebar items */
+        @keyframes sidebarSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .sidebar-container .nav li {
+            animation: sidebarSlideIn 0.4s ease forwards;
+            animation-delay: calc(var(--item-index) * 0.08s);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Container - Everything scoped inside -->
+    <div class="sidebar-container">
+        <!-- Sidebar Toggle Button -->
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar Component -->
+        <aside class="sidebar" id="sidebarMenu">
+            <!-- Logo at the top -->
+            <div class="logo">
+                <div class="logo-icon">
+                    {% if app.user %}
+                        {% if 'ROLE_ADMIN' in app.user.roles %}
+                            ADMIN PANEL
+                        {% elseif 'ROLE_staff' in app.user.roles %}
+                            STAFF PANEL
+                        {% else %}
+                            DASHBOARD
+                        {% endif %}
+                    {% else %}
+                        WELCOME!
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Section indicator -->
+            <div class="section-indicator">Main Menu</div>
+            
+            <!-- Navigation menu -->
+            <ul class="nav">
+                <li style="--item-index: 0;">
+                    <a href="{{ path('app_dashboard') }}"
+                       class="{% if app.request.attributes.get('_route') == 'app_dashboard' %}active{% endif %}">
+                        <i class="fas fa-chart-pie"></i>
+                        <span class="menu-text">Dashboard</span>
+                    </a>
+                </li>
+                
+                <li style="--item-index: 1;">
+                    <a href="{{ path('app_petproducts_index') }}"
+                       class="{% if app.request.attributes.get('_route') starts with 'app_petproducts' %}active{% endif %}">
+                        <i class="fas fa-box-open"></i>
+                        <span class="menu-text">Products</span>
+                        <span class="status-badge">{{ totalProducts ?? '0' }}</span>
+                    </a>
+                </li>
+                
+                <li style="--item-index: 2;">
+                    <a href="{{ path('app_inventory_index') }}"
+                       class="{% if app.request.attributes.get('_route') starts with 'app_inventory' %}active{% endif %}">
+                        <i class="fas fa-warehouse"></i>
+                        <span class="menu-text">Inventory</span>
+                    </a>
+                </li>
+                
+                <!-- Additional menu items -->
+              
+                <li style="--item-index: 3;">
+                <a href="{{ path('app_user_index') }}"
+                 class="{% if app.request.attributes.get('_route') starts with 'app_user' %}active{% endif %}">
+              <i class="fas fa-users"></i>
+               <span class="menu-text">Users</span>
+                </a>
+                  </li>
+                <li style="--item-index: 4;">
+                    <a href="#">
+                        <i class="fas fa-question-circle"></i>
+                        <span class="menu-text">Help & Support</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- User profile and logout at the BOTTOM - CENTERED -->
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        {% if app.user %}
+                            {{ app.user.username|first|upper }}
+                        {% else %}
+                            A
+                        {% endif %}
+                    </div>
+                    <div class="user-info">
+                        <h4>
+                            {% if app.user %}
+                                {{ app.user.username }}
+                            {% else %}
+                                Admin User
+                            {% endif %}
+                        </h4>
+                        <p>
+                            {% if app.user %}
+                                {% if 'ROLE_ADMIN' in app.user.roles %}
+                                    Administrator
+                                {% elseif 'ROLE_staff' in app.user.roles %}
+                                    Staff Member
+                                {% else %}
+                                    User
+                                {% endif %}
+                            {% else %}
+                                Administrator
+                            {% endif %}
+                        </p>
+                        <span class="user-role-badge 
+                            {% if app.user %}
+                                {% if 'ROLE_ADMIN' in app.user.roles %}admin
+                                {% elseif 'ROLE_staff' in app.user.roles %}staff
+                                {% else %}user{% endif %}
+                            {% else %}
+                                admin
+                            {% endif %}">
+                            {% if app.user %}
+                                {% if 'ROLE_ADMIN' in app.user.roles %}
+                                    Admin
+                                {% elseif 'ROLE_staff' in app.user.roles %}
+                                    Staff
+                                {% else %}
+                                    User
+                                {% endif %}
+                            {% else %}
+                                Admin
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <a href="{{ path('app_logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Mobile overlay -->
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+    </div>
+
+    <!-- Main content area - This will be replaced by your dashboard -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Only run if sidebar exists (user is authenticated)
+            const sidebarContainer = document.querySelector('.sidebar-container');
+            if (!sidebarContainer) return;
+
+            // DOM Elements
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebarMenu');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const navLinks = document.querySelectorAll('.sidebar-container .nav a');
+            const body = document.body;
+
+            // Initialize based on screen size
+            if (window.innerWidth >= 1200) {
+                body.classList.add('sidebar-active');
+                sidebar.classList.add('open');
+            }
+
+            // Toggle sidebar
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+                body.classList.toggle('sidebar-active');
+                
+                // Show/hide mobile overlay
+                if (window.innerWidth < 1200) {
+                    if (sidebar.classList.contains('open')) {
+                        mobileOverlay.classList.add('active');
+                    } else {
+                        mobileOverlay.classList.remove('active');
+                    }
+                }
+            });
+
+            // Close sidebar when clicking overlay
+            mobileOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                body.classList.remove('sidebar-active');
+                mobileOverlay.classList.remove('active');
+            });
+
+            // Set active link on click
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (link.getAttribute('href') === '#') {
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    // On mobile, close sidebar after clicking a link
+                    if (window.innerWidth < 1200) {
+                        setTimeout(() => {
+                            sidebar.classList.remove('open');
+                            body.classList.remove('sidebar-active');
+                            mobileOverlay.classList.remove('active');
+                        }, 300);
+                    }
+                });
+            });
+
+            // Close sidebar with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    body.classList.remove('sidebar-active');
+                    mobileOverlay.classList.remove('active');
+                }
+            });
+
+            // Add animation delays to nav items
+            document.querySelectorAll('.sidebar-container .nav li').forEach((item, index) => {
+                item.style.setProperty('--item-index', index);
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1200) {
+                    // Desktop: Always show sidebar
+                    sidebar.classList.add('open');
+                    body.classList.add('sidebar-active');
+                    mobileOverlay.classList.remove('active');
+                } else {
+                    // Mobile/Tablet: Hide sidebar by default
+                    sidebar.classList.remove('open');
+                    body.classList.remove('sidebar-active');
+                    mobileOverlay.classList.remove('active');
+                }
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 1200 && 
+                    sidebar.classList.contains('open') && 
+                    !sidebar.contains(e.target) && 
+                    !toggleBtn.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                    body.classList.remove('sidebar-active');
+                    mobileOverlay.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

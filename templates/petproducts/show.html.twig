@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}View Product - {{ petproduct.product_name }}{% endblock %}
+{% block title %}View Product - {{ petproduct.productName }}{% endblock %} {# FIXED #}
 
 {% block body %}
 <style>
@@ -117,19 +117,19 @@
       <div class="product-header">
         <div class="product-image">
           {% if petproduct.imageUrl %}
-            <img src="{{ asset('uploads/' ~ petproduct.imageUrl) }}" alt="{{ petproduct.product_name }}">
+            <img src="{{ asset('uploads/' ~ petproduct.imageUrl) }}" alt="{{ petproduct.productName }}"> {# FIXED #}
           {% else %}
             <div class="no-image-placeholder">No Image Available</div>
           {% endif %}
         </div>
         
         <div class="product-info">
-          <h2 class="product-title">{{ petproduct.product_name }}</h2>
+          <h2 class="product-title">{{ petproduct.productName }}</h2> {# FIXED #}
           
           <div class="product-meta">
             <span>Category: {{ petproduct.category }}</span>
-            {% if petproduct.sub_category %}
-              <span>| Sub-category: {{ petproduct.sub_category }}</span>
+            {% if petproduct.subCategory %} {# FIXED #}
+              <span>| Sub-category: {{ petproduct.subCategory }}</span> {# FIXED #}
             {% endif %}
             {% if petproduct.brand %}
               <span>| Brand: {{ petproduct.brand }}</span>

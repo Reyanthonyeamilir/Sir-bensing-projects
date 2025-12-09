@@ -1,66 +1,345 @@
+{# templates/Dashboard/index.html.twig #}
+
+{# Include the sidebar template #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Admin Dashboard{% endblock %}
-
-{% block stylesheets %}
-  <link rel="stylesheet" href="{{ asset('styles/dashboard.css') }}">
-{% endblock %}
+{% block title %}Pet Products{% endblock %}
 
 {% block body %}
-{# =====================================================
-   🧭 Admin Dashboard
-   - Sidebar stays separate and starts below your navbar
-   - No navbar design changes at all
-   ===================================================== #}
+{% include 'Dashboard/sidebar.html.twig' %}
 
-<div class="dashboard-container">
+{# Add dashboard styles after sidebar styles #}
+<style>
+    /* Dashboard-specific styles */
+    .main-content {
+        padding: 40px;
+        min-height: 100vh;
+        transition: padding-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #f9f5f0;
+    }
 
-  {# Include the Sidebar Partial #}
-  {% include 'dashboard/sidebar.html.twig' %}
+    body.sidebar-active .main-content {
+        padding-left: calc(280px + 40px);
+    }
 
-  <!-- MAIN DASHBOARD SECTION -->
-  <main class="main-content">
-    <header class="header">
-      <h1>Dashboard Overview</h1>
-      <input type="text" class="search-bar" placeholder="Search..." />
-    </header>
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 20px;
+        }
+        
+        body.sidebar-active .main-content {
+            padding-left: 20px;
+        }
+    }
 
-    <!-- DASHBOARD STATISTICS -->
-    <section class="stats-grid">
-      <div class="card">
-        <h3>Total Products</h3>
-        <p class="number">{{ totalProducts }}</p>
-        {% if priceGrowth is defined %}
-          <span class="growth positive">+{{ priceGrowth }}%</span>
-        {% endif %}
-      </div>
+    /* Dashboard content styles */
+    .dashboard-header {
+        margin-bottom: 40px;
+        text-align: center;
+    }
 
-      <div class="card">
-        <h3>Total Prices</h3>
-        <p class="number">${{ totalPrice|number_format(2, '.', ',') }}</p>
-      </div>
+    .dashboard-title {
+        color: #3a2610;
+        font-size: 2.8rem;
+        margin-bottom: 15px;
+        font-weight: 700;
+        line-height: 1.3;
+        font-family: 'Chewy', cursive;
+    }
 
-      <div class="card">
-        <h3>Users Registered</h3>
-        <p class="number">{{ totalUsers }}</p>
-      </div>
+    .dashboard-subtitle {
+        color: #6b4f35;
+        font-size: 1.2rem;
+        font-family: 'Poppins', sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+    }
 
-<div class="card">
-  <h3>Total Inventory</h3>
-  <p class="number">{{ totalInventory }}</p>
-</div>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-bottom: 50px;
+    }
 
-      <div class="card">
-        <h3>Service Bookings</h3>
-        <p class="number">{{ bookingsCount }}</p>
-      </div>
-    </section>
+    .stat-card {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(46, 21, 4, 0.1);
+        border-left: 6px solid #ff7b35;
+        transition: all 0.3s ease;
+    }
 
-    <!-- PLACEHOLDER CHART SECTION -->
-    <section class="chart-area">
-      <div class="chart-box">📈 Product Price Trend (Coming Soon)</div>
-      <div class="chart-box">📊 Bookings Overview (Coming Soon)</div>
-    </section>
-  </main>
-</div>
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(46, 21, 4, 0.15);
+    }
+
+    .stat-title {
+        color: #6b4f35;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 15px;
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+        color: #3a2610;
+        font-size: 2.8rem;
+        font-weight: 700;
+        font-family: 'Chewy', cursive;
+        line-height: 1;
+    }
+
+    .stat-subvalue {
+        color: #ff7b35;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 10px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+    }
+
+    .content-card {
+        background: white;
+        border-radius: 16px;
+        padding: 35px;
+        box-shadow: 0 8px 25px rgba(46, 21, 4, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .content-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card-title {
+        color: #3a2610;
+        font-size: 1.6rem;
+        margin-bottom: 25px;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+        border-bottom: 2px solid rgba(255, 123, 53, 0.2);
+        padding-bottom: 10px;
+    }
+
+    .card-text {
+        color: #6b4f35;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .card-text ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .card-text li {
+        padding: 8px 0;
+        padding-left: 25px;
+        position: relative;
+    }
+
+    .card-text li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #ff7b35;
+        font-weight: bold;
+    }
+
+    @media (max-width: 1024px) {
+        .dashboard-title {
+            font-size: 2.2rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-title {
+            font-size: 1.8rem;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stat-card {
+            padding: 25px;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+        }
+        
+        .content-card {
+            padding: 25px;
+        }
+    }
+</style>
+
+<!-- Main Content Area -->
+<main class="main-content" id="mainContent">
+    <div class="dashboard-content">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Dashboard Overview</h1>
+            <p class="dashboard-subtitle">
+                Welcome back, {{ app.user.username }}! 
+                {% if 'ROLE_ADMIN' in app.user.roles %}
+                    You're logged in as Administrator
+                {% elseif 'ROLE_STAFF' in app.user.roles or 'ROLE_staff' in app.user.roles %}
+                    You're logged in as Staff Member
+                {% else %}
+                    You're logged in as Customer
+                {% endif %}
+            </p>
+        </div>
+        
+        <!-- Stats Grid - Dynamically based on role -->
+        <div class="stats-grid">
+            <!-- ALWAYS SHOW: Total Products -->
+            {% if totalProducts is defined %}
+            <div class="stat-card">
+                <div class="stat-title">Total Products</div>
+                <div class="stat-value">{{ totalProducts }}</div>
+            </div>
+            {% endif %}
+            
+            <!-- ALWAYS SHOW: Total Inventory -->
+            {% if totalInventory is defined %}
+            <div class="stat-card">
+                <div class="stat-title">Total Inventory</div>
+                <div class="stat-value">{{ totalInventory }}</div>
+                <div class="stat-subvalue">Items in stock</div>
+            </div>
+            {% endif %}
+            
+            <!-- SHOW FOR ADMIN: Total Users -->
+            {% if 'ROLE_ADMIN' in app.user.roles and totalUsers is defined %}
+            <div class="stat-card">
+                <div class="stat-title">Total Users</div>
+                <div class="stat-value">{{ totalUsers }}</div>
+            </div>
+            {% endif %}
+            
+            <!-- SHOW FOR ADMIN: Total Price Value -->
+            {% if 'ROLE_ADMIN' in app.user.roles and totalPrice is defined %}
+            <div class="stat-card">
+                <div class="stat-title">Total Value</div>
+                <div class="stat-value">${{ totalPrice|number_format(2, '.', ',') }}</div>
+                {% if priceGrowth is defined %}
+                <div class="stat-subvalue">Price Growth: {{ priceGrowth }}%</div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- SHOW FOR ALL: Bookings Count -->
+            {% if bookingsCount is defined %}
+            <div class="stat-card">
+                <div class="stat-title">Bookings</div>
+                <div class="stat-value">{{ bookingsCount }}</div>
+                <div class="stat-subvalue">Today's bookings</div>
+            </div>
+            {% endif %}
+            
+            <!-- SHOW FOR USERS: User Orders -->
+            {% if 'ROLE_USER' in app.user.roles and userOrders is defined %}
+            <div class="stat-card">
+                <div class="stat-title">My Orders</div>
+                <div class="stat-value">{{ userOrders }}</div>
+            </div>
+            {% endif %}
+            
+            <!-- SHOW FOR USERS: User Bookings -->
+            {% if 'ROLE_USER' in app.user.roles and userBookings is defined %}
+            <div class="stat-card">
+                <div class="stat-title">My Bookings</div>
+                <div class="stat-value">{{ userBookings }}</div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <div class="content-card">
+                <h2 class="card-title">Quick Actions</h2>
+                <div class="card-text">
+                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                        As an administrator, you can:
+                        <ul>
+                            <li>Manage all products and inventory</li>
+                            <li>View user statistics and reports</li>
+                            <li>Configure system settings</li>
+                            <li>Manage staff accounts</li>
+                        </ul>
+                    {% elseif 'ROLE_STAFF' in app.user.roles or 'ROLE_staff' in app.user.roles %}
+                        As a staff member, you can:
+                        <ul>
+                            <li>View and manage products</li>
+                            <li>Update inventory levels</li>
+                            <li>Process customer bookings</li>
+                            <li>View daily reports</li>
+                        </ul>
+                    {% else %}
+                        Welcome to your dashboard! Browse products and manage your orders.
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <h2 class="card-title">Recent Activities</h2>
+                <div class="card-text">
+                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                        <strong>Admin Activity:</strong> Monitor system performance and user activities.
+                    {% elseif 'ROLE_STAFF' in app.user.roles or 'ROLE_staff' in app.user.roles %}
+                        <strong>Staff Activity:</strong> Track inventory updates and customer interactions.
+                    {% else %}
+                        <strong>User Activity:</strong> View your order history and booking status.
+                    {% endif %}
+                </div>
+                <div class="card-text">
+                    Last updated: {{ "now"|date("Y-m-d H:i:s") }}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Dashboard-specific JavaScript
+    document.addEventListener('DOMContentLoaded', () => {
+        // Add hover effects to stat cards
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-8px)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
 {% endblock %}
