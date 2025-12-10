@@ -6,6 +6,7 @@ use App\Repository\ActivityLogRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ActivityLogRepository::class)]
+#[ORM\Table(name: 'activity_log')]
 class ActivityLog
 {
     #[ORM\Id]
@@ -13,39 +14,43 @@ class ActivityLog
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?user $user_id = null;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $userId = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 180, nullable: true)]
     private ?string $username = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $Role = null;
+    #[ORM\Column(length: 50)]
+    private ?string $role = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $Action = null;
+    #[ORM\Column(length: 50)]
+    private ?string $action = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $Target_Data = null;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $targetData = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $created_at = null;
+    #[ORM\Column(name: 'created_at')]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUserId(): ?user
+    public function getUserId(): ?User
     {
-        return $this->user_id;
+        return $this->userId;
     }
 
-    public function setUserId(?user $user_id): static
+    public function setUserId(?User $userId): static
     {
-        $this->user_id = $user_id;
-
+        $this->userId = $userId;
         return $this;
     }
 
@@ -54,58 +59,53 @@ class ActivityLog
         return $this->username;
     }
 
-    public function setUsername(string $username): static
+    public function setUsername(?string $username): static
     {
         $this->username = $username;
-
         return $this;
     }
 
     public function getRole(): ?string
     {
-        return $this->Role;
+        return $this->role;
     }
 
-    public function setRole(string $Role): static
+    public function setRole(string $role): static
     {
-        $this->Role = $Role;
-
+        $this->role = $role;
         return $this;
     }
 
     public function getAction(): ?string
     {
-        return $this->Action;
+        return $this->action;
     }
 
-    public function setAction(string $Action): static
+    public function setAction(string $action): static
     {
-        $this->Action = $Action;
-
+        $this->action = $action;
         return $this;
     }
 
     public function getTargetData(): ?string
     {
-        return $this->Target_Data;
+        return $this->targetData;
     }
 
-    public function setTargetData(string $Target_Data): static
+    public function setTargetData(?string $targetData): static
     {
-        $this->Target_Data = $Target_Data;
-
+        $this->targetData = $targetData;
         return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->created_at = $created_at;
-
+        $this->createdAt = $createdAt;
         return $this;
     }
 }

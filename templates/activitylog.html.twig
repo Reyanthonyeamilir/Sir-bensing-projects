@@ -1,0 +1,897 @@
+{# templates/activitylog.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Activity Log{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Activity Log Specific Styles - Won't affect other pages */
+        .activity-log-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .activity-main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
+            margin-left: 250px;
+            box-sizing: border-box;
+        }
+
+        .activity-log-container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: 0;
+        }
+
+        .activity-log-title {
+            color: #cc5404;
+            font-weight: 700;
+            font-size: 1.8rem;
+            text-align: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            margin: 0 0 1.5rem 0;
+        }
+
+        /* Filters */
+        .activity-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .activity-filter-input {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            min-width: 180px;
+            transition: all 0.3s;
+        }
+
+        .activity-filter-input:focus {
+            outline: none;
+            border-color: #cc5404;
+            box-shadow: 0 0 0 3px rgba(204, 84, 4, 0.1);
+        }
+
+        .activity-filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .activity-btn-primary {
+            background: #cc5404;
+            color: white;
+        }
+
+        .activity-btn-primary:hover {
+            background: #a63d03;
+            transform: translateY(-1px);
+        }
+
+        .activity-btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .activity-btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .activity-btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .activity-btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .activity-btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .activity-btn-info:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        /* Table Styles */
+        .activity-table-container {
+            overflow-x: auto;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
+        }
+
+        .activity-log-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        .activity-log-table thead {
+            background-color: #f8f9fa;
+        }
+
+        .activity-log-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #4b5563;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .activity-log-table tbody tr {
+            border-bottom: 1px solid #eaeaea;
+            transition: background 0.3s;
+        }
+
+        .activity-log-table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .activity-log-table td {
+            padding: 1rem;
+            font-size: 14px;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        /* Badge Styles - Activity Log Specific */
+        .activity-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .activity-badge-admin {
+            background: #dc3545;
+            color: white;
+        }
+
+        .activity-badge-user {
+            background: #28a745;
+            color: white;
+        }
+
+        .activity-badge-moderator {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .activity-badge-other {
+            background: #6c757d;
+            color: white;
+        }
+
+        /* Action Badges */
+        .activity-action-badge {
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .activity-action-create {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .activity-action-update {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .activity-action-delete {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .activity-action-view {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Target Data Cell */
+        .activity-target-data {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .activity-view-full-btn {
+            background: none;
+            border: none;
+            color: #cc5404;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+            margin-left: 5px;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        .activity-view-full-btn:hover {
+            color: #a63d03;
+        }
+
+        /* Empty State */
+        .activity-empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6c757d;
+        }
+
+        .activity-empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .activity-empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .activity-empty-state p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Pagination */
+        .activity-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 25px;
+        }
+
+        .activity-pagination-btn {
+            padding: 8px 15px;
+            border: 1px solid #dee2e6;
+            background: white;
+            color: #cc5404;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .activity-pagination-btn:hover:not(.disabled):not(.active) {
+            background: #f8f9fa;
+            border-color: #cc5404;
+        }
+
+        .activity-pagination-btn.active {
+            background: #cc5404;
+            color: white;
+            border-color: #cc5404;
+        }
+
+        .activity-pagination-btn.disabled {
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Timestamp */
+        .activity-timestamp {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 3px;
+        }
+
+        /* Modal Styles */
+        .activity-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-modal.active {
+            display: flex;
+        }
+
+        .activity-modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .activity-modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+
+        .activity-modal-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .activity-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .activity-modal-close:hover {
+            background: #eaeaea;
+            color: #333;
+        }
+
+        .activity-modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .activity-modal-data {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Loading State */
+        .activity-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #cc5404;
+            border-radius: 50%;
+            animation: activity-spin 1s linear infinite;
+        }
+
+        @keyframes activity-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .activity-main-content {
+                padding: 1rem;
+                margin-left: 0;
+                justify-content: center;
+            }
+
+            .activity-log-container {
+                max-width: 100%;
+                padding: 1rem;
+            }
+
+            .activity-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .activity-filter-input {
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .activity-filter-btn {
+                width: 100%;
+            }
+
+            .activity-log-table {
+                font-size: 0.875rem;
+                min-width: 600px;
+            }
+
+            .activity-log-table th,
+            .activity-log-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .activity-log-title {
+                font-size: 1.5rem;
+                padding: 0.75rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="activity-log-wrapper">
+        {% include 'dashboard/sidebar.html.twig' %}
+        
+        <div class="activity-main-content">
+            <div class="activity-log-container">
+                <h1 class="activity-log-title">Activity Log</h1>
+                
+                <!-- Filters -->
+                <div class="activity-filters">
+                    <input type="text" id="usernameFilter" class="activity-filter-input" placeholder="Filter by username...">
+                    
+                    <select id="roleFilter" class="activity-filter-input">
+                        <option value="">All Roles</option>
+                        <option value="ROLE_ADMIN">Admin</option>
+                        <option value="ROLE_USER">User</option>
+                        <option value="ROLE_MODERATOR">Moderator</option>
+                    </select>
+                    
+                    <select id="actionFilter" class="activity-filter-input">
+                        <option value="">All Actions</option>
+                        <option value="CREATE">Create</option>
+                        <option value="UPDATE">Update</option>
+                        <option value="DELETE">Delete</option>
+                        <option value="VIEW">View</option>
+                    </select>
+                    
+                    <input type="date" id="dateFilter" class="activity-filter-input">
+                    
+                    <button class="activity-filter-btn activity-btn-primary" id="applyFilters">Apply Filters</button>
+                    <button class="activity-filter-btn activity-btn-info" id="resetFilters">Reset</button>
+                    <button class="activity-filter-btn activity-btn-success" id="exportBtn">Export CSV</button>
+                </div>
+                
+                <!-- Activity Log Table -->
+                <div class="activity-table-container">
+                    <table class="activity-log-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                                <th>Target Data</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityTableBody">
+                            {% for log in activityLogs %}
+                                <tr>
+                                    <td>#{{ log.id }}</td>
+                                    <td>
+                                        <strong>{{ log.username }}</strong>
+                                        {% if log.userId %}
+                                            <br><small style="color: #6c757d;">ID: {{ log.userId.id }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% set roleLower = log.role|lower %}
+                                        <span class="activity-badge {% if 'admin' in roleLower %}activity-badge-admin{% elseif 'user' in roleLower %}activity-badge-user{% elseif 'moderator' in roleLower %}activity-badge-moderator{% else %}activity-badge-other{% endif %}">
+                                            {{ log.role }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="activity-action-badge activity-action-{{ log.action|lower }}">
+                                            {{ log.action }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="activity-target-data" title="{{ log.targetData }}">
+                                            {{ log.targetData|slice(0, 50) }}
+                                            {% if log.targetData|length > 50 %}...{% endif %}
+                                        </div>
+                                        {% if log.targetData|length > 50 %}
+                                            <button class="activity-view-full-btn" onclick="viewFullData({{ log.id }}, '{{ log.targetData|escape('js') }}')">
+                                                View Full
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ log.createdAt|date('Y-m-d H:i:s') }}
+                                        <div class="activity-timestamp">{{ log.createdAt|date('D, M j, Y') }}</div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="activity-empty-state">
+                                            <div class="activity-empty-state-icon">📭</div>
+                                            <h3>No activity logs found</h3>
+                                            <p>There are no activity logs to display at the moment.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                {% if activityLogs|length > 0 %}
+                    <div class="activity-pagination">
+                        <button class="activity-pagination-btn {% if currentPage <= 1 %}disabled{% endif %}" 
+                                id="prevPage" {% if currentPage <= 1 %}disabled{% endif %}>
+                            ← Previous
+                        </button>
+                        
+                        {% for i in 1..totalPages %}
+                            <button class="activity-pagination-btn {% if i == currentPage %}active{% endif %}" 
+                                    onclick="changePage({{ i }})">
+                                {{ i }}
+                            </button>
+                        {% endfor %}
+                        
+                        <button class="activity-pagination-btn {% if currentPage >= totalPages %}disabled{% endif %}" 
+                                id="nextPage" {% if currentPage >= totalPages %}disabled{% endif %}>
+                            Next →
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for viewing full data -->
+    <div id="dataModal" class="activity-modal">
+        <div class="activity-modal-content">
+            <div class="activity-modal-header">
+                <h3>Full Target Data</h3>
+                <button class="activity-modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="activity-modal-body">
+                <div id="modalDataContent">
+                    <!-- Data will be inserted here via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Current page state
+        let currentPage = {{ currentPage ?? 1 }};
+        let totalPages = {{ totalPages ?? 1 }};
+        let filters = {
+            username: '',
+            role: '',
+            action: '',
+            date: ''
+        };
+        
+        // DOM elements
+        const usernameFilter = document.getElementById('usernameFilter');
+        const roleFilter = document.getElementById('roleFilter');
+        const actionFilter = document.getElementById('actionFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const applyFiltersBtn = document.getElementById('applyFilters');
+        const resetFiltersBtn = document.getElementById('resetFilters');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const exportBtn = document.getElementById('exportBtn');
+        const modal = document.getElementById('dataModal');
+        const tableBody = document.getElementById('activityTableBody');
+        
+        // Event Listeners
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener('click', applyFilters);
+        }
+        
+        if (resetFiltersBtn) {
+            resetFiltersBtn.addEventListener('click', resetFilters);
+        }
+        
+        if (prevPageBtn) {
+            prevPageBtn.addEventListener('click', () => changePage(currentPage - 1));
+        }
+        
+        if (nextPageBtn) {
+            nextPageBtn.addEventListener('click', () => changePage(currentPage + 1));
+        }
+        
+        if (exportBtn) {
+            exportBtn.addEventListener('click', exportToCSV);
+        }
+        
+        // Allow Enter key to apply filters
+        [usernameFilter, roleFilter, actionFilter, dateFilter].forEach(input => {
+            if (input) {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        applyFilters();
+                    }
+                });
+            }
+        });
+        
+        // Functions
+        function applyFilters() {
+            filters = {
+                username: usernameFilter.value.trim(),
+                role: roleFilter.value,
+                action: actionFilter.value,
+                date: dateFilter.value
+            };
+            currentPage = 1;
+            loadActivityLogs();
+        }
+        
+        function resetFilters() {
+            usernameFilter.value = '';
+            roleFilter.value = '';
+            actionFilter.value = '';
+            dateFilter.value = '';
+            filters = {
+                username: '',
+                role: '',
+                action: '',
+                date: ''
+            };
+            currentPage = 1;
+            loadActivityLogs();
+        }
+        
+        function changePage(page) {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            loadActivityLogs();
+        }
+        
+        function loadActivityLogs() {
+            // Show loading state
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        <div class="activity-empty-state">
+                            <div class="activity-loading" style="margin: 0 auto;"></div>
+                            <p>Loading logs...</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Build query parameters
+            const params = new URLSearchParams({
+                page: currentPage,
+                ...(filters.username && { username: filters.username }),
+                ...(filters.role && { role: filters.role }),
+                ...(filters.action && { action: filters.action }),
+                ...(filters.date && { date: filters.date })
+            });
+            
+            // Make AJAX request
+            fetch(`/activity-log/data?${params.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateTable(data.logs);
+                    updatePagination(data.pagination);
+                })
+                .catch(error => {
+                    console.error('Error loading activity logs:', error);
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6">
+                                <div class="activity-empty-state">
+                                    <div class="activity-empty-state-icon">⚠️</div>
+                                    <h3>Error loading logs</h3>
+                                    <p>Please try again later.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+        
+        function updateTable(logs) {
+            if (!tableBody) return;
+            
+            if (!logs || logs.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="activity-empty-state">
+                                <div class="activity-empty-state-icon">🔍</div>
+                                <h3>No matching logs found</h3>
+                                <p>Try adjusting your filters.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tableBody.innerHTML = logs.map(log => `
+                <tr>
+                    <td>#${log.id}</td>
+                    <td>
+                        <strong>${escapeHtml(log.username)}</strong>
+                        ${log.user_id ? `<br><small style="color: #6c757d;">ID: ${log.user_id.id}</small>` : ''}
+                    </td>
+                    <td>
+                        <span class="activity-badge ${getRoleBadgeClassJS(log.role)}">
+                            ${escapeHtml(log.role)}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="activity-action-badge activity-action-${log.action.toLowerCase()}">
+                            ${escapeHtml(log.action)}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="activity-target-data" title="${escapeHtml(log.target_data)}">
+                            ${escapeHtml(log.target_data.substring(0, 50))}
+                            ${log.target_data.length > 50 ? '...' : ''}
+                        </div>
+                        ${log.target_data.length > 50 ? `
+                            <button class="activity-view-full-btn" onclick="viewFullData(${log.id}, '${escapeHtml(log.target_data).replace(/'/g, "\\'")}')">
+                                View Full
+                            </button>
+                        ` : ''}
+                    </td>
+                    <td>
+                        ${new Date(log.created_at).toLocaleString()}
+                        <div class="activity-timestamp">${new Date(log.created_at).toDateString()}</div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function updatePagination(pagination) {
+            const paginationContainer = document.querySelector('.activity-pagination');
+            if (!paginationContainer || !pagination) return;
+            
+            totalPages = pagination.totalPages;
+            
+            paginationContainer.innerHTML = `
+                <button class="activity-pagination-btn ${pagination.currentPage === 1 ? 'disabled' : ''}" 
+                        onclick="changePage(${pagination.currentPage - 1})" 
+                        ${pagination.currentPage === 1 ? 'disabled' : ''}>
+                    ← Previous
+                </button>
+                ${Array.from({length: pagination.totalPages}, (_, i) => i + 1).map(page => `
+                    <button class="activity-pagination-btn ${page === pagination.currentPage ? 'active' : ''}" 
+                            onclick="changePage(${page})">
+                        ${page}
+                    </button>
+                `).join('')}
+                <button class="activity-pagination-btn ${pagination.currentPage === pagination.totalPages ? 'disabled' : ''}" 
+                        onclick="changePage(${pagination.currentPage + 1})" 
+                        ${pagination.currentPage === pagination.totalPages ? 'disabled' : ''}>
+                    Next →
+                </button>
+            `;
+        }
+        
+        function viewFullData(id, data) {
+            const modalContent = document.getElementById('modalDataContent');
+            if (modalContent) {
+                modalContent.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <strong>Log ID:</strong> ${id}
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <strong>Full Data:</strong>
+                    </div>
+                    <div class="activity-modal-data">
+                        ${escapeHtml(formatJsonData(data))}
+                    </div>
+                `;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function exportToCSV() {
+            // Build query parameters for export
+            const params = new URLSearchParams({
+                format: 'csv',
+                ...(filters.username && { username: filters.username }),
+                ...(filters.role && { role: filters.role }),
+                ...(filters.action && { action: filters.action }),
+                ...(filters.date && { date: filters.date })
+            });
+            
+            // Redirect to export endpoint
+            window.location.href = `/activity-log/export?${params.toString()}`;
+        }
+        
+        function getRoleBadgeClassJS(role) {
+            role = role.toLowerCase();
+            if (role.includes('admin')) return 'activity-badge-admin';
+            if (role.includes('user')) return 'activity-badge-user';
+            if (role.includes('moderator')) return 'activity-badge-moderator';
+            return 'activity-badge-other';
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function formatJsonData(data) {
+            try {
+                // Try to parse as JSON for pretty formatting
+                const parsed = JSON.parse(data);
+                return JSON.stringify(parsed, null, 2);
+            } catch (e) {
+                // If not valid JSON, return as is
+                return data;
+            }
+        }
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    </script>
+{% endblock %}

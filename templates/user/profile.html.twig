@@ -1,0 +1,421 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block body %}
+    {% include 'dashboard/sidebar.html.twig' %}
+    
+    <style>
+        html, body {
+            min-height: 100%;
+            margin: 0;
+            background: #f8f9fa;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
+            margin-left: 250px;
+            box-sizing: border-box;
+        }
+
+        .profile-container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-header h1 {
+            color: #cc5404;
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .profile-header .subtitle {
+            color: #8B4513;
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #cc5404, #ff6b35);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #8B4513;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d4a574;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #8B4513;
+            background: #fefefe;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #cc5404;
+            box-shadow: 0 0 0 3px rgba(204, 84, 4, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #b08968;
+            opacity: 0.7;
+        }
+
+        .form-help {
+            font-size: 0.85rem;
+            color: #8B4513;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        .password-fields {
+            background: #f9f5f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border: 1px solid #e9d8c8;
+        }
+
+        .password-fields h3 {
+            color: #8B4513;
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 0.9rem 2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            display: inline-block;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            background-color: #cc5404;
+            width: 100%;
+            margin-top: 1rem;
+            box-sizing: border-box;
+        }
+
+        .btn:hover {
+            background-color: #a63d03;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            margin-top: 0.5rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .form-errors {
+            color: #dc3545;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            color: #0f5132;
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
+
+        .alert-error, .alert-danger {
+            color: #842029;
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+        }
+
+        .alert-info {
+            color: #055160;
+            background-color: #cff4fc;
+            border-color: #b6effb;
+        }
+
+        .user-info {
+            background: #f9f5f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid #e9d8c8;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e9d8c8;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #8B4513;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: #8B4513;
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.3rem 0.75rem;
+            background: #e9ecef;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            margin: 0.2rem 0.2rem 0.2rem 0;
+            color: #8B4513;
+            border: 1px solid #d4a574;
+            font-weight: 500;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .profile-container {
+                padding: 1.5rem;
+                margin-top: 1rem;
+            }
+            
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            
+            .button-container {
+                gap: 0.3rem;
+            }
+        }
+    </style>
+
+    <div class="dashboard-container">
+        <div class="main-content">
+            <div class="profile-container">
+                <!-- Flash Messages -->
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-error">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                
+                {% for message in app.flashes('info') %}
+                    <div class="alert alert-info">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
+                <div class="profile-header">
+                    <div class="user-avatar">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <h1>My Profile</h1>
+                    <div class="subtitle">Manage your account settings</div>
+                </div>
+
+                <!-- User Information -->
+                <div class="user-info">
+                    <div class="info-item">
+                        <span class="info-label">User ID:</span>
+                        <span class="info-value">#{{ user.id }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Current Username:</span>
+                        <span class="info-value">{{ user.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Roles:</span>
+                        <div class="info-value">
+                            {% for role in user.roles %}
+                                {% if role != 'ROLE_USER' or user.roles|length == 1 %}
+                                    <span class="role-badge">{{ role|replace({'ROLE_': ''})|lower|title }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Account Created:</span>
+                        <span class="info-value">Not available</span>
+                    </div>
+                </div>
+
+                <!-- Edit Form -->
+                {{ form_start(form, {'attr': {'class': 'profile-form'}}) }}
+                
+                    <div class="form-group">
+                        {{ form_label(form.username) }}
+                        {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.username) }}
+                        <small class="form-help">Choose a unique username that others will see</small>
+                    </div>
+
+                    <div class="password-fields">
+                        <h3>Change Password</h3>
+                        
+                        <div class="form-group">
+                            {{ form_label(form.currentPassword) }}
+                            {{ form_widget(form.currentPassword, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.currentPassword) }}
+                            <small class="form-help">Enter your current password to authorize changes</small>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.newPassword) }}
+                            {{ form_widget(form.newPassword, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.newPassword) }}
+                            <small class="form-help">Minimum 8 characters, recommended to use a strong password</small>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.confirmPassword) }}
+                            {{ form_widget(form.confirmPassword, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.confirmPassword) }}
+                            <small class="form-help">Re-enter your new password for confirmation</small>
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <button type="submit" class="btn">
+                            <i class="fas fa-save"></i> Update Profile
+                        </button>
+                        
+                        <a href="{{ path('app_user_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Users
+                        </a>
+                    </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const newPassword = document.querySelector('#{{ form.newPassword.vars.id }}');
+            const confirmPassword = document.querySelector('#{{ form.confirmPassword.vars.id }}');
+            
+            function validatePasswordMatch() {
+                if (newPassword.value && confirmPassword.value) {
+                    if (newPassword.value !== confirmPassword.value) {
+                        confirmPassword.setCustomValidity('Passwords do not match');
+                    } else {
+                        confirmPassword.setCustomValidity('');
+                    }
+                }
+            }
+            
+            if (newPassword && confirmPassword) {
+                newPassword.addEventListener('input', validatePasswordMatch);
+                confirmPassword.addEventListener('input', validatePasswordMatch);
+            }
+            
+            // Show/hide password fields based on current password
+            const currentPassword = document.querySelector('#{{ form.currentPassword.vars.id }}');
+            
+            function togglePasswordFields() {
+                const passwordFields = document.querySelector('.password-fields');
+                if (currentPassword && passwordFields) {
+                    passwordFields.style.display = currentPassword.value ? 'block' : 'block';
+                }
+            }
+            
+            if (currentPassword) {
+                currentPassword.addEventListener('input', togglePasswordFields);
+                togglePasswordFields();
+            }
+        });
+    </script>
+{% endblock %}

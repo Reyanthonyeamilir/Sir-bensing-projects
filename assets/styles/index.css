@@ -4,7 +4,6 @@ body, html {
   padding: 0;
   height: 100%;
   font-family: 'Poppins', sans-serif;
-  color: #fff;
   overflow-x: hidden;
   overflow-y: scroll; /* keeps scrollbar space reserved even on short pages */
   scroll-behavior: smooth;
@@ -337,7 +336,7 @@ footer {
 /* === mao ni sa =====================================================================HOME PAGE === */
 .hero {
   background: linear-gradient(135deg, #ff8c1a 0%, #2e1504 100%);
-  border-radius: 0 0 80px 80px;
+  
   padding: 60px 8%;
   display: flex;
   justify-content: center;
@@ -372,20 +371,16 @@ footer {
   color: #f3d8b4;
   margin-bottom: 25px;
 }
-
-.btn-primary {
+.btnraprimary {
   background-color: #cc5404;
   color: #fff;
-  padding: 12px 25px;
+  padding: 10px 20px;
   border-radius: 8px;
   font-weight: 600;
   text-decoration: none;
+  /* No margin-top needed */
+  display: inline-block; /* Ensures proper button sizing */
   transition: background 0.3s ease, transform 0.3s ease;
-}
-
-.btn-primary:hover {
-  background-color: #ff7518;
-  transform: translateY(-3px);
 }
 
 .hero-image img {
@@ -517,7 +512,7 @@ footer {
   font-size: 1.1rem;
   max-width: 700px;
   margin: 0 auto;
-  color: #592507;
+  color: #d3af0e;
 }
 
 /* Story Section */
@@ -571,7 +566,7 @@ footer {
 }
 
 .about-values h2 {
-  color: #2e1504;
+  color: #eeea1e;
   font-size: 2rem;
   margin-bottom: 40px;
 }

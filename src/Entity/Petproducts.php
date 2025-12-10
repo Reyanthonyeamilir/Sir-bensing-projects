@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\PetproductsRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -15,8 +13,6 @@ class Petproducts
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-
 
     #[ORM\Column(length: 255)]
     private ?string $product_name = null;
@@ -48,15 +44,9 @@ class Petproducts
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTime $createdAt = null;
 
-    /**
-     * @var Collection<int, Inventory>
-     */
-    #[ORM\OneToMany(targetEntity: Inventory::class, mappedBy: 'petproduct')]
-    private Collection $inventories;
-
     public function __construct()
     {
-        $this->inventories = new ArrayCollection();
+        // Constructor is now empty since we removed the ArrayCollection
     }
 
     public function getId(): ?int
@@ -171,36 +161,6 @@ class Petproducts
     public function setCreatedAt(\DateTime $createdAt): static
     {
         $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Inventory>
-     */
-    public function getInventories(): Collection
-    {
-        return $this->inventories;
-    }
-
-    public function addInventory(Inventory $inventory): static
-    {
-        if (!$this->inventories->contains($inventory)) {
-            $this->inventories->add($inventory);
-            $inventory->setPetproduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeInventory(Inventory $inventory): static
-    {
-        if ($this->inventories->removeElement($inventory)) {
-            // set the owning side to null (unless already changed)
-            if ($inventory->getPetproduct() === $this) {
-                $inventory->setPetproduct(null);
-            }
-        }
-
         return $this;
     }
 }

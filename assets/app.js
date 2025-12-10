@@ -39,3 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 import './styles/app.css';
+  
+import './styles/crud.css';
+// import './styles/adminstaffsdbar.css';
+// import './styles/dashboard.css';
+// import './styles/index.css';
+// import './styles/orders.css';
+// import './styles/petproducts.css';
+// import './styles/product_view.css';
+// import './styles/product.css';
+
+
+

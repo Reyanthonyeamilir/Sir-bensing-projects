@@ -22,6 +22,76 @@
 }
 
 
+/* === FORM WRAPPER === */
+.user-form {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* === INPUT GROUP === */
+.user-form .form-group {
+  margin-bottom: 18px;
+}
+
+/* === LABELS === */
+.user-form .form-group label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* === INPUT FIELDS === */
+.user-form .form-input,
+.user-form select,
+.user-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #fafafa;
+  transition: all 0.2s ease-in-out;
+}
+
+.user-form .form-input:focus,
+.user-form select:focus,
+.user-form textarea:focus {
+  outline: none;
+  border-color: #ff8c42;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.25);
+}
+
+/* === ERRORS === */
+.user-form .form-error {
+  color: #d9534f;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* === BUTTON === */
+.user-form .action-btn {
+  width: 100%;
+  padding: 14px;
+  background: #ff8c42;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.25s ease-in-out;
+}
+
+.user-form .action-btn:hover {
+  background: #e6762f;
+}
 
 
 
@@ -38,7 +108,7 @@
 h1, h2, h3,h4, h5, h6 {
   font-family: 'Chewy', cursive;
   font-weight: normal; /* Chewy doesn't need bold */
-  color: #5a3922;      /* Optional: your theme color */
+        /* Optional: your theme color */
   letter-spacing: 0.5px;
 }
 

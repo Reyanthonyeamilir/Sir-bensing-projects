@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Repository\PetproductsRepository;
-use App\Repository\InventoryRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +14,6 @@ class DashboardController extends AbstractController
     #[Route('/dashboard', name: 'app_dashboard')]
     public function index(
         PetproductsRepository $petproductsRepository,
-        InventoryRepository $inventoryRepository,
         UserRepository $userRepository
     ): Response {
         // Check if user is authenticated
@@ -43,10 +41,7 @@ class DashboardController extends AbstractController
                 'priceGrowth'     => $priceGrowth,
                 'totalUsers'      => $userRepository->count([]),
                 'bookingsCount'   => 5, // Replace with actual bookings count
-                'totalInventory'  => $inventoryRepository->createQueryBuilder('i')
-                    ->select('SUM(i.quantity)')
-                    ->getQuery()
-                    ->getSingleScalarResult() ?? 0,
+                // Inventory removed from here
             ];
         }
         // STAFF DASHBOARD DATA - FIXED: Check both uppercase and lowercase
@@ -56,10 +51,7 @@ class DashboardController extends AbstractController
             
             $data = [
                 'totalProducts'   => $totalProducts,
-                'totalInventory'  => $inventoryRepository->createQueryBuilder('i')
-                    ->select('SUM(i.quantity)')
-                    ->getQuery()
-                    ->getSingleScalarResult() ?? 0,
+                // Inventory removed from here
                 'bookingsCount'   => 5, // Replace with actual bookings count
             ];
         }
@@ -90,7 +82,6 @@ class DashboardController extends AbstractController
     #[Route('/admin/dashboard', name: 'app_admin_dashboard')]
     public function adminDashboard(
         PetproductsRepository $petproductsRepository,
-        InventoryRepository $inventoryRepository,
         UserRepository $userRepository
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -106,17 +97,13 @@ class DashboardController extends AbstractController
             'priceGrowth'     => 8.5,
             'totalUsers'      => $userRepository->count([]),
             'bookingsCount'   => 5,
-            'totalInventory'  => $inventoryRepository->createQueryBuilder('i')
-                ->select('SUM(i.quantity)')
-                ->getQuery()
-                ->getSingleScalarResult() ?? 0,
+            // Inventory removed from here
         ]);
     }
     
     #[Route('/staff/dashboard', name: 'app_staff_dashboard')]
     public function staffDashboard(
-        PetproductsRepository $petproductsRepository,
-        InventoryRepository $inventoryRepository
+        PetproductsRepository $petproductsRepository
     ): Response {
         // FIXED: Check both uppercase and lowercase for staff role
         if (!$this->isGranted('ROLE_STAFF') && !$this->isGranted('ROLE_staff')) {
@@ -128,10 +115,7 @@ class DashboardController extends AbstractController
         
         return $this->render('dashboard/index.html.twig', [
             'totalProducts'   => $totalProducts,
-            'totalInventory'  => $inventoryRepository->createQueryBuilder('i')
-                ->select('SUM(i.quantity)')
-                ->getQuery()
-                ->getSingleScalarResult() ?? 0,
+            // Inventory removed from here
             'bookingsCount'   => 5,
         ]);
     }

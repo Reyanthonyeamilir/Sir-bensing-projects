@@ -21,8 +21,11 @@
   .create-container {
     flex: 1;
     display: flex;
-    justify-content: flex-start; /* align left */
+    justify-content: center; /* Changed from flex-start to center */
+    align-items: flex-start; /* Align to top */
     padding: 2rem;
+    margin-left: 250px; /* Add left margin for sidebar */
+    box-sizing: border-box;
   }
 
   .create-card {
@@ -137,6 +140,8 @@
 
     .create-container {
       padding: 1rem;
+      margin-left: 0; /* Remove margin on mobile */
+      justify-content: center;
     }
 
     .create-card {

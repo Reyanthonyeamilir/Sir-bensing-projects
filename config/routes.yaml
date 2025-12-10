@@ -3,3 +3,18 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+    
+app_activity_log:
+    path: /activity-log
+    controller: App\Controller\ActivityLogController::index
+    methods: GET
+
+app_activity_log_data:
+    path: /activity-log/data
+    controller: App\Controller\ActivityLogController::getData
+    methods: GET
+
+app_activity_log_export:
+    path: /activity-log/export
+    controller: App\Controller\ActivityLogController::export
+    methods: GET

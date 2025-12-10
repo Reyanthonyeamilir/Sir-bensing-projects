@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Amilir’s Pawthentic Bites{% endblock %}</title>
+  <title>{% block title %}Amilir's Pawthentic Bites{% endblock %}</title>
 
   <!-- Fonts & Styles -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -17,36 +17,46 @@
   <!-- Full-page background wrapper -->
   <div class="page-bg">
     
-   <!-- ===== Banner Slideshow ===== -->
-<!-- ===== Banner Slideshow ===== -->
-<section class="banner-slider">
-  <div class="slide fade">
-    <img src="{{ asset('images/BANNER-removebg-preview.png') }}" alt="Banner 1">
-  </div>
-  <div class="slide fade">
-    <img src="{{ asset('images/BANNER-removebg-preview.png') }}" alt="Banner 2">
-  </div>
-</section>
-<!-- ===== Navigation Bar ===== -->
-<nav class="nav">
-  <div class="nav-container">
-    <div class="nav-logo">
-    {# this is the chey fonts #}
-   <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-      <img src="{{ asset('images/mylogo.png') }}" alt="Pawthentic Logo">
-      <span class="logo-text">Amilir’s Pawthentic Bites</span>
-    </div>
+    <!-- ===== Banner Slideshow ===== -->
+    <section class="banner-slider">
+      <div class="slide fade">
+        <img src="{{ asset('images/BANNER-removebg-preview.png') }}" alt="Banner 1">
+      </div>
+      <div class="slide fade">
+        <img src="{{ asset('images/BANNER-removebg-preview.png') }}" alt="Banner 2">
+      </div>
+    </section>
     
-    <ul class="nav-links">
-      <li><a href="{{ path('home') }}">Home</a></li>
-      <li><a href="{{ path('about') }}">About</a></li>
-      <li><a href="{{ path('product') }}">Products</a></li>
-      <li><a href="{{ path('contact') }}">Contact</a></li>
-      <li><a href="{{ path('login') }}">Login</a></li>
-      <li><a href="{{ path('app_register') }}" class="btn">Register</a></li>
-    </ul>
-  </div>
-</nav>
+    <!-- ===== Navigation Bar ===== -->
+    <nav class="nav">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+          <img src="{{ asset('images/mylogo.png') }}" alt="Pawthentic Logo">
+          <span class="logo-text">Amilir's Pawthentic Bites</span>
+        </div>
+        
+        <ul class="nav-links">
+          <li><a href="{{ path('home') }}">Home</a></li>
+          <li><a href="{{ path('about') }}">About</a></li>
+          <li><a href="{{ path('product') }}">Products</a></li>
+          <li><a href="{{ path('contact') }}">Contact</a></li>
+          
+          {# Authentication-aware navigation #}
+          {% if app.user %}
+            {# User is logged in #}
+            {% if is_granted('ROLE_ADMIN') %}
+              <li><a href="{{ path('app_dashboard') }}">Dashboard</a></li>
+            {% endif %}
+            <li><a href="{{ path('app_logout') }}">Logout</a></li>
+          {% else %}
+            {# User is not logged in #}
+            <li><a href="{{ path('login') }}">Login</a></li>
+            <li><a href="{{ path('app_register') }}" class="btn">Register</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
 
     <!-- ===== Main Content ===== -->
     <main>
@@ -55,7 +65,7 @@
 
     <!-- ===== Footer ===== -->
     <footer>
-      <p>&copy; {{ "now"|date("Y") }} Amilir’s Pawthentic Bites | Crafted with Care, Love by Talles</p>
+      <p>&copy; {{ "now"|date("Y") }} Amilir's Pawthentic Bites | Crafted with Care, Love by Talles</p>
     </footer>
   </div>
 

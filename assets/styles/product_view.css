@@ -1,72 +1,122 @@
 .product-detail-page {
   background-color: #fff8f2;
-  font-family: 'Segoe UI', sans-serif;
-  padding: 40px 5%;
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
   animation: fadeIn 0.8s ease-in-out;
 }
 
 .product-detail-card {
   display: flex;
   flex-wrap: wrap;
-  gap: 30px;
+  gap: 20px;
   background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  padding: 20px;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  font-family: 'Poppins', sans-serif;
 }
 
 .image-section {
-  flex: 1 1 300px;
+  flex: 1 1 250px;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
 }
 
 .image-section img {
   max-width: 100%;
-  border-radius: 12px;
-  transition: transform 0.4s ease;
+  max-height: 320px;
+  border-radius: 8px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
 }
 
 .image-section img:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 .info-section {
-  flex: 1 1 350px;
+  flex: 1 1 280px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
 }
 
 .info-section h1 {
   color: #a0522d;
-  font-size: 2rem;
-  margin-bottom: 10px;
+  font-family: 'Chewy', cursive;
+  font-size: 1.9rem;
+  font-weight: 400;
+  margin-bottom: 8px;
+  line-height: 1.2;
+  letter-spacing: 0.3px;
 }
 
 .category, .description, .price, .brand, .stock {
-  margin: 10px 0;
+  margin: 8px 0;
   color: #5a4636;
-  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.category strong, .price strong, .brand strong, .stock strong {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: #8b4513;
+}
+
+.description {
+  background: #fff8f2;
+  padding: 10px;
+  border-radius: 5px;
+  border-left: 2px solid #d2691e;
+  font-weight: 400;
+  margin: 8px 0;
 }
 
 .price {
+  font-family: 'Poppins', sans-serif;
   font-size: 1.2rem;
   color: #d2691e;
-  font-weight: bold;
+  font-weight: 600;
+  margin: 10px 0;
 }
 
 .action-section {
-  margin-top: 25px;
+  margin-top: 20px;
   display: flex;
-  gap: 15px;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e8d4c8;
 }
 
 .btn {
-  padding: 10px 18px;
+  padding: 8px 16px;
   border: none;
-  border-radius: 6px;
-  font-weight: bold;
+  border-radius: 4px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
   color: white;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
+  font-size: 0.9rem;
+  flex: 1;
+  min-width: 120px;
 }
 
 .order-btn {
@@ -75,7 +125,8 @@
 
 .order-btn:hover {
   background: #e07b39;
-  transform: scale(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(210, 105, 30, 0.2);
 }
 
 .back-btn {
@@ -84,24 +135,89 @@
 
 .back-btn:hover {
   background: #b3541e;
-  transform: scale(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(160, 82, 45, 0.2);
+}
+
+@media (max-width: 992px) {
+  .product-detail-card {
+    padding: 18px;
+    gap: 18px;
+  }
 }
 
 @media (max-width: 768px) {
+  .product-detail-page {
+    padding: 12px;
+  }
+  
   .product-detail-card {
     flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .image-section {
+    padding: 8px;
+  }
+  
+  .image-section img {
+    max-height: 280px;
   }
 
   .info-section {
+    padding: 8px;
+  }
+
+  .info-section h1 {
+    font-family: 'Chewy', cursive;
+    font-size: 1.7rem;
     text-align: center;
   }
 
   .action-section {
     justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 8px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-detail-page {
+    padding: 8px;
+  }
+  
+  .product-detail-card {
+    padding: 14px;
+  }
+  
+  .info-section h1 {
+    font-family: 'Chewy', cursive;
+    font-size: 1.5rem;
+  }
+  
+  .btn {
+    min-width: auto;
+    padding: 7px 12px;
+  }
+  
+  .category, .description, .price, .brand, .stock {
+    font-size: 0.9rem;
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
 }

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Pet Products{% endblock %}
+{% block title %}Pet and Products{% endblock %}
 
 {% block stylesheets %}
   <link rel="stylesheet" href="{{ asset('styles/product.css') }}">
@@ -70,11 +70,11 @@
       });
     });
   });
-</script>
+  </script>
 
   <!-- MAIN PRODUCT LIST -->
   <main class="product-page">
-    <h1 class="page-title">🐾 Pet Products</h1>
+    <h1 class="page-title">🐾 Pet and Products</h1>
 
     <div class="product-grid">
       {% for petproduct in petproducts %}
@@ -90,7 +90,14 @@
             <h3 class="product-name">{{ petproduct.productName}}</h3>
             <p class="category">{{ petproduct.category }} — {{ petproduct.subCategory }}</p>
             <p class="price">$ {{ petproduct.price }}</p>
-            <p class="brand">Brand: {{ petproduct.brand }}</p>
+            
+            {# Condition: Show Breed for DOG, Brand for others #}
+            {% if petproduct.category|upper == 'DOG' %}
+              <p class="breed">Breed: {{ petproduct.brand ? petproduct.brand : 'Mixed Breed' }}</p>
+            {% else %}
+              <p class="brand">Brand: {{ petproduct.brand ? petproduct.brand : 'Generic' }}</p>
+            {% endif %}
+            
             <div class="button-group">
               <a href="{{ path('product_view', {'id': petproduct.id}) }}" class="btn view-btn">View</a>
             </div>

@@ -118,13 +118,13 @@ final class PetproductsController extends AbstractController
     public function delete(Request $request, Petproducts $petproduct, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete'.$petproduct->getId(), $request->getPayload()->getString('_token'))) {
-            // Remove related inventory records first
-            foreach ($petproduct->getInventories() as $inventory) {
-                $em->remove($inventory);
-            }
-
+            // Just remove the product - no inventory records to worry about
             $em->remove($petproduct);
             $em->flush();
+            
+            $this->addFlash('success', 'Product deleted successfully!');
+        } else {
+            $this->addFlash('error', 'Invalid CSRF token.');
         }
 
         return $this->redirectToRoute('app_petproducts_index');

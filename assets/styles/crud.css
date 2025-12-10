@@ -1,0 +1,472 @@
+/* USER CRUD - Shared Styles */
+.user-crud * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.user-crud body, 
+.user-crud html { 
+    background: transparent !important; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+.user-crud .dashboard-container { 
+    display: flex; 
+    min-height: 100vh; 
+    background: transparent; 
+}
+
+.user-crud .main-content { 
+    flex: 1; 
+    padding: 1.5rem; 
+    background: transparent; 
+    margin-left: 280px; 
+    max-width: calc(100% - 280px);
+}
+
+/* SEM Container (Header + Content) */
+.user-crud .sem-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* Header Styles */
+.user-crud .sem-header {
+    background: linear-gradient(135deg, #cc5404, #b34903);
+    padding: 1.2rem 1.5rem;
+    color: white;
+}
+
+.user-crud .sem-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+    color: white;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+/* Content Area */
+.user-crud .sem-content {
+    padding: 1.5rem;
+}
+
+/* Common Table Styles */
+.user-crud .sem-table-container {
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+}
+
+.user-crud .sem-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.user-crud .sem-table th, 
+.user-crud .sem-table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.user-crud .sem-table th {
+    background: #f8f8f8;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #555;
+}
+
+.user-crud .sem-table tr:hover { 
+    background: rgba(204, 84, 4, 0.05); 
+    transition: background 0.2s ease; 
+}
+
+/* Common Form Styles */
+.user-crud .sem-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.user-crud .sem-form-group {
+    margin-bottom: 0.5rem;
+}
+
+.user-crud .sem-form-group label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.user-crud .sem-form-input {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    background: #fff;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.user-crud .sem-form-input:focus {
+    outline: none;
+    border-color: #cc5404;
+    box-shadow: 0 0 0 2px rgba(204, 84, 4, 0.1);
+}
+
+/* Common Button Styles */
+.user-crud .sem-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    gap: 0.5rem;
+}
+
+.user-crud .sem-btn:hover { 
+    transform: translateY(-1px); 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Button Variants */
+.user-crud .sem-btn-primary { 
+    background-color: #cc5404; 
+}
+
+.user-crud .sem-btn-primary:hover { 
+    background-color: #b34903; 
+}
+
+.user-crud .sem-btn-secondary { 
+    background-color: #5a3922; 
+}
+
+.user-crud .sem-btn-secondary:hover { 
+    background-color: #4a2e1b; 
+}
+
+.user-crud .sem-btn-danger { 
+    background-color: #dc3545; 
+}
+
+.user-crud .sem-btn-danger:hover { 
+    background-color: #c82333; 
+}
+
+.user-crud .sem-btn-outline { 
+    background-color: transparent;
+    border: 1px solid #ddd;
+    color: #666;
+}
+
+.user-crud .sem-btn-outline:hover { 
+    background-color: #f8f8f8;
+    border-color: #cc5404;
+    color: #cc5404;
+}
+
+/* Info Display */
+.user-crud .sem-info-display {
+    background: #f8f8f8;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 1.5rem;
+}
+
+.user-crud .sem-info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.9rem;
+}
+
+.user-crud .sem-info-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.user-crud .sem-info-label {
+    color: #555;
+    font-weight: 600;
+}
+
+.user-crud .sem-info-value {
+    color: #333;
+    text-align: right;
+}
+
+/* Role Badges */
+.user-crud .sem-role-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    color: white;
+    font-weight: 600;
+    margin-left: 0.3rem;
+}
+
+.user-crud .sem-role-badge-admin {
+    background-color: #cc5404;
+}
+
+.user-crud .sem-role-badge-staff {
+    background-color: #5a3922;
+}
+
+.user-crud .sem-role-badge-user {
+    background-color: #4ECDC4;
+}
+
+/* Checkbox Group */
+.user-crud .sem-checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.user-crud .sem-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem;
+    background: #f8f8f8;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+.user-crud .sem-checkbox-item:hover {
+    background: rgba(204, 84, 4, 0.05);
+    border-color: rgba(204, 84, 4, 0.3);
+}
+
+.user-crud .sem-checkbox-item-input {
+    width: 16px;
+    height: 16px;
+    accent-color: #cc5404;
+    cursor: pointer;
+}
+
+.user-crud .sem-checkbox-item-label {
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+/* Form Text */
+.user-crud .sem-form-text {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+/* Form Actions */
+.user-crud .sem-form-actions {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Action Buttons Container */
+.user-crud .sem-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* New Button Container */
+.user-crud .sem-new-btn-container { 
+    text-align: center; 
+    margin-top: 1.5rem; 
+}
+
+.user-crud .sem-create-btn {
+    background-color: #cc5404;
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-crud .sem-create-btn:hover { 
+    background-color: #b34903; 
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.user-crud .sem-create-btn::before {
+    content: "+";
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Back Link */
+.user-crud .sem-back-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+    margin-top: 1rem;
+    color: #666;
+    text-decoration: none;
+    padding: 0.6rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.user-crud .sem-back-link:hover {
+    color: #cc5404;
+    text-decoration: underline;
+}
+
+/* Alert Messages */
+.user-crud .sem-alert {
+    padding: 0.8rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.user-crud .sem-alert-success {
+    color: #155724;
+    background: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.user-crud .sem-alert-error {
+    color: #721c24;
+    background: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Password Display */
+.user-crud .sem-password-hash {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: #666;
+    background: #f8f8f8;
+    padding: 0.5rem;
+    border-radius: 5px;
+    display: inline-block;
+    word-break: break-all;
+}
+
+.user-crud .sem-password-note {
+    font-size: 0.8rem;
+    color: #888;
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+/* Empty State */
+.user-crud .sem-empty-row {
+    text-align: center;
+    padding: 2rem !important;
+    color: #666;
+}
+
+.user-crud .sem-empty-row a {
+    color: #cc5404;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .user-crud .main-content {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 1rem;
+    }
+    
+    .user-crud .sem-content {
+        padding: 1rem;
+    }
+    
+    .user-crud .sem-table th, 
+    .user-crud .sem-table td { 
+        font-size: 0.8rem; 
+        padding: 0.6rem;
+    }
+    
+    .user-crud .sem-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .user-crud .sem-form-input {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    .user-crud .sem-checkbox-item {
+        padding: 0.5rem;
+    }
+    
+    .user-crud .sem-action-buttons {
+        flex-direction: column;
+    }
+    
+    .user-crud .sem-action-buttons .sem-btn {
+        width: 100%;
+    }
+    
+    .user-crud .sem-info-row {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    
+    .user-crud .sem-info-label {
+        width: 100%;
+    }
+    
+    .user-crud .sem-info-value {
+        width: 100%;
+        text-align: left;
+    }
+}

@@ -2,10 +2,29 @@
 
 {% block title %}New User{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/user/crud.css') }}">
+{% endblock %}
+
 {% block body %}
-    <h1>Create new User</h1>
+<div class="user-crud">
+    {% include 'dashboard/sidebar.html.twig' %}
 
-    {{ include('user/_form.html.twig') }}
-
-    <a href="{{ path('app_user_index') }}">back to list</a>
+    <main class="main-content">
+        <div class="sem-container">
+            <div class="sem-header">
+                <h1>Create New User</h1>
+            </div>
+            
+            <div class="sem-content">
+                {{ include('user/_form.html.twig') }}
+                
+                <a href="{{ path('app_user_index') }}" class="sem-back-link">
+                    <span>←</span> Back to User List
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
 {% endblock %}

@@ -24,7 +24,8 @@
       <p class="brand"><strong>Brand:</strong> {{ petproduct.brand }}</p>
       <p class="stock"><strong>Available Stock:</strong> {{ petproduct.stock }}</p>
       <div class="action-section">
-        <button class="btn order-btn">Order Now</button>
+      {# Test with direct URL #}
+        <a href="/login" class="btn order-btn">Order Now</a>
         <a href="{{ path('product') }}" class="btn back-btn">← Back to Products</a>
       </div>
     </div>

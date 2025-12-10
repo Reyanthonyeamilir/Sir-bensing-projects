@@ -3,11 +3,453 @@
 {% block title %}Edit User{% endblock %}
 
 {% block body %}
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body, html { 
+    background: transparent !important; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  }
+  
+  .dashboard-container { 
+    display: flex; 
+    min-height: 100vh; 
+    background: transparent; 
+  }
+  
+  .main-content { 
+    flex: 1; 
+    padding: 1.5rem; 
+    background: transparent; 
+    margin-left: 280px; 
+    max-width: calc(100% - 280px);
+  }
+  
+  h1 { 
+    font-size: 1.6rem; 
+    font-weight: 700; 
+    color: #e9d311c5; 
+    margin-bottom: 1.2rem; 
+    text-align: center; 
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid #ff7b35;
+  }
+  
+  .form-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .user-info-display {
+    background: #f8f8f8;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.9rem;
+  }
+  
+  .info-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  
+  .info-label {
+    color: #555;
+    font-weight: 600;
+  }
+  
+  .info-value {
+    color: #333;
+    text-align: right;
+  }
+  
+  .user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .form-group {
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-group label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #555;
+    font-size: 0.9rem;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    background: #fff;
+    color: #333;
+    transition: all 0.2s ease;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #cc5404;
+    box-shadow: 0 0 0 2px rgba(204, 84, 4, 0.1);
+  }
+  
+  .form-input::placeholder {
+    color: #888;
+    opacity: 0.7;
+  }
+  
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem;
+    background: #f8f8f8;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+  }
+  
+  .checkbox-item:hover {
+    background: rgba(204, 84, 4, 0.05);
+    border-color: rgba(204, 84, 4, 0.3);
+  }
+  
+  .checkbox-item-input {
+    width: 16px;
+    height: 16px;
+    accent-color: #cc5404;
+    cursor: pointer;
+  }
+  
+  .checkbox-item-label {
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    font-size: 0.9rem;
+  }
+  
+  .checkbox-item[data-role="admin"] {
+    border-left: 3px solid #cc5404;
+  }
+  
+  .checkbox-item[data-role="staff"] {
+    border-left: 3px solid #5a3922;
+  }
+  
+  .checkbox-item[data-role="user"] {
+    border-left: 3px solid #4ECDC4;
+  }
+  
+  .form-text {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    color: #888;
+  }
+  
+  .form-actions {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  .btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    gap: 0.5rem;
+  }
+  
+  .btn:hover { 
+    transform: translateY(-1px); 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .action-btn { 
+    background-color: #cc5404; 
+    width: 100%;
+  }
+  
+  .action-btn:hover { 
+    background-color: #b34903; 
+  }
+  
+  .back-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+    margin-top: 1rem;
+    color: #666;
+    text-decoration: none;
+    padding: 0.6rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  .back-link:hover {
+    color: #cc5404;
+    text-decoration: underline;
+  }
+  
+  .delete-form {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  .delete-form .btn {
+    background-color: #dc3545;
+    width: 100%;
+  }
+  
+  .delete-form .btn:hover {
+    background-color: #c82333;
+  }
+  
+  .alert {
+    padding: 0.8rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .alert-success {
+    color: #155724;
+    background: #d4edda;
+    border-color: #c3e6cb;
+  }
+  
+  .alert-error {
+    color: #721c24;
+    background: #f8d7da;
+    border-color: #f5c6cb;
+  }
+  
+  .role-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    color: white;
+    font-weight: 600;
+    margin-left: 0.3rem;
+  }
+  
+  .role-badge.admin {
+    background-color: #cc5404;
+  }
+  
+  .role-badge.staff {
+    background-color: #5a3922;
+  }
+  
+  .role-badge.user {
+    background-color: #4ECDC4;
+  }
+  
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 0;
+      max-width: 100%;
+      padding: 1rem;
+    }
+    
+    .form-container {
+      padding: 1rem;
+    }
+    
+    .form-input {
+      padding: 0.6rem;
+      font-size: 0.85rem;
+    }
+    
+    .checkbox-item {
+      padding: 0.5rem;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<div class="dashboard-container">
+  {% include 'dashboard/sidebar.html.twig' %}
+
+  <main class="main-content">
     <h1>Edit User</h1>
+    
+    <div class="form-container">
+      <!-- Flash Messages -->
+      {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+          <span>✓</span> {{ message }}
+        </div>
+      {% endfor %}
+      
+      {% for message in app.flashes('error') %}
+        <div class="alert alert-error">
+          <span>⚠</span> {{ message }}
+        </div>
+      {% endfor %}
 
-    {{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
+      <!-- User Information Display -->
+      <div class="user-info-display">
+        <div class="info-row">
+          <span class="info-label">User ID:</span>
+          <span class="info-value">#{{ user.id }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Current Username:</span>
+          <span class="info-value">{{ user.username }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Current Roles:</span>
+          <div class="info-value">
+            {% for role in user.roles %}
+              {% if role == 'ROLE_ADMIN' %}
+                <span class="role-badge admin">Admin</span>
+              {% elseif role == 'ROLE_staff' %}
+                <span class="role-badge staff">Staff</span>
+              {% elseif role == 'ROLE_USER' %}
+                <span class="role-badge user">User</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
 
-    <a href="{{ path('app_user_index') }}">back to list</a>
+      <!-- Edit Form -->
+      {{ form_start(form, {'attr': {'class': 'user-form'}}) }}
+          
+        <!-- Username Field -->
+        <div class="form-group">
+          {{ form_label(form.username) }}
+          {{ form_widget(form.username, {'attr': {'class': 'form-input'}}) }}
+          {{ form_errors(form.username) }}
+          <small class="form-text">Enter the new username for this user</small>
+        </div>
 
-    {{ include('user/_delete_form.html.twig') }}
+        <!-- Roles Field - Using Symfony Form Widget -->
+        <div class="form-group">
+          {{ form_label(form.roles) }}
+          <div class="checkbox-group">
+            {{ form_widget(form.roles, {'attr': {'class': 'checkbox-group'}}) }}
+          </div>
+          {{ form_errors(form.roles) }}
+          <small class="form-text">Select roles assigned to this user</small>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          {{ form_label(form.password) }}
+          {{ form_widget(form.password, {'attr': {'class': 'form-input'}}) }}
+          {{ form_errors(form.password) }}
+          <small class="form-text">Leave blank to keep current password</small>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="submit" class="btn action-btn">
+            <span>💾</span> Update User
+          </button>
+        </div>
+
+      {{ form_end(form) }}
+      
+      <!-- Back Link -->
+      <a href="{{ path('app_user_index') }}" class="back-link">
+        <span>←</span> Back to User List
+      </a>
+      
+      <!-- Delete Form -->
+      {% if is_granted('ROLE_ADMIN') %}
+        <div class="delete-form">
+          {{ include('user/_delete_form.html.twig') }}
+        </div>
+      {% endif %}
+    </div>
+  </main>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Auto-hide alerts after 5 seconds
+    setTimeout(() => {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => {
+        alert.style.opacity = '0';
+        alert.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+          alert.style.display = 'none';
+        }, 500);
+      });
+    }, 5000);
+    
+    // Add data-role attributes to checkboxes for styling
+    const checkboxItems = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
+    checkboxItems.forEach(checkbox => {
+      const label = document.querySelector(`label[for="${checkbox.id}"]`);
+      if (label) {
+        const roleText = label.textContent.trim().toLowerCase();
+        const wrapper = document.createElement('div');
+        wrapper.className = 'checkbox-item';
+        wrapper.setAttribute('data-role', roleText);
+        
+        // Wrap the checkbox and label
+        checkbox.parentNode.insertBefore(wrapper, checkbox);
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(label);
+      }
+    });
+  });
+</script>
 {% endblock %}

@@ -1,39 +1,87 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}User index{% endblock %}
+{% block title %}User Management{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/user/crud.css') }}">
+{% endblock %}
 
 {% block body %}
-    <h1>User index</h1>
+<div class="user-crud">
+    {% include 'dashboard/sidebar.html.twig' %}
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Username</th>
-                <th>Roles</th>
-                <th>Password</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                <td>{{ user.password }}</td>
-                <td>
-                    <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <main class="main-content">
+        <div class="sem-container">
+            <div class="sem-header">
+                <h1>User Management</h1>
+            </div>
+            
+            <div class="sem-content">
+                <div class="sem-table-container">
+                    <table class="sem-table" id="userTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Roles</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>#{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>
+                                    {% for role in user.roles %}
+                                        {% if role == 'ROLE_ADMIN' %}
+                                            <span class="sem-role-badge sem-role-badge-admin">Admin</span>
+                                        {% elseif role == 'ROLE_staff' %}
+                                            <span class="sem-role-badge sem-role-badge-staff">Staff</span>
+                                        {% elseif role == 'ROLE_USER' %}
+                                            <span class="sem-role-badge sem-role-badge-user">User</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <div class="sem-action-buttons" style="margin: 0; padding: 0; border: none; justify-content: flex-start;">
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}" class="sem-btn sem-btn-primary">View</a>
+                                        <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="sem-btn sem-btn-secondary">Edit</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="sem-empty-row">
+                                    No users found. <a href="{{ path('app_user_new') }}">Create the first user</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-    <a href="{{ path('app_user_new') }}">Create new</a>
+                <div class="sem-new-btn-container">
+                    <a href="{{ path('app_user_new') }}" class="sem-btn sem-create-btn">Add New User</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tableRows = document.querySelectorAll('.sem-table tbody tr');
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.backgroundColor = 'rgba(204, 84, 4, 0.05)';
+            });
+            
+            row.addEventListener('mouseleave', () => {
+                row.style.backgroundColor = '';
+            });
+        });
+    });
+</script>
 {% endblock %}

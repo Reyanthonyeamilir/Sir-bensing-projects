@@ -1,4 +1,42 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_start(form, {'attr': {'class': 'sem-form'}}) }}
+    <div class="sem-form-group">
+        {{ form_label(form.username) }}
+        {{ form_widget(form.username, {'attr': {'class': 'sem-form-input'}}) }}
+        {{ form_errors(form.username) }}
+        <small class="sem-form-text">Enter username for this user</small>
+    </div>
+
+    <div class="sem-form-group">
+        {{ form_label(form.roles) }}
+        <div class="sem-checkbox-group">
+            {% for choice in form.roles.vars.choices %}
+                <div class="sem-checkbox-item" data-role="{{ choice.label|lower }}">
+                    <input type="checkbox" 
+                           id="{{ form.roles.vars.id }}_{{ loop.index0 }}"
+                           name="{{ form.roles.vars.full_name }}[]"
+                           value="{{ choice.value }}"
+                           class="sem-checkbox-item-input"
+                           {% if choice.value in form.roles.vars.value %}checked{% endif %}>
+                    <label for="{{ form.roles.vars.id }}_{{ loop.index0 }}" class="sem-checkbox-item-label">
+                        {{ choice.label }}
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+        {{ form_errors(form.roles) }}
+        <small class="sem-form-text">Select roles assigned to this user</small>
+    </div>
+
+    <div class="sem-form-group">
+        {{ form_label(form.password) }}
+        {{ form_widget(form.password, {'attr': {'class': 'sem-form-input'}}) }}
+        {{ form_errors(form.password) }}
+        <small class="sem-form-text">Enter password for this user</small>
+    </div>
+
+    <div class="sem-form-actions">
+        <button type="submit" class="sem-btn sem-btn-primary">
+            <span>💾</span> {{ button_label|default('Save') }}
+        </button>
+    </div>
 {{ form_end(form) }}
