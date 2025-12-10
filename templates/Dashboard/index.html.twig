@@ -1,6 +1,6 @@
 {# templates/Dashboard/index.html.twig #}
 {% extends 'base.html.twig' %}
-{% block title %}Pet Products{% endblock %}
+{% block title %}Pet Products Dashboard{% endblock %}
 
 {% block body %}
 
@@ -170,6 +170,46 @@ body.sidebar-collapsed .main-content {
     font-weight: bold;
 }
 
+/* Quick Links */
+.quick-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.quick-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #fff8f0;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #5a3922;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.quick-link:hover {
+    background: #ff7b35;
+    color: white;
+    transform: translateY(-3px);
+    border-color: #ff7b35;
+}
+
+.quick-link-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.quick-link-text {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
 /* Responsive scaling */
 @media (max-width: 1024px) {
     .dashboard-title {
@@ -184,6 +224,9 @@ body.sidebar-collapsed .main-content {
     .stat-value {
         font-size: 2.2rem;
     }
+    .quick-links {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 </style>
 
@@ -194,10 +237,12 @@ body.sidebar-collapsed .main-content {
                 <h1 class="dashboard-title">Dashboard Overview</h1>
                 <p class="dashboard-subtitle">
                     Welcome back, {{ app.user.username }}!
-                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                    {% if is_granted('ROLE_ADMIN') %}
                         You're logged in as Administrator
-                    {% else %}
+                    {% elseif is_granted('ROLE_staff') %}
                         You're logged in as Staff Member
+                    {% else %}
+                        Welcome to your dashboard
                     {% endif %}
                 </p>
             </div>
@@ -207,31 +252,39 @@ body.sidebar-collapsed .main-content {
                 <div class="stat-card">
                     <div class="stat-title">Total Products</div>
                     <div class="stat-value">{{ totalProducts }}</div>
+                    <div class="stat-subvalue">Active products in store</div>
                 </div>
                 {% endif %}
 
-                {% if 'ROLE_ADMIN' in app.user.roles and totalUsers is defined %}
+                {% if is_granted('ROLE_ADMIN') and totalUsers is defined %}
                 <div class="stat-card">
                     <div class="stat-title">Total Users</div>
                     <div class="stat-value">{{ totalUsers }}</div>
+                    <div class="stat-subvalue">Registered users</div>
                 </div>
                 {% endif %}
 
-                {% if 'ROLE_ADMIN' in app.user.roles and totalPrice is defined %}
+                {% if totalCategories is defined %}
                 <div class="stat-card">
-                    <div class="stat-title">Total Value</div>
-                    <div class="stat-value">${{ totalPrice|number_format(2) }}</div>
-                    {% if priceGrowth is defined %}
-                    <div class="stat-subvalue">Price Growth: {{ priceGrowth }}%</div>
-                    {% endif %}
+                    <div class="stat-title">Categories</div>
+                    <div class="stat-value">{{ totalCategories }}</div>
+                    <div class="stat-subvalue">Product categories</div>
                 </div>
                 {% endif %}
 
-                {% if bookingsCount is defined %}
+                {% if totalStock is defined %}
                 <div class="stat-card">
-                    <div class="stat-title">Bookings</div>
-                    <div class="stat-value">{{ bookingsCount }}</div>
-                    <div class="stat-subvalue">Today's bookings</div>
+                    <div class="stat-title">Total Stock</div>
+                    <div class="stat-value">{{ totalStock }}</div>
+                    <div class="stat-subvalue">Items available</div>
+                </div>
+                {% endif %}
+
+                {% if totalValue is defined and is_granted('ROLE_ADMIN') %}
+                <div class="stat-card">
+                    <div class="stat-title">Inventory Value</div>
+                    <div class="stat-value">${{ totalValue|number_format(2) }}</div>
+                    <div class="stat-subvalue">Total product value</div>
                 </div>
                 {% endif %}
             </div>
@@ -240,34 +293,86 @@ body.sidebar-collapsed .main-content {
                 <div class="content-card">
                     <h2 class="card-title">Quick Actions</h2>
                     <div class="card-text">
-                        {% if 'ROLE_ADMIN' in app.user.roles %}
+                        {% if is_granted('ROLE_ADMIN') %}
                         <ul>
-                            <li>View user statistics and reports</li>
-                            <li>Configure system settings</li>
-                            <li>Manage staff accounts</li>
+                            <li>Manage all users and permissions</li>
+                            <li>View system reports and analytics</li>
+                            <li>Configure application settings</li>
+                            <li>Monitor activity logs</li>
                         </ul>
-                        {% elseif 'ROLE_STAFF' in app.user.roles %}
+                        {% elseif is_granted('ROLE_staff') %}
                         <ul>
-                            <li>View and manage products</li>
-                            <li>Process customer bookings</li>
-                            <li>View daily reports</li>
+                            <li>Add new pet products</li>
+                            <li>Update product stock and details</li>
+                            <li>Manage product categories</li>
+                            <li>View product inventory</li>
                         </ul>
                         {% else %}
-                        Browse products and manage your orders.
+                        <ul>
+                            <li>Browse available products</li>
+                            <li>View product details</li>
+                            <li>Manage your account</li>
+                        </ul>
                         {% endif %}
+                    </div>
+                    
+                    <div class="quick-links">
+                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
+                            <a href="{{ path('app_petproducts_new') }}" class="quick-link">
+                                <span class="quick-link-icon">➕</span>
+                                <span class="quick-link-text">Add Product</span>
+                            </a>
+                            
+                            <a href="{{ path('app_petproducts_index') }}" class="quick-link">
+                                <span class="quick-link-icon">📦</span>
+                                <span class="quick-link-text">View Products</span>
+                            </a>
+                        {% endif %}
+                        
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_user_index') }}" class="quick-link">
+                                <span class="quick-link-icon">👥</span>
+                                <span class="quick-link-text">Manage Users</span>
+                            </a>
+                            
+                            <a href="{{ path('app_activity_log') }}" class="quick-link">
+                                <span class="quick-link-icon">📜</span>
+                                <span class="quick-link-text">Activity Log</span>
+                            </a>
+                        {% endif %}
+                        
+                        <a href="{{ path('app_user_profile') }}" class="quick-link">
+                            <span class="quick-link-icon">👤</span>
+                            <span class="quick-link-text">My Profile</span>
+                        </a>
                     </div>
                 </div>
 
                 <div class="content-card">
                     <h2 class="card-title">Recent Activities</h2>
                     <div class="card-text">
-                        {% if 'ROLE_ADMIN' in app.user.roles %}
-                        <strong>Admin Activity:</strong> Monitor system performance.
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <strong>Administrator Panel:</strong> You have full access to manage the entire system including users, products, and activity logs.
+                        {% elseif is_granted('ROLE_staff') %}
+                        <strong>Staff Panel:</strong> You can manage products and view inventory. You have limited access compared to administrators.
                         {% else %}
-                        <strong>User Activity:</strong> View your order and booking history.
+                        <strong>User Panel:</strong> Browse and view products. Contact staff for assistance.
                         {% endif %}
                     </div>
-                    <div class="card-text">Last updated: {{ "now"|date("Y-m-d H:i:s") }}</div>
+                    
+                    <div class="card-text">
+                        <strong>System Status:</strong>
+                        <ul>
+                            <li>Dashboard loaded successfully</li>
+                            <li>User session active</li>
+                            <li>Database connection established</li>
+                            <li>All systems operational</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-text">
+                        <strong>Last updated:</strong> {{ "now"|date("F j, Y g:i A") }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -276,9 +381,26 @@ body.sidebar-collapsed .main-content {
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Add hover effects to stat cards
     document.querySelectorAll('.stat-card').forEach(card => {
         card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-8px)');
         card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0)');
+    });
+    
+    // Add hover effects to content cards
+    document.querySelectorAll('.content-card').forEach(card => {
+        card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-5px)');
+        card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0)');
+    });
+    
+    // Add click effects to quick links
+    document.querySelectorAll('.quick-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
     });
 });
 </script>

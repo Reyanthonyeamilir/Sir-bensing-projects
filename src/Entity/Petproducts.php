@@ -44,9 +44,13 @@ class Petproducts
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTime $createdAt = null;
 
+    #[ORM\Column(length: 180, nullable: true)]
+    private ?string $createdBy = null;
+
     public function __construct()
     {
-        // Constructor is now empty since we removed the ArrayCollection
+        $this->createdAt = new \DateTime();
+        $this->isActive = true;
     }
 
     public function getId(): ?int
@@ -161,6 +165,17 @@ class Petproducts
     public function setCreatedAt(\DateTime $createdAt): static
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getCreatedBy(): ?string
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?string $createdBy): static
+    {
+        $this->createdBy = $createdBy;
         return $this;
     }
 }

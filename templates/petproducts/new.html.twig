@@ -59,9 +59,19 @@
     gap: 1rem;
   }
 
-  form input,
-  form select,
-  form textarea {
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #5a3922;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .form-control {
     width: 100%;
     padding: 0.7rem 1rem;
     border: 1px solid #ccc;
@@ -71,12 +81,33 @@
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
-  form input:focus,
-  form select:focus,
-  form textarea:focus {
+  .form-control:focus {
     outline: none;
     border-color: #cc5404;
     box-shadow: 0 0 5px rgba(204, 84, 4, 0.3);
+  }
+
+  .form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+  }
+
+  .invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc3545;
+  }
+
+  .form-text {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #6c757d;
   }
 
   .image-preview-wrapper {
@@ -133,6 +164,52 @@
     color: #cc5404;
   }
 
+  /* Flash messages */
+  .alert {
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 1px solid transparent;
+  }
+
+  .alert-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+  }
+
+  .alert-error, .alert-danger {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+  }
+
+  /* Form error summary */
+  .error-summary {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    color: #721c24;
+  }
+
+  .error-summary h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: #721c24;
+  }
+
+  .error-summary ul {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.5rem;
+  }
+
+  .error-summary li {
+    margin-bottom: 0.25rem;
+  }
+
   @media (max-width: 768px) {
     .dashboard-container {
       flex-direction: column;
@@ -159,17 +236,142 @@
     <div class="create-card">
       <h1>🐾 Create New Pet Product</h1>
 
-      <div class="form-scroll">
-        {{ form_start(form, { 'attr': { 'id': 'petproducts_form' } }) }}
-          {{ form_widget(form) }}
+      <!-- Flash Messages -->
+      {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+          ✅ {{ message }}
+        </div>
+      {% endfor %}
+      
+      {% for message in app.flashes('error') %}
+        <div class="alert alert-error">
+          ❌ {{ message }}
+        </div>
+      {% endfor %}
 
-          <div class="image-preview-wrapper">
-            <img id="imagePreview" class="image-preview" alt="Image Preview">
+      <!-- Form Error Summary -->
+      {% if not form.vars.valid %}
+        <div class="error-summary">
+          <h3>❌ Please fix the following errors:</h3>
+          {{ form_errors(form) }}
+        </div>
+      {% endif %}
+
+      <div class="form-scroll">
+        {{ form_start(form, { 'attr': { 'id': 'petproducts_form', 'novalidate': 'novalidate' } }) }}
+          
+          <!-- Product Name -->
+          <div class="form-group">
+            {{ form_label(form.product_name) }}
+            {{ form_widget(form.product_name, {'attr': {'class': 'form-control' ~ (not form.product_name.vars.valid ? ' is-invalid' : ''), 'required': 'required'}}) }}
+            {% if not form.product_name.vars.valid %}
+              <div class="invalid-feedback">
+                {{ form_errors(form.product_name) }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Category -->
+          <div class="form-group">
+            {{ form_label(form.category) }}
+            {{ form_widget(form.category, {'attr': {'class': 'form-control' ~ (not form.category.vars.valid ? ' is-invalid' : ''), 'required': 'required'}}) }}
+            {% if not form.category.vars.valid %}
+              <div class="invalid-feedback">
+                {{ form_errors(form.category) }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Sub Category -->
+          <div class="form-group">
+            {{ form_label(form.sub_category) }}
+            {{ form_widget(form.sub_category, {'attr': {'class': 'form-control' ~ (not form.sub_category.vars.valid ? ' is-invalid' : '')}}) }}
+            {% if not form.sub_category.vars.valid %}
+              <div class="invalid-feedback">
+                {{ form_errors(form.sub_category) }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (not form.description.vars.valid ? ' is-invalid' : ''), 'rows': 4}}) }}
+            {% if not form.description.vars.valid %}
+              <div class="invalid-feedback">
+                {{ form_errors(form.description) }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Price -->
+          <div class="form-group">
+            {{ form_label(form.price) }}
+            {{ form_widget(form.price, {'attr': {'class': 'form-control' ~ (not form.price.vars.valid ? ' is-invalid' : ''), 'step': '0.01', 'required': 'required'}}) }}
+            {% if not form.price.vars.valid %}
+              <div class="invalid-feedback">
+                {{ form_errors(form.price) }}
+              </div>
+            {% endif %}
+            <small class="form-text">Enter price in dollars (e.g., 19.99)</small>
+          </div>
+
+          <!-- Stock -->
+          <div class="form-group">
+            {{ form_label(form.stock) }}
+            {{ form_widget(form.stock, {'attr': {'class': 'form-control' ~ (not form.stock.vars.valid ? ' is-invalid' : ''), 'min': '0', 'required': 'required'}}) }}
+            {% if not form.stock.vars.valid %}
+              <div class="invalid-feedback">
+                {{ form_errors(form.stock) }}
+              </div>
+            {% endif %}
+            <small class="form-text">Enter stock quantity (must be 0 or greater)</small>
+          </div>
+
+          <!-- Brand -->
+          <div class="form-group">
+            {{ form_label(form.brand) }}
+            {{ form_widget(form.brand, {'attr': {'class': 'form-control' ~ (not form.brand.vars.valid ? ' is-invalid' : '')}}) }}
+            {% if not form.brand.vars.valid %}
+              <div class="invalid-feedback">
+                {{ form_errors(form.brand) }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Image File -->
+          <div class="form-group">
+            {{ form_label(form.imageFile) }}
+            {{ form_widget(form.imageFile, {'attr': {'class': 'form-control' ~ (not form.imageFile.vars.valid ? ' is-invalid' : '')}}) }}
+            {% if not form.imageFile.vars.valid %}
+              <div class="invalid-feedback">
+                {{ form_errors(form.imageFile) }}
+              </div>
+            {% endif %}
+            <small class="form-text">Optional: Upload product image (JPG, PNG, GIF, max 5MB)</small>
+            
+            <div class="image-preview-wrapper">
+              <img id="imagePreview" class="image-preview" alt="Image Preview">
+            </div>
+          </div>
+
+          <!-- Is Active -->
+          <div class="form-group">
+            <div class="form-check">
+              {{ form_widget(form.isActive, {'attr': {'class': 'form-check-input' ~ (not form.isActive.vars.valid ? ' is-invalid' : '')}}) }}
+              {{ form_label(form.isActive, 'Active Product', {'label_attr': {'class': 'form-check-label'}}) }}
+            </div>
+            {% if not form.isActive.vars.valid %}
+              <div class="invalid-feedback">
+                {{ form_errors(form.isActive) }}
+              </div>
+            {% endif %}
+            <small class="form-text">Uncheck to hide this product from customers</small>
           </div>
 
           <div class="btn-group">
             <a href="{{ path('app_petproducts_index') }}" class="btn-back">← Back to List</a>
-            <button type="submit" class="btn-submit">Create</button>
+            <button type="submit" class="btn-submit">Create Product</button>
           </div>
         {{ form_end(form) }}
       </div>
@@ -197,6 +399,102 @@
           previewImg.style.display = 'none';
         }
       });
+    }
+
+    // Initialize form validation
+    const form = document.getElementById('petproducts_form');
+    if (form) {
+      const inputs = form.querySelectorAll('.form-control, .form-check-input');
+      
+      // Check each field for errors on page load
+      inputs.forEach(input => {
+        // Add required attribute to required fields
+        if (input.hasAttribute('required') && !input.value.trim()) {
+          input.classList.add('is-invalid');
+        }
+      });
+      
+      // Real-time validation
+      inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+          validateField(this);
+        });
+        
+        input.addEventListener('input', function() {
+          if (this.checkValidity()) {
+            this.classList.remove('is-invalid');
+          }
+        });
+      });
+      
+      // Form submission validation
+      form.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        inputs.forEach(input => {
+          if (!validateField(input)) {
+            isValid = false;
+          }
+        });
+        
+        if (!isValid) {
+          event.preventDefault();
+          event.stopPropagation();
+          
+          // Show error summary
+          showErrorSummary();
+          
+          // Scroll to first error
+          const firstError = form.querySelector('.is-invalid');
+          if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+          }
+        }
+      });
+      
+      // Validation function
+      function validateField(field) {
+        if (!field.checkValidity()) {
+          field.classList.add('is-invalid');
+          return false;
+        } else {
+          field.classList.remove('is-invalid');
+          return true;
+        }
+      }
+      
+      // Error summary function
+      function showErrorSummary() {
+        // Remove existing error summary if any
+        const existingSummary = document.querySelector('.error-summary:not(.error-summary-form)');
+        if (existingSummary) {
+          existingSummary.remove();
+        }
+        
+        // Create error summary
+        const errorFields = form.querySelectorAll('.is-invalid');
+        if (errorFields.length > 0) {
+          const errorSummary = document.createElement('div');
+          errorSummary.className = 'error-summary error-summary-form';
+          errorSummary.innerHTML = `
+            <h3>❌ Please fix the following errors:</h3>
+            <ul>
+              ${Array.from(errorFields).map(field => {
+                const fieldName = field.name || field.id;
+                const fieldLabel = document.querySelector(`label[for="${field.id}"]`)?.textContent || fieldName;
+                return `<li>${fieldLabel}: This field is required or invalid</li>`;
+              }).join('')}
+            </ul>
+          `;
+          
+          // Insert after the title
+          const title = document.querySelector('.create-card h1');
+          if (title) {
+            title.insertAdjacentElement('afterend', errorSummary);
+          }
+        }
+      }
     }
   });
 </script>

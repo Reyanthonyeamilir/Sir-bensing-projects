@@ -32,6 +32,11 @@ final class PetproductsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // ADD THIS LINE: Set the current user as creator
+            if ($this->getUser()) {
+                $petproduct->setCreatedBy($this->getUser()->getUserIdentifier());
+            }
+
             // optional image upload
             if ($form->has('imageFile')) {
                 $imageFile = $form->get('imageFile')->getData();
@@ -75,6 +80,25 @@ final class PetproductsController extends AbstractController
     #[Route('/{id}/edit', name: 'app_petproducts_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Petproducts $petproduct, EntityManagerInterface $em): Response
     {
+        // ADD SECURITY CHECK: Only admin or creator can edit
+        $currentUser = $this->getUser();
+        
+        // Admin can edit all products
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            // Staff can only edit products they created
+            if ($this->isGranted('ROLE_staff')) {
+                if ($petproduct->getCreatedBy() !== $currentUser->getUserIdentifier()) {
+                    $this->addFlash('error', 'You can only edit products you created.');
+                    return $this->redirectToRoute('app_petproducts_index');
+                }
+            }
+            // Regular users cannot edit at all
+            else {
+                $this->addFlash('error', 'You do not have permission to edit products.');
+                return $this->redirectToRoute('app_petproducts_index');
+            }
+        }
+
         $form = $this->createForm(PetproductsType::class, $petproduct);
         $form->handleRequest($request);
 
@@ -117,8 +141,26 @@ final class PetproductsController extends AbstractController
     #[Route('/{id}', name: 'app_petproducts_delete', methods: ['POST'])]
     public function delete(Request $request, Petproducts $petproduct, EntityManagerInterface $em): Response
     {
+        // ADD SECURITY CHECK: Only admin or creator can delete
+        $currentUser = $this->getUser();
+        
+        // Admin can delete all products
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            // Staff can only delete products they created
+            if ($this->isGranted('ROLE_staff')) {
+                if ($petproduct->getCreatedBy() !== $currentUser->getUserIdentifier()) {
+                    $this->addFlash('error', 'You can only delete products you created.');
+                    return $this->redirectToRoute('app_petproducts_index');
+                }
+            }
+            // Regular users cannot delete at all
+            else {
+                $this->addFlash('error', 'You do not have permission to delete products.');
+                return $this->redirectToRoute('app_petproducts_index');
+            }
+        }
+
         if ($this->isCsrfTokenValid('delete'.$petproduct->getId(), $request->getPayload()->getString('_token'))) {
-            // Just remove the product - no inventory records to worry about
             $em->remove($petproduct);
             $em->flush();
             
