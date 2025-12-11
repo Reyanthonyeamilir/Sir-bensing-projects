@@ -100,6 +100,64 @@
             padding-right: 1.5rem !important;
         }
         
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-active {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+        
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        /* Role badges */
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 0.125rem;
+        }
+        
+        .role-admin {
+            background: rgba(234, 179, 8, 0.1);
+            color: #ca8a04;
+            border: 1px solid rgba(234, 179, 8, 0.2);
+        }
+        
+        .role-staff {
+            background: rgba(59, 130, 246, 0.1);
+            color: #2563eb;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .role-user {
+            background: rgba(107, 114, 128, 0.1);
+            color: #4b5563;
+            border: 1px solid rgba(107, 114, 128, 0.2);
+        }
+        
+        /* Date styling */
+        .date-cell {
+            font-size: 0.875rem;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+        
         /* Responsive adjustments for buttons */
         @media (max-width: 768px) {
             .action-buttons {
@@ -178,6 +236,7 @@
                                 <th class="sem-table-th">ID</th>
                                 <th class="sem-table-th">Username</th>
                                 <th class="sem-table-th">Roles</th>
+                                <th class="sem-table-th">Created At</th>
                                 <th class="sem-table-th">Status</th>
                                 <th class="sem-table-th sem-actions-col">Actions</th>
                             </tr>
@@ -190,16 +249,23 @@
                                 <td class="sem-table-td">
                                     {% for role in user.roles %}
                                         {% if role == 'ROLE_ADMIN' %}
-                                            <span class="">Admin</span>
+                                            <span class="role-badge role-admin">Admin</span>
                                         {% elseif role == 'ROLE_staff' %}
-                                            <span class="">Staff</span>
+                                            <span class="role-badge role-staff">Staff</span>
                                         {% elseif role == 'ROLE_USER' %}
-                                            <span class="">User</span>
+                                            <span class="role-badge role-user">User</span>
                                         {% endif %}
                                     {% endfor %}
                                 </td>
+                                <td class="sem-table-td date-cell">
+                                    {% if user.createdAt %}
+                                        {{ user.createdAt|date('Y-m-d H:i:s') }}
+                                    {% else %}
+                                        <span style="color: #9ca3af; font-style: italic;">Not set</span>
+                                    {% endif %}
+                                </td>
                                 <td class="sem-table-td">
-                                    <span class="">Active</span>
+                                    <span class="status-badge status-active">Active</span>
                                 </td>
                                 <td class="sem-table-td sem-actions-td">
                                     <div class="action-buttons">
@@ -210,7 +276,7 @@
                             </tr>
                         {% else %}
                             <tr class="sem-empty-row">
-                                <td colspan="5" class="sem-empty-td">
+                                <td colspan="6" class="sem-empty-td">
                                     No users found. <a href="{{ path('app_user_new') }}" class="sem-link">Create the first user</a>
                                 </td>
                             </tr>
@@ -243,7 +309,7 @@
                 responsive: true,
                 pageLength: 10,
                 lengthMenu: [10, 25, 50, 100],
-                order: [[0, 'desc']],
+                order: [[0, 'desc']], // Default sort by ID descending
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search users...",
@@ -261,18 +327,29 @@
                 },
                 columnDefs: [
                     {
-                        targets: 4, // Actions column
+                        targets: 5, // Actions column (changed from 4 to 5)
                         orderable: false,
                         searchable: false,
-                        className: 'dt-body-right sem-actions-td' // Add right alignment for DataTable
+                        className: 'dt-body-right sem-actions-td'
                     },
                     {
                         targets: 0, // ID column
                         className: 'dt-body-left'
                     },
                     {
-                        targets: [1, 2, 3], // Other columns
+                        targets: [1, 2, 3, 4], // Other columns
                         className: 'dt-body-left'
+                    },
+                    {
+                        targets: 3, // Created At column
+                        type: 'date', // Enable date sorting
+                        render: function(data, type, row) {
+                            if (type === 'sort') {
+                                // Return timestamp for sorting
+                                return new Date(data).getTime();
+                            }
+                            return data;
+                        }
                     }
                 ],
                 initComplete: function() {
@@ -339,6 +416,50 @@
                 buttons.style.justifyContent = 'flex-end';
             });
         }
+        
+        // Add time ago functionality
+        function updateTimeAgo() {
+            document.querySelectorAll('.date-cell').forEach(cell => {
+                const dateText = cell.textContent.trim();
+                if (dateText && dateText !== 'Not set') {
+                    const date = new Date(dateText);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                    
+                    let agoText = '';
+                    if (diffDays > 0) {
+                        agoText = `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+                    } else if (diffHours > 0) {
+                        agoText = `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+                    } else if (diffMinutes > 0) {
+                        agoText = `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`;
+                    } else {
+                        agoText = 'Just now';
+                    }
+                    
+                    // Add tooltip with full date
+                    cell.title = `Created: ${dateText}`;
+                    
+                    // Optional: Add a small "ago" text
+                    const agoSpan = document.createElement('small');
+                    agoSpan.style.display = 'block';
+                    agoSpan.style.fontSize = '0.75rem';
+                    agoSpan.style.color = '#9ca3af';
+                    agoSpan.style.marginTop = '0.125rem';
+                    agoSpan.textContent = agoText;
+                    
+                    // Clear and add new content
+                    cell.innerHTML = dateText;
+                    cell.appendChild(agoSpan);
+                }
+            });
+        }
+        
+        // Run time ago update
+        updateTimeAgo();
     });
     </script>
 {% endblock %}
