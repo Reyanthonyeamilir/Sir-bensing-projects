@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 import './styles/app.css';
-  
+ import '/styles/order-system.css';
 import './styles/crud.css';
 // import './styles/adminstaffsdbar.css';
 // import './styles/dashboard.css';

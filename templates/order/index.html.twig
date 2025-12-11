@@ -1,0 +1,821 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders Management{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+  /* COMPLETELY OFFLINE - NO NETWORK DEPENDENCIES */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body, html { 
+    background: transparent !important; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  }
+  
+  .dashboard-container { 
+    display: flex; 
+    min-height: 100vh; 
+    background: transparent; 
+  }
+  
+  .main-content { 
+    flex: 1; 
+    padding: 1.5rem; 
+    background: transparent; 
+    margin-left: 280px; 
+    max-width: calc(100% - 280px);
+  }
+  
+  /* Main white container */
+  .main-white-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  /* Header Container with Brown Background INSIDE white container */
+  .header-container {
+    background: #8B4513; /* Brown color */
+    color: white;
+    padding: 1.2rem 1.5rem;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+  }
+  
+  .header-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  /* Content area inside white container */
+  .content-area {
+    padding: 1.5rem;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    padding: 0.8rem;
+    margin-top: 0;
+  }
+  
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .orders-table th, .orders-table td {
+    padding: 0.6rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #333;
+  }
+  
+  .orders-table th {
+    background: #f8f8f8;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #555;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  
+  .orders-table th.sortable:hover {
+    background: #f0f0f0;
+  }
+  
+  .orders-table th.sorting::after {
+    content: "↕";
+    margin-left: 5px;
+    font-size: 0.7rem;
+    opacity: 0.5;
+  }
+  
+  .orders-table th.sorting-asc::after {
+    content: "↑";
+    color: #8B4513;
+    opacity: 1;
+  }
+  
+  .orders-table th.sorting-desc::after {
+    content: "↓";
+    color: #8B4513;
+    opacity: 1;
+  }
+  
+  .orders-table tr:hover { 
+    background: rgba(139, 69, 19, 0.05); 
+    transition: background 0.2s ease; 
+  }
+  
+  /* DataTable Controls */
+  .datatable-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .datatable-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .datatable-search input {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-width: 250px;
+  }
+  
+  .datatable-search input:focus {
+    outline: none;
+    border-color: #8B4513;
+    box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.1);
+  }
+  
+  .datatable-length {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .datatable-length select {
+    padding: 0.4rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+  }
+  
+  .datatable-info {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .datatable-pagination {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+    margin-top: 1rem;
+    justify-content: center;
+  }
+  
+  .pagination-btn {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #555;
+    transition: all 0.2s ease;
+  }
+  
+  .pagination-btn:hover:not(:disabled) {
+    background: #8B4513;
+    color: white;
+    border-color: #8B4513;
+  }
+  
+  .pagination-btn.active {
+    background: #8B4513;
+    color: white;
+    border-color: #8B4513;
+  }
+  
+  .pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .btn {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.8rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+  
+  .btn:hover:not(.disabled) { 
+    transform: translateY(-1px); 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .view-btn { 
+    background-color: #8B4513; /* Brown */
+  }
+  
+  .view-btn:hover:not(.disabled) { 
+    background-color: #703a0f; 
+  }
+  
+  .edit-btn { 
+    background-color: #5a3922; 
+  }
+  
+  .edit-btn:hover:not(.disabled) { 
+    background-color: #4a2e1b; 
+  }
+  
+  .btn.disabled {
+    background-color: #6c757d;
+    color: #adb5bd;
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+  
+  .actions-cell { 
+    display: flex; 
+    gap: 5px; 
+    justify-content: center; 
+  }
+  
+  .create-btn {
+    background-color: #8B4513;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: white;
+  }
+  
+  .create-btn:hover { 
+    background-color: #703a0f; 
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  .create-btn::before {
+    content: "+";
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  
+  /* Status badges */
+  .status-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .status-pending {
+    background-color: #ffc107;
+    color: #856404;
+  }
+  
+  .status-processing {
+    background-color: #17a2b8;
+    color: white;
+  }
+  
+  .status-completed {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .status-cancelled {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .amount-cell {
+    font-weight: 600;
+    color: #8B4513;
+  }
+  
+  .customer-cell {
+    font-weight: 500;
+  }
+  
+  .product-cell {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 0;
+      max-width: 100%;
+      padding: 1rem;
+    }
+    
+    .main-white-container {
+      border-radius: 8px;
+    }
+    
+    .header-container {
+      padding: 1rem;
+      flex-direction: column;
+      gap: 0.8rem;
+      text-align: center;
+    }
+    
+    .header-title {
+      font-size: 1.5rem;
+    }
+    
+    .datatable-controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .datatable-search input {
+      min-width: 100%;
+    }
+    
+    .orders-table th, .orders-table td { 
+      font-size: 0.75rem; 
+      padding: 0.5rem;
+    }
+    
+    .btn {
+      padding: 0.3rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .status-badge {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+    }
+    
+    .create-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+    
+    .actions-cell {
+      flex-direction: column;
+      gap: 3px;
+    }
+    
+    .btn {
+      width: 100%;
+      margin-bottom: 0.25rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .content-area {
+      padding: 1rem;
+    }
+    
+    .table-container {
+      padding: 0.5rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="dashboard-container">
+    {% include 'dashboard/sidebar.html.twig' %}
+    
+    <div class="main-content">
+        <!-- White container wrapping everything -->
+        <div class="main-white-container">
+            <!-- Brown header inside white container -->
+            <div class="header-container">
+                <h1 class="header-title">Orders Management</h1>
+                <div class="header-actions">
+                    <a href="{{ path('app_order_new') }}" class="create-btn">
+                        Create New Order
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Content area inside white container -->
+            <div class="content-area">
+                <!-- DataTable Controls -->
+                <div class="datatable-controls">
+                    <div class="datatable-search">
+                        <label for="datatable-search">Search:</label>
+                        <input type="text" id="datatable-search" placeholder="Search orders...">
+                    </div>
+                    
+                    <div class="datatable-length">
+                        <label for="datatable-length">Show:</label>
+                        <select id="datatable-length">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="-1">All</option>
+                        </select>
+                        <span>entries</span>
+                    </div>
+                    
+                    <div class="datatable-info" id="datatable-info">
+                        Showing 0 to 0 of 0 entries
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="orders-table" id="orders-datatable">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="id">ID</th>
+                                <th class="sortable" data-sort="customer">Customer</th>
+                                <th class="sortable" data-sort="product">Product</th>
+                                <th class="sortable" data-sort="quantity">Qty</th>
+                                <th class="sortable" data-sort="amount">Amount</th>
+                                <th class="sortable" data-sort="status">Status</th>
+                                <th class="sortable" data-sort="created">Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td data-sort="id">#{{ order.id }}</td>
+                                <td data-sort="customer" class="customer-cell">{{ order.customer.username }}</td>
+                                <td data-sort="product" class="product-cell">{{ order.product.productName }}</td>
+                                <td data-sort="quantity">{{ order.quantity }}</td>
+                                <td data-sort="amount" class="amount-cell">₱{{ order.amount|number_format(2) }}</td>
+                                <td data-sort="status">
+                                    {% if order.status == 'pending' %}
+                                        <span class="status-badge status-pending">{{ order.status }}</span>
+                                    {% elseif order.status == 'processing' %}
+                                        <span class="status-badge status-processing">{{ order.status }}</span>
+                                    {% elseif order.status == 'completed' %}
+                                        <span class="status-badge status-completed">{{ order.status }}</span>
+                                    {% elseif order.status == 'cancelled' %}
+                                        <span class="status-badge status-cancelled">{{ order.status }}</span>
+                                    {% else %}
+                                        <span class="status-badge">{{ order.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td data-sort="created">{{ order.createdAt|date('Y-m-d H:i') }}</td>
+                                <td class="actions-cell">
+                                    <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn view-btn">View</a>
+                                    <a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn edit-btn">Edit</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center py-4" style="text-align: center; padding: 2rem; color: #666;">
+                                    No orders found. Create your first order!
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="datatable-pagination" id="datatable-pagination">
+                    <button class="pagination-btn" id="first-page" disabled>First</button>
+                    <button class="pagination-btn" id="prev-page" disabled>Previous</button>
+                    <span id="page-numbers"></span>
+                    <button class="pagination-btn" id="next-page" disabled>Next</button>
+                    <button class="pagination-btn" id="last-page" disabled>Last</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Simple DataTable implementation (no CDN)
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let currentData = [];
+    let filteredData = [];
+    let sortColumn = 'created'; // Default sort by created date
+    let sortDirection = 'desc'; // Default descending
+    
+    // Initialize data from table
+    const table = document.getElementById('orders-datatable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    // Store data
+    rows.forEach((row, index) => {
+        const cells = row.querySelectorAll('td');
+        const statusBadge = cells[5].querySelector('.status-badge');
+        const statusText = statusBadge ? statusBadge.textContent.toLowerCase() : '';
+        
+        currentData.push({
+            element: row,
+            data: {
+                id: parseInt(cells[0].textContent.replace('#', '')) || 0,
+                customer: cells[1].textContent.toLowerCase(),
+                product: cells[2].textContent.toLowerCase(),
+                quantity: parseInt(cells[3].textContent) || 0,
+                amount: parseFloat(cells[4].textContent.replace('₱', '').replace(',', '')) || 0,
+                status: statusText,
+                created: cells[6].textContent
+            }
+        });
+    });
+    
+    filteredData = [...currentData];
+    
+    // Apply default sort
+    sortData(sortColumn, sortDirection);
+    
+    // Sort functionality
+    const sortableHeaders = table.querySelectorAll('th.sortable');
+    sortableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const column = header.dataset.sort;
+            
+            // Update sorting UI
+            sortableHeaders.forEach(h => {
+                h.classList.remove('sorting-asc', 'sorting-desc');
+                h.classList.add('sorting');
+            });
+            
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            
+            header.classList.remove('sorting');
+            header.classList.add(`sorting-${sortDirection}`);
+            
+            // Sort data
+            sortData(column, sortDirection);
+            renderTable();
+        });
+    });
+    
+    // Set initial sort indicator
+    const createdHeader = table.querySelector('th[data-sort="created"]');
+    if (createdHeader) {
+        createdHeader.classList.remove('sorting');
+        createdHeader.classList.add('sorting-desc');
+    }
+    
+    function sortData(column, direction) {
+        filteredData.sort((a, b) => {
+            let aValue = a.data[column];
+            let bValue = b.data[column];
+            
+            // Handle different data types
+            if (column === 'created') {
+                // Parse date for proper sorting
+                aValue = new Date(aValue.replace(',', ''));
+                bValue = new Date(bValue.replace(',', ''));
+                return direction === 'asc' 
+                    ? aValue - bValue
+                    : bValue - aValue;
+            } else if (typeof aValue === 'string') {
+                return direction === 'asc' 
+                    ? aValue.localeCompare(bValue)
+                    : bValue.localeCompare(aValue);
+            } else {
+                return direction === 'asc'
+                    ? aValue - bValue
+                    : bValue - aValue;
+            }
+        });
+    }
+    
+    // Search functionality
+    const searchInput = document.getElementById('datatable-search');
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        if (searchTerm.trim() === '') {
+            filteredData = [...currentData];
+        } else {
+            filteredData = currentData.filter(item => {
+                return Object.values(item.data).some(value => 
+                    String(value).toLowerCase().includes(searchTerm)
+                );
+            });
+        }
+        
+        currentPage = 1;
+        sortData(sortColumn, sortDirection); // Re-sort filtered data
+        renderTable();
+    });
+    
+    // Items per page
+    const lengthSelect = document.getElementById('datatable-length');
+    lengthSelect.addEventListener('change', (e) => {
+        itemsPerPage = e.target.value === '-1' ? filteredData.length : parseInt(e.target.value);
+        currentPage = 1;
+        renderTable();
+    });
+    
+    // Pagination functionality
+    function renderTable() {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageData = filteredData.slice(startIndex, endIndex);
+        
+        // Clear current rows
+        while (tbody.firstChild) {
+            tbody.removeChild(tbody.firstChild);
+        }
+        
+        // Add paginated rows
+        pageData.forEach(item => {
+            tbody.appendChild(item.element);
+        });
+        
+        // Update info
+        const total = filteredData.length;
+        const start = total === 0 ? 0 : startIndex + 1;
+        const end = Math.min(endIndex, total);
+        document.getElementById('datatable-info').textContent = 
+            `Showing ${start} to ${end} of ${total} orders`;
+        
+        // Update pagination
+        updatePagination(total);
+    }
+    
+    function updatePagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const pageNumbers = document.getElementById('page-numbers');
+        const firstBtn = document.getElementById('first-page');
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        const lastBtn = document.getElementById('last-page');
+        
+        // Clear page numbers
+        pageNumbers.innerHTML = '';
+        
+        // Generate page numbers (show limited pages)
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
+        
+        // Adjust if at the beginning
+        if (currentPage <= 3) {
+            endPage = Math.min(5, totalPages);
+        }
+        
+        // Adjust if at the end
+        if (currentPage >= totalPages - 2) {
+            startPage = Math.max(1, totalPages - 4);
+        }
+        
+        // Add first page button if needed
+        if (startPage > 1) {
+            const firstBtn = document.createElement('button');
+            firstBtn.className = 'pagination-btn';
+            firstBtn.textContent = '1';
+            firstBtn.addEventListener('click', () => {
+                currentPage = 1;
+                renderTable();
+            });
+            pageNumbers.appendChild(firstBtn);
+            
+            if (startPage > 2) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                ellipsis.style.padding = '0.4rem 0.8rem';
+                pageNumbers.appendChild(ellipsis);
+            }
+        }
+        
+        // Add page numbers
+        for (let i = startPage; i <= endPage; i++) {
+            const btn = document.createElement('button');
+            btn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+            btn.textContent = i;
+            btn.addEventListener('click', () => {
+                currentPage = i;
+                renderTable();
+            });
+            pageNumbers.appendChild(btn);
+        }
+        
+        // Add last page button if needed
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                ellipsis.style.padding = '0.4rem 0.8rem';
+                pageNumbers.appendChild(ellipsis);
+            }
+            
+            const lastBtn = document.createElement('button');
+            lastBtn.className = 'pagination-btn';
+            lastBtn.textContent = totalPages;
+            lastBtn.addEventListener('click', () => {
+                currentPage = totalPages;
+                renderTable();
+            });
+            pageNumbers.appendChild(lastBtn);
+        }
+        
+        // Update button states
+        firstBtn.disabled = currentPage === 1 || totalPages === 0;
+        prevBtn.disabled = currentPage === 1 || totalPages === 0;
+        nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+        lastBtn.disabled = currentPage === totalPages || totalPages === 0;
+        
+        // Add event listeners
+        firstBtn.onclick = () => {
+            if (!firstBtn.disabled) {
+                currentPage = 1;
+                renderTable();
+            }
+        };
+        
+        prevBtn.onclick = () => {
+            if (!prevBtn.disabled) {
+                currentPage--;
+                renderTable();
+            }
+        };
+        
+        nextBtn.onclick = () => {
+            if (!nextBtn.disabled) {
+                currentPage++;
+                renderTable();
+            }
+        };
+        
+        lastBtn.onclick = () => {
+            if (!lastBtn.disabled) {
+                currentPage = totalPages;
+                renderTable();
+            }
+        };
+    }
+    
+    // Add row hover effects
+    function attachRowHover() {
+        const tableRows = document.querySelectorAll('.orders-table tbody tr');
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.backgroundColor = 'rgba(139, 69, 19, 0.08)';
+            });
+            
+            row.addEventListener('mouseleave', () => {
+                row.style.backgroundColor = '';
+            });
+        });
+    }
+    
+    // Prevent clicks on disabled buttons
+    document.querySelectorAll('.btn.disabled').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        });
+    });
+    
+    // Initial render
+    renderTable();
+    attachRowHover();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create New Order{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+  /* Same styles as edit.html.twig */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body, html { 
+    background: transparent !important; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  }
+  
+  .dashboard-container { 
+    display: flex; 
+    min-height: 100vh; 
+    background: transparent; 
+  }
+  
+  .main-content { 
+    flex: 1; 
+    padding: 1.5rem; 
+    background: transparent; 
+    margin-left: 280px; 
+    max-width: calc(100% - 280px);
+  }
+  
+  .new-heading { 
+    font-size: 1.6rem; 
+    font-weight: 700; 
+    color: #e9d311c5; 
+    margin-bottom: 1.5rem; 
+    text-align: center; 
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid #ff7b35;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="dashboard-container">
+    {% include 'dashboard/sidebar.html.twig' %}
+    
+    <div class="main-content">
+        <h1 class="new-heading">Create New Order</h1>
+        
+        {{ include('order/_form.html.twig') }}
+    </div>
+</div>
+{% endblock %}

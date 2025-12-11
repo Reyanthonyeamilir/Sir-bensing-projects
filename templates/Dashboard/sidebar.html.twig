@@ -521,6 +521,20 @@
                 </a>
             </li>
             {% endif %}
+
+            <!-- Orders - Only for Staff and Admin -->
+            {% if is_granted('ROLE_staff') or is_granted('ROLE_ADMIN') %}
+            <li>
+                <a href="{{ path('app_order_index') }}"
+                   class="{% if app.request.attributes.get('_route') starts with 'app_order' %}active{% endif %}">
+                    <span class="nav-icon">📋</span>
+                    <span>Orders</span>
+                    {% if totalOrders is defined %}
+                    <span class="status-badge">{{ totalOrders }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            {% endif %}            
             
             <!-- Users Management - ONLY FOR ADMIN -->
             {% if is_granted('ROLE_ADMIN') %}

@@ -14,22 +14,20 @@
 
         .activity-main-content {
             flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
             padding: 2rem;
             margin-left: 250px;
             box-sizing: border-box;
+            background: #f8f9fa;
+            min-height: 100vh;
         }
 
         .activity-log-container {
             width: 100%;
-            max-width: 1200px;
             background: white;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             padding: 2rem;
-            margin-top: 0;
+            margin: 0;
         }
 
         .activity-log-title {
@@ -37,8 +35,8 @@
             font-weight: 700;
             font-size: 1.8rem;
             text-align: center;
-            padding: 1rem;
-            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #eee;
             margin: 0 0 1.5rem 0;
         }
 
@@ -61,6 +59,7 @@
             font-size: 14px;
             background: white;
             min-width: 180px;
+            flex: 1;
             transition: all 0.3s;
         }
 
@@ -78,6 +77,7 @@
             font-weight: 500;
             font-size: 14px;
             transition: all 0.3s;
+            white-space: nowrap;
         }
 
         .activity-btn-primary {
@@ -417,18 +417,12 @@
         }
 
         /* Mobile responsiveness */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .activity-main-content {
-                padding: 1rem;
                 margin-left: 0;
-                justify-content: center;
-            }
-
-            .activity-log-container {
-                max-width: 100%;
                 padding: 1rem;
             }
-
+            
             .activity-filters {
                 flex-direction: column;
                 align-items: stretch;
@@ -442,20 +436,26 @@
             .activity-filter-btn {
                 width: 100%;
             }
+        }
 
+        @media (max-width: 768px) {
+            .activity-log-container {
+                padding: 1rem;
+            }
+            
             .activity-log-table {
                 font-size: 0.875rem;
                 min-width: 600px;
             }
-
+            
             .activity-log-table th,
             .activity-log-table td {
                 padding: 0.75rem 0.5rem;
             }
-
+            
             .activity-log-title {
                 font-size: 1.5rem;
-                padding: 0.75rem;
+                padding: 0.75rem 0;
             }
         }
     </style>
@@ -471,24 +471,24 @@
                 
                 <!-- Filters -->
                 <div class="activity-filters">
-                    <input type="text" id="usernameFilter" class="activity-filter-input" placeholder="Filter by username...">
+                    <input type="text" id="usernameFilter" class="activity-filter-input" placeholder="Filter by username..." value="{{ app.request.query.get('username', '') }}">
                     
                     <select id="roleFilter" class="activity-filter-input">
                         <option value="">All Roles</option>
-                        <option value="ROLE_ADMIN">Admin</option>
-                        <option value="ROLE_USER">User</option>
-                        <option value="ROLE_MODERATOR">Moderator</option>
+                        <option value="ROLE_ADMIN" {% if app.request.query.get('role') == 'ROLE_ADMIN' %}selected{% endif %}>Admin</option>
+                        <option value="ROLE_USER" {% if app.request.query.get('role') == 'ROLE_USER' %}selected{% endif %}>User</option>
+                        <option value="ROLE_MODERATOR" {% if app.request.query.get('role') == 'ROLE_MODERATOR' %}selected{% endif %}>Moderator</option>
                     </select>
                     
                     <select id="actionFilter" class="activity-filter-input">
                         <option value="">All Actions</option>
-                        <option value="CREATE">Create</option>
-                        <option value="UPDATE">Update</option>
-                        <option value="DELETE">Delete</option>
-                        <option value="VIEW">View</option>
+                        <option value="CREATE" {% if app.request.query.get('action') == 'CREATE' %}selected{% endif %}>Create</option>
+                        <option value="UPDATE" {% if app.request.query.get('action') == 'UPDATE' %}selected{% endif %}>Update</option>
+                        <option value="DELETE" {% if app.request.query.get('action') == 'DELETE' %}selected{% endif %}>Delete</option>
+                        <option value="VIEW" {% if app.request.query.get('action') == 'VIEW' %}selected{% endif %}>View</option>
                     </select>
                     
-                    <input type="date" id="dateFilter" class="activity-filter-input">
+                    <input type="date" id="dateFilter" class="activity-filter-input" value="{{ app.request.query.get('date', '') }}">
                     
                     <button class="activity-filter-btn activity-btn-primary" id="applyFilters">Apply Filters</button>
                     <button class="activity-filter-btn activity-btn-info" id="resetFilters">Reset</button>
@@ -509,74 +509,80 @@
                             </tr>
                         </thead>
                         <tbody id="activityTableBody">
-                            {% for log in activityLogs %}
-                                <tr>
-                                    <td>#{{ log.id }}</td>
-                                    <td>
-                                        <strong>{{ log.username }}</strong>
-                                        {% if log.userId %}
-                                            <br><small style="color: #6c757d;">ID: {{ log.userId.id }}</small>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% set roleLower = log.role|lower %}
-                                        <span class="activity-badge {% if 'admin' in roleLower %}activity-badge-admin{% elseif 'user' in roleLower %}activity-badge-user{% elseif 'moderator' in roleLower %}activity-badge-moderator{% else %}activity-badge-other{% endif %}">
-                                            {{ log.role }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="activity-action-badge activity-action-{{ log.action|lower }}">
-                                            {{ log.action }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="activity-target-data" title="{{ log.targetData }}">
-                                            {{ log.targetData|slice(0, 50) }}
-                                            {% if log.targetData|length > 50 %}...{% endif %}
-                                        </div>
-                                        {% if log.targetData|length > 50 %}
-                                            <button class="activity-view-full-btn" onclick="viewFullData({{ log.id }}, '{{ log.targetData|escape('js') }}')">
-                                                View Full
-                                            </button>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {{ log.createdAt|date('Y-m-d H:i:s') }}
-                                        <div class="activity-timestamp">{{ log.createdAt|date('D, M j, Y') }}</div>
-                                    </td>
-                                </tr>
+                            {% if activityLogs|length > 0 %}
+                                {% for log in activityLogs %}
+                                    <tr>
+                                        <td>#{{ log.id }}</td>
+                                        <td>
+                                            <strong>{{ log.username }}</strong>
+                                            {% if log.userId %}
+                                                <br><small style="color: #6c757d;">ID: {{ log.userId.id }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% set roleLower = log.role|lower %}
+                                            <span class="activity-badge {% if 'admin' in roleLower %}activity-badge-admin{% elseif 'user' in roleLower %}activity-badge-user{% elseif 'moderator' in roleLower %}activity-badge-moderator{% else %}activity-badge-other{% endif %}">
+                                                {{ log.role }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="activity-action-badge activity-action-{{ log.action|lower }}">
+                                                {{ log.action }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="activity-target-data" title="{{ log.targetData }}">
+                                                {{ log.targetData|slice(0, 50) }}
+                                                {% if log.targetData|length > 50 %}...{% endif %}
+                                            </div>
+                                            {% if log.targetData|length > 50 %}
+                                                <button class="activity-view-full-btn" onclick="viewFullData({{ log.id }}, '{{ log.targetData|escape('js') }}')">
+                                                    View Full
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                        {{ log.createdAt|date('m/d/Y g:i A') }}
+                                            <div class="activity-timestamp">{{ log.createdAt|date('D, M j, Y') }}</div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                             {% else %}
                                 <tr>
                                     <td colspan="6">
                                         <div class="activity-empty-state">
                                             <div class="activity-empty-state-icon">📭</div>
                                             <h3>No activity logs found</h3>
-                                            <p>There are no activity logs to display at the moment.</p>
+                                            <p>{% if app.request.query.all()|length > 0 %}No logs match your filters. Try adjusting them.{% else %}There are no activity logs to display at the moment.{% endif %}</p>
                                         </div>
                                     </td>
                                 </tr>
-                            {% endfor %}
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
                 
                 <!-- Pagination -->
-                {% if activityLogs|length > 0 %}
+                {% if activityLogs|length > 0 and totalPages > 1 %}
                     <div class="activity-pagination">
                         <button class="activity-pagination-btn {% if currentPage <= 1 %}disabled{% endif %}" 
-                                id="prevPage" {% if currentPage <= 1 %}disabled{% endif %}>
+                                id="prevPage" {% if currentPage <= 1 %}disabled{% endif %} onclick="changePage({{ currentPage - 1 }})">
                             ← Previous
                         </button>
                         
                         {% for i in 1..totalPages %}
-                            <button class="activity-pagination-btn {% if i == currentPage %}active{% endif %}" 
-                                    onclick="changePage({{ i }})">
-                                {{ i }}
-                            </button>
+                            {% if i == 1 or i == totalPages or (i >= currentPage - 2 and i <= currentPage + 2) %}
+                                <button class="activity-pagination-btn {% if i == currentPage %}active{% endif %}" 
+                                        onclick="changePage({{ i }})">
+                                    {{ i }}
+                                </button>
+                            {% elseif i == currentPage - 3 or i == currentPage + 3 %}
+                                <span style="padding: 8px 5px; color: #6c757d;">...</span>
+                            {% endif %}
                         {% endfor %}
                         
                         <button class="activity-pagination-btn {% if currentPage >= totalPages %}disabled{% endif %}" 
-                                id="nextPage" {% if currentPage >= totalPages %}disabled{% endif %}>
+                                id="nextPage" {% if currentPage >= totalPages %}disabled{% endif %} onclick="changePage({{ currentPage + 1 }})">
                             Next →
                         </button>
                     </div>
@@ -608,10 +614,10 @@
         let currentPage = {{ currentPage ?? 1 }};
         let totalPages = {{ totalPages ?? 1 }};
         let filters = {
-            username: '',
-            role: '',
-            action: '',
-            date: ''
+            username: '{{ app.request.query.get('username', '') }}',
+            role: '{{ app.request.query.get('role', '') }}',
+            action: '{{ app.request.query.get('action', '') }}',
+            date: '{{ app.request.query.get('date', '') }}'
         };
         
         // DOM elements
@@ -621,11 +627,14 @@
         const dateFilter = document.getElementById('dateFilter');
         const applyFiltersBtn = document.getElementById('applyFilters');
         const resetFiltersBtn = document.getElementById('resetFilters');
-        const prevPageBtn = document.getElementById('prevPage');
-        const nextPageBtn = document.getElementById('nextPage');
         const exportBtn = document.getElementById('exportBtn');
         const modal = document.getElementById('dataModal');
-        const tableBody = document.getElementById('activityTableBody');
+        
+        // Initialize filter values from URL
+        if (usernameFilter) usernameFilter.value = filters.username;
+        if (roleFilter) roleFilter.value = filters.role;
+        if (actionFilter) actionFilter.value = filters.action;
+        if (dateFilter) dateFilter.value = filters.date;
         
         // Event Listeners
         if (applyFiltersBtn) {
@@ -634,14 +643,6 @@
         
         if (resetFiltersBtn) {
             resetFiltersBtn.addEventListener('click', resetFilters);
-        }
-        
-        if (prevPageBtn) {
-            prevPageBtn.addEventListener('click', () => changePage(currentPage - 1));
-        }
-        
-        if (nextPageBtn) {
-            nextPageBtn.addEventListener('click', () => changePage(currentPage + 1));
         }
         
         if (exportBtn) {
@@ -661,160 +662,27 @@
         
         // Functions
         function applyFilters() {
-            filters = {
-                username: usernameFilter.value.trim(),
-                role: roleFilter.value,
-                action: actionFilter.value,
-                date: dateFilter.value
-            };
-            currentPage = 1;
-            loadActivityLogs();
+            const params = new URLSearchParams();
+            params.set('page', 1);
+            
+            if (usernameFilter.value.trim()) params.set('username', usernameFilter.value.trim());
+            if (roleFilter.value) params.set('role', roleFilter.value);
+            if (actionFilter.value) params.set('action', actionFilter.value);
+            if (dateFilter.value) params.set('date', dateFilter.value);
+            
+            window.location.href = `?${params.toString()}`;
         }
         
         function resetFilters() {
-            usernameFilter.value = '';
-            roleFilter.value = '';
-            actionFilter.value = '';
-            dateFilter.value = '';
-            filters = {
-                username: '',
-                role: '',
-                action: '',
-                date: ''
-            };
-            currentPage = 1;
-            loadActivityLogs();
+            window.location.href = '{{ path('app_activity_log') }}';
         }
         
         function changePage(page) {
             if (page < 1 || page > totalPages) return;
-            currentPage = page;
-            loadActivityLogs();
-        }
-        
-        function loadActivityLogs() {
-            // Show loading state
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        <div class="activity-empty-state">
-                            <div class="activity-loading" style="margin: 0 auto;"></div>
-                            <p>Loading logs...</p>
-                        </div>
-                    </td>
-                </tr>
-            `;
             
-            // Build query parameters
-            const params = new URLSearchParams({
-                page: currentPage,
-                ...(filters.username && { username: filters.username }),
-                ...(filters.role && { role: filters.role }),
-                ...(filters.action && { action: filters.action }),
-                ...(filters.date && { date: filters.date })
-            });
-            
-            // Make AJAX request
-            fetch(`/activity-log/data?${params.toString()}`)
-                .then(response => response.json())
-                .then(data => {
-                    updateTable(data.logs);
-                    updatePagination(data.pagination);
-                })
-                .catch(error => {
-                    console.error('Error loading activity logs:', error);
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="6">
-                                <div class="activity-empty-state">
-                                    <div class="activity-empty-state-icon">⚠️</div>
-                                    <h3>Error loading logs</h3>
-                                    <p>Please try again later.</p>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-        }
-        
-        function updateTable(logs) {
-            if (!tableBody) return;
-            
-            if (!logs || logs.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6">
-                            <div class="activity-empty-state">
-                                <div class="activity-empty-state-icon">🔍</div>
-                                <h3>No matching logs found</h3>
-                                <p>Try adjusting your filters.</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            tableBody.innerHTML = logs.map(log => `
-                <tr>
-                    <td>#${log.id}</td>
-                    <td>
-                        <strong>${escapeHtml(log.username)}</strong>
-                        ${log.user_id ? `<br><small style="color: #6c757d;">ID: ${log.user_id.id}</small>` : ''}
-                    </td>
-                    <td>
-                        <span class="activity-badge ${getRoleBadgeClassJS(log.role)}">
-                            ${escapeHtml(log.role)}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="activity-action-badge activity-action-${log.action.toLowerCase()}">
-                            ${escapeHtml(log.action)}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="activity-target-data" title="${escapeHtml(log.target_data)}">
-                            ${escapeHtml(log.target_data.substring(0, 50))}
-                            ${log.target_data.length > 50 ? '...' : ''}
-                        </div>
-                        ${log.target_data.length > 50 ? `
-                            <button class="activity-view-full-btn" onclick="viewFullData(${log.id}, '${escapeHtml(log.target_data).replace(/'/g, "\\'")}')">
-                                View Full
-                            </button>
-                        ` : ''}
-                    </td>
-                    <td>
-                        ${new Date(log.created_at).toLocaleString()}
-                        <div class="activity-timestamp">${new Date(log.created_at).toDateString()}</div>
-                    </td>
-                </tr>
-            `).join('');
-        }
-        
-        function updatePagination(pagination) {
-            const paginationContainer = document.querySelector('.activity-pagination');
-            if (!paginationContainer || !pagination) return;
-            
-            totalPages = pagination.totalPages;
-            
-            paginationContainer.innerHTML = `
-                <button class="activity-pagination-btn ${pagination.currentPage === 1 ? 'disabled' : ''}" 
-                        onclick="changePage(${pagination.currentPage - 1})" 
-                        ${pagination.currentPage === 1 ? 'disabled' : ''}>
-                    ← Previous
-                </button>
-                ${Array.from({length: pagination.totalPages}, (_, i) => i + 1).map(page => `
-                    <button class="activity-pagination-btn ${page === pagination.currentPage ? 'active' : ''}" 
-                            onclick="changePage(${page})">
-                        ${page}
-                    </button>
-                `).join('')}
-                <button class="activity-pagination-btn ${pagination.currentPage === pagination.totalPages ? 'disabled' : ''}" 
-                        onclick="changePage(${pagination.currentPage + 1})" 
-                        ${pagination.currentPage === pagination.totalPages ? 'disabled' : ''}>
-                    Next →
-                </button>
-            `;
+            const params = new URLSearchParams(window.location.search);
+            params.set('page', page);
+            window.location.href = `?${params.toString()}`;
         }
         
         function viewFullData(id, data) {
@@ -842,25 +710,9 @@
         }
         
         function exportToCSV() {
-            // Build query parameters for export
-            const params = new URLSearchParams({
-                format: 'csv',
-                ...(filters.username && { username: filters.username }),
-                ...(filters.role && { role: filters.role }),
-                ...(filters.action && { action: filters.action }),
-                ...(filters.date && { date: filters.date })
-            });
-            
-            // Redirect to export endpoint
-            window.location.href = `/activity-log/export?${params.toString()}`;
-        }
-        
-        function getRoleBadgeClassJS(role) {
-            role = role.toLowerCase();
-            if (role.includes('admin')) return 'activity-badge-admin';
-            if (role.includes('user')) return 'activity-badge-user';
-            if (role.includes('moderator')) return 'activity-badge-moderator';
-            return 'activity-badge-other';
+            const params = new URLSearchParams(window.location.search);
+            params.set('format', 'csv');
+            window.location.href = `{{ path('app_activity_log') }}/export?${params.toString()}`;
         }
         
         function escapeHtml(text) {

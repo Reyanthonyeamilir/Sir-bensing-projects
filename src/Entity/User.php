@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -36,14 +38,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     // ADD THIS FIELD: ---------------------------------------------------------
     #[ORM\Column(type: 'datetime', nullable: false)]
     private ?\DateTimeInterface $createdAt = null;
-    // -------------------------------------------------------------------------
 
-    // ADD THIS CONSTRUCTOR: ---------------------------------------------------
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'customer')]
+    private Collection $orders;
+
     public function __construct()
     {
-        $this->createdAt = new \DateTime(); // Auto-set creation date
+        $this->orders = new ArrayCollection();
     }
-    // -------------------------------------------------------------------------
+
+    
 
     public function getId(): ?int
     {
@@ -135,15 +142,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $data;
     }
 
-    // Also add __unserialize() method for proper unserialization: ------------
-    public function __unserialize(array $data): void
-    {
-        $this->id = $data["\0".self::class."\0id"] ?? null;
-        $this->username = $data["\0".self::class."\0username"] ?? null;
-        $this->roles = $data["\0".self::class."\0roles"] ?? [];
-        $this->password = null; // Password remains null for security
-        $this->createdAt = $data["\0".self::class."\0createdAt"] ?? null;
-    }
+public function __unserialize(array $data): void
+{
+    $this->id = $data["\0".self::class."\0id"] ?? null;
+    $this->username = $data["\0".self::class."\0username"] ?? null;
+    $this->roles = $data["\0".self::class."\0roles"] ?? [];
+    $this->password = null; // Password remains null for security
+    
+    // RESTORE the original createdAt, don't create a new one!
+    $this->createdAt = $data["\0".self::class."\0createdAt"] ?? null;
+}
     // -------------------------------------------------------------------------
 
     #[\Deprecated]
@@ -151,4 +159,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // @deprecated, to be removed when upgrading to Symfony 8
     }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setCustomer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getCustomer() === $this) {
+                $order->setCustomer(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

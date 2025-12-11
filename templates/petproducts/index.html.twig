@@ -30,28 +30,57 @@
     max-width: calc(100% - 280px);
   }
   
-  h1 { 
-    font-size: 1.6rem; 
-    font-weight: 700; 
-    color: #e9d311c5; 
-    margin-bottom: 1.2rem; 
-    text-align: center; 
-    padding-bottom: 0.8rem;
-    border-bottom: 2px solid #ff7b35;
+  /* Main white container */
+  .main-white-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  /* Header Container with Brown Background INSIDE white container */
+  .header-container {
+    background: #8B4513; /* Brown color */
+    color: white;
+    padding: 1.2rem 1.5rem;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+  }
+  
+  .header-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  /* Content area inside white container */
+  .content-area {
+    padding: 1.5rem;
   }
   
   .table-container {
     overflow-x: auto;
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     padding: 0.8rem;
+    margin-top: 0;
   }
   
+  /* DataTable Styles */
   .pet-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
   }
   
   .pet-table th, .pet-table td {
@@ -70,11 +99,122 @@
     font-size: 0.8rem;
     letter-spacing: 0.5px;
     color: #555;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  
+  .pet-table th.sortable:hover {
+    background: #f0f0f0;
+  }
+  
+  .pet-table th.sorting::after {
+    content: "↕";
+    margin-left: 5px;
+    font-size: 0.7rem;
+    opacity: 0.5;
+  }
+  
+  .pet-table th.sorting-asc::after {
+    content: "↑";
+    color: #8B4513;
+    opacity: 1;
+  }
+  
+  .pet-table th.sorting-desc::after {
+    content: "↓";
+    color: #8B4513;
+    opacity: 1;
   }
   
   .pet-table tr:hover { 
-    background: rgba(255, 123, 53, 0.05); 
+    background: rgba(139, 69, 19, 0.05); /* Brown tint */
     transition: background 0.2s ease; 
+  }
+  
+  /* DataTable Controls */
+  .datatable-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .datatable-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .datatable-search input {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-width: 250px;
+  }
+  
+  .datatable-search input:focus {
+    outline: none;
+    border-color: #8B4513;
+    box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.1);
+  }
+  
+  .datatable-length {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .datatable-length select {
+    padding: 0.4rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+  }
+  
+  .datatable-info {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .datatable-pagination {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+  }
+  
+  .pagination-btn {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #555;
+    transition: all 0.2s ease;
+  }
+  
+  .pagination-btn:hover:not(:disabled) {
+    background: #8B4513;
+    color: white;
+    border-color: #8B4513;
+  }
+  
+  .pagination-btn.active {
+    background: #8B4513;
+    color: white;
+    border-color: #8B4513;
+  }
+  
+  .pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
   
   .product-img {
@@ -145,7 +285,7 @@
   }
   
   .create-btn {
-    background-color: #cc5404;
+    background-color: #8B4513; /* Changed to match brown header */
     padding: 0.6rem 1.2rem;
     font-weight: 600;
     font-size: 0.9rem;
@@ -158,7 +298,7 @@
   }
   
   .create-btn:hover { 
-    background-color: #b34903; 
+    background-color: #703a0f; 
     transform: translateY(-2px); 
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   }
@@ -193,7 +333,7 @@
   .toggle-btn {
     background: none;
     border: none;
-    color: #cc5404;
+    color: #8B4513;
     cursor: pointer;
     font-size: 0.75rem;
     padding: 0;
@@ -203,7 +343,7 @@
   }
   
   .toggle-btn:hover {
-    color: #a63e00;
+    color: #703a0f;
   }
   
   /* Custom check/cross icons - NO FONT AWESOME */
@@ -229,10 +369,10 @@
   .creator-badge {
     display: inline-block;
     padding: 0.2rem 0.5rem;
-    background: rgba(204, 84, 4, 0.1);
+    background: rgba(139, 69, 19, 0.1);
     border-radius: 3px;
     font-size: 0.7rem;
-    color: #cc5404;
+    color: #8B4513;
     margin-top: 3px;
   }
   
@@ -242,6 +382,30 @@
       margin-left: 0;
       max-width: 100%;
       padding: 1rem;
+    }
+    
+    .main-white-container {
+      border-radius: 8px;
+    }
+    
+    .header-container {
+      padding: 1rem;
+      flex-direction: column;
+      gap: 0.8rem;
+      text-align: center;
+    }
+    
+    .header-title {
+      font-size: 1.5rem;
+    }
+    
+    .datatable-controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .datatable-search input {
+      min-width: 100%;
     }
     
     .pet-table th, .pet-table td { 
@@ -265,128 +429,368 @@
   {% include 'dashboard/sidebar.html.twig' %}
 
   <main class="main-content">
-    <h1>Pet Products</h1>
-
-    <div class="table-container">
-      <table class="pet-table" id="petTable">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Sub Category</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Brand</th>
-            <th>Active</th>
-            <th>Created</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for petproduct in petproducts %}
-          <tr>
-            <td>{{ petproduct.id }}</td>
-            <td>
-              {% if petproduct.imageUrl %}
-                <img src="{{ asset('uploads/' ~ petproduct.imageUrl) }}" alt="Product Image" class="product-img">
-              {% else %}
-                <span class="no-image">No image</span>
-              {% endif %}
-              {% if petproduct.createdBy %}
-                <div class="creator-badge">by {{ petproduct.createdBy }}</div>
-              {% endif %}
-            </td>
-            <td>{{ petproduct.productName }}</td>
-            <td>{{ petproduct.category }}</td>
-            <td>{{ petproduct.subCategory }}</td>
-            <td>${{ petproduct.price|number_format(2) }}</td>
-            <td>{{ petproduct.stock }}</td>
-            <td>{{ petproduct.brand }}</td>
-            <td class="{{ petproduct.isActive ? 'active-yes' : 'active-no' }}">
-              {{ petproduct.isActive ? ' Yes' : ' No' }}
-            </td>
-            <td>{{ petproduct.createdAt ? petproduct.createdAt|date('Y-m-d H:i') : '' }}</td>
-            <td>
-              <div class="description-container">
-                <p class="description-text">{{ petproduct.description }}</p>
-                {% if petproduct.description and petproduct.description|length > 50 %}
-                  <button type="button" class="toggle-btn">Read more</button>
-                {% endif %}
-              </div>
-            </td>
-            <td>
-              <div class="actions-cell">
-                {# View button - Always enabled for everyone #}
-                <a href="{{ path('app_petproducts_show', {'id': petproduct.id}) }}" class="btn action-btn">View</a>
-                
-                {# Edit button logic #}
-                {% if is_granted('ROLE_ADMIN') %}
-                  {# Admin can edit everything - button enabled #}
-                  <a href="{{ path('app_petproducts_edit', {'id': petproduct.id}) }}" class="btn edit-btn">Edit</a>
-                {% elseif is_granted('ROLE_staff') %}
-                  {# Staff can only edit their own products #}
-                  {% if petproduct.createdBy == app.user.username %}
-                    {# Staff created this - button enabled #}
-                    <a href="{{ path('app_petproducts_edit', {'id': petproduct.id}) }}" class="btn edit-btn">Edit</a>
-                  {% else %}
-                    {# Staff didn't create this - button disabled #}
-                    <span class="btn edit-btn disabled" title="You can only edit products you created">Edit</span>
-                  {% endif %}
-                {% else %}
-                  {# Regular users cannot edit #}
-                  <span class="btn edit-btn disabled" title="Edit permission required">Edit</span>
-                {% endif %}
-              </div>
-            </td>
-          </tr>
-        {% else %}
-          <tr>
-            <td colspan="12" style="text-align: center; padding: 1.5rem;">
-              No products found.
-              {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
-                <a href="{{ path('app_petproducts_new') }}" style="color: #cc5404; text-decoration: underline;">Create your first product</a>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-    {# Create button - Only for Admin and Staff #}
-    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
-      <div class="new-btn-container">
-        <a href="{{ path('app_petproducts_new') }}" class="btn create-btn">Add New Product</a>
+    <!-- White container wrapping everything -->
+    <div class="main-white-container">
+      <!-- Brown header inside white container -->
+      <div class="header-container">
+        <h1 class="header-title">Pet Products</h1>
+        <div class="header-actions">
+          {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
+            <a href="{{ path('app_petproducts_new') }}" class="btn create-btn">Add New Product</a>
+          {% endif %}
+        </div>
       </div>
-    {% endif %}
+      
+      <!-- Content area inside white container -->
+      <div class="content-area">
+        <!-- DataTable Controls -->
+        <div class="datatable-controls">
+          <div class="datatable-search">
+            <label for="datatable-search">Search:</label>
+            <input type="text" id="datatable-search" placeholder="Search products...">
+          </div>
+          
+          <div class="datatable-length">
+            <label for="datatable-length">Show:</label>
+            <select id="datatable-length">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="-1">All</option>
+            </select>
+            <span>entries</span>
+          </div>
+          
+          <div class="datatable-info" id="datatable-info">
+            Showing 0 to 0 of 0 entries
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <table class="pet-table" id="petTable">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="id">ID</th>
+                <th data-sort="image">Image</th>
+                <th class="sortable" data-sort="name">Name</th>
+                <th class="sortable" data-sort="category">Category</th>
+                <th class="sortable" data-sort="subcategory">Sub Category</th>
+                <th class="sortable" data-sort="price">Price</th>
+                <th class="sortable" data-sort="stock">Stock</th>
+                <th class="sortable" data-sort="brand">Brand</th>
+                <th class="sortable" data-sort="active">Active</th>
+                <th class="sortable" data-sort="created">Created</th>
+                <th data-sort="description">Description</th>
+                <th data-sort="actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for petproduct in petproducts %}
+              <tr>
+                <td>{{ petproduct.id }}</td>
+                <td>
+                  {% if petproduct.imageUrl %}
+                    <img src="{{ asset('uploads/' ~ petproduct.imageUrl) }}" alt="Product Image" class="product-img">
+                  {% else %}
+                    <span class="no-image">No image</span>
+                  {% endif %}
+                  {% if petproduct.createdBy %}
+                    <div class="creator-badge">by {{ petproduct.createdBy }}</div>
+                  {% endif %}
+                </td>
+                <td>{{ petproduct.productName }}</td>
+                <td>{{ petproduct.category }}</td>
+                <td>{{ petproduct.subCategory }}</td>
+                <td>${{ petproduct.price|number_format(2) }}</td>
+                <td>{{ petproduct.stock }}</td>
+                <td>{{ petproduct.brand }}</td>
+                <td class="{{ petproduct.isActive ? 'active-yes' : 'active-no' }}">
+                  {{ petproduct.isActive ? ' Yes' : ' No' }}
+                </td>
+                <td>{{ petproduct.createdAt ? petproduct.createdAt|date('Y-m-d H:i') : '' }}</td>
+                <td>
+                  <div class="description-container">
+                    <p class="description-text">{{ petproduct.description }}</p>
+                    {% if petproduct.description and petproduct.description|length > 50 %}
+                      <button type="button" class="toggle-btn">Read more</button>
+                    {% endif %}
+                  </div>
+                </td>
+                <td>
+                  <div class="actions-cell">
+                    {# View button - Always enabled for everyone #}
+                    <a href="{{ path('app_petproducts_show', {'id': petproduct.id}) }}" class="btn action-btn">View</a>
+                    
+                    {# Edit button logic #}
+                    {% if is_granted('ROLE_ADMIN') %}
+                      {# Admin can edit everything - button enabled #}
+                      <a href="{{ path('app_petproducts_edit', {'id': petproduct.id}) }}" class="btn edit-btn">Edit</a>
+                    {% elseif is_granted('ROLE_staff') %}
+                      {# Staff can only edit their own products #}
+                      {% if petproduct.createdBy == app.user.username %}
+                        {# Staff created this - button enabled #}
+                        <a href="{{ path('app_petproducts_edit', {'id': petproduct.id}) }}" class="btn edit-btn">Edit</a>
+                      {% else %}
+                        {# Staff didn't create this - button disabled #}
+                        <span class="btn edit-btn disabled" title="You can only edit products you created">Edit</span>
+                      {% endif %}
+                    {% else %}
+                      {# Regular users cannot edit #}
+                      <span class="btn edit-btn disabled" title="Edit permission required">Edit</span>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="12" style="text-align: center; padding: 1.5rem;">
+                  No products found.
+                  {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
+                    <a href="{{ path('app_petproducts_new') }}" style="color: #8B4513; text-decoration: underline;">Create your first product</a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="datatable-pagination" id="datatable-pagination">
+          <button class="pagination-btn" id="first-page" disabled>First</button>
+          <button class="pagination-btn" id="prev-page" disabled>Previous</button>
+          <span id="page-numbers"></span>
+          <button class="pagination-btn" id="next-page" disabled>Next</button>
+          <button class="pagination-btn" id="last-page" disabled>Last</button>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Read more/less toggle
-    document.querySelectorAll('.toggle-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const text = btn.previousElementSibling;
-        text.classList.toggle('expanded');
-        btn.textContent = text.classList.contains('expanded') ? 'Read less' : 'Read more';
+    // Simple DataTable implementation (no CDN)
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let currentData = [];
+    let filteredData = [];
+    let sortColumn = null;
+    let sortDirection = 'asc';
+    
+    // Initialize data from table
+    const table = document.getElementById('petTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    // Store data
+    rows.forEach((row, index) => {
+      const cells = row.querySelectorAll('td');
+      currentData.push({
+        element: row,
+        data: {
+          id: parseInt(cells[0].textContent) || 0,
+          name: cells[2].textContent.toLowerCase(),
+          category: cells[3].textContent.toLowerCase(),
+          subcategory: cells[4].textContent.toLowerCase(),
+          price: parseFloat(cells[5].textContent.replace('$', '')) || 0,
+          stock: parseInt(cells[6].textContent) || 0,
+          brand: cells[7].textContent.toLowerCase(),
+          active: cells[8].classList.contains('active-yes') ? 'yes' : 'no',
+          created: cells[9].textContent,
+          description: cells[10].querySelector('.description-text').textContent.toLowerCase()
+        }
       });
     });
     
-    // Add row hover effects
-    const tableRows = document.querySelectorAll('.pet-table tbody tr');
-    tableRows.forEach(row => {
-      row.addEventListener('mouseenter', () => {
-        row.style.backgroundColor = 'rgba(255, 123, 53, 0.08)';
-      });
-      
-      row.addEventListener('mouseleave', () => {
-        row.style.backgroundColor = '';
+    filteredData = [...currentData];
+    
+    // Sort functionality
+    const sortableHeaders = table.querySelectorAll('th.sortable');
+    sortableHeaders.forEach(header => {
+      header.addEventListener('click', () => {
+        const column = header.dataset.sort;
+        
+        // Update sorting UI
+        sortableHeaders.forEach(h => {
+          h.classList.remove('sorting-asc', 'sorting-desc');
+          h.classList.add('sorting');
+        });
+        
+        if (sortColumn === column) {
+          sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          sortColumn = column;
+          sortDirection = 'asc';
+        }
+        
+        header.classList.remove('sorting');
+        header.classList.add(`sorting-${sortDirection}`);
+        
+        // Sort data
+        sortData(column, sortDirection);
+        renderTable();
       });
     });
+    
+    function sortData(column, direction) {
+      filteredData.sort((a, b) => {
+        let aValue = a.data[column];
+        let bValue = b.data[column];
+        
+        if (typeof aValue === 'string') {
+          return direction === 'asc' 
+            ? aValue.localeCompare(bValue)
+            : bValue.localeCompare(aValue);
+        } else {
+          return direction === 'asc'
+            ? aValue - bValue
+            : bValue - aValue;
+        }
+      });
+    }
+    
+    // Search functionality
+    const searchInput = document.getElementById('datatable-search');
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      
+      if (searchTerm.trim() === '') {
+        filteredData = [...currentData];
+      } else {
+        filteredData = currentData.filter(item => {
+          return Object.values(item.data).some(value => 
+            String(value).toLowerCase().includes(searchTerm)
+          );
+        });
+      }
+      
+      currentPage = 1;
+      renderTable();
+    });
+    
+    // Items per page
+    const lengthSelect = document.getElementById('datatable-length');
+    lengthSelect.addEventListener('change', (e) => {
+      itemsPerPage = e.target.value === '-1' ? filteredData.length : parseInt(e.target.value);
+      currentPage = 1;
+      renderTable();
+    });
+    
+    // Pagination functionality
+    function renderTable() {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageData = filteredData.slice(startIndex, endIndex);
+      
+      // Clear current rows
+      while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+      }
+      
+      // Add paginated rows
+      pageData.forEach(item => {
+        tbody.appendChild(item.element);
+      });
+      
+      // Update info
+      const total = filteredData.length;
+      const start = total === 0 ? 0 : startIndex + 1;
+      const end = Math.min(endIndex, total);
+      document.getElementById('datatable-info').textContent = 
+        `Showing ${start} to ${end} of ${total} entries`;
+      
+      // Update pagination
+      updatePagination(total);
+      
+      // Reattach event listeners for toggle buttons
+      attachToggleListeners();
+    }
+    
+    function updatePagination(totalItems) {
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      const pageNumbers = document.getElementById('page-numbers');
+      const firstBtn = document.getElementById('first-page');
+      const prevBtn = document.getElementById('prev-page');
+      const nextBtn = document.getElementById('next-page');
+      const lastBtn = document.getElementById('last-page');
+      
+      // Clear page numbers
+      pageNumbers.innerHTML = '';
+      
+      // Generate page numbers
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+        btn.textContent = i;
+        btn.addEventListener('click', () => {
+          currentPage = i;
+          renderTable();
+        });
+        pageNumbers.appendChild(btn);
+      }
+      
+      // Update button states
+      firstBtn.disabled = currentPage === 1 || totalPages === 0;
+      prevBtn.disabled = currentPage === 1 || totalPages === 0;
+      nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+      lastBtn.disabled = currentPage === totalPages || totalPages === 0;
+      
+      // Add event listeners
+      firstBtn.onclick = () => {
+        if (!firstBtn.disabled) {
+          currentPage = 1;
+          renderTable();
+        }
+      };
+      
+      prevBtn.onclick = () => {
+        if (!prevBtn.disabled) {
+          currentPage--;
+          renderTable();
+        }
+      };
+      
+      nextBtn.onclick = () => {
+        if (!nextBtn.disabled) {
+          currentPage++;
+          renderTable();
+        }
+      };
+      
+      lastBtn.onclick = () => {
+        if (!lastBtn.disabled) {
+          currentPage = totalPages;
+          renderTable();
+        }
+      };
+    }
+    
+    // Read more/less toggle
+    function attachToggleListeners() {
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.previousElementSibling;
+          text.classList.toggle('expanded');
+          btn.textContent = text.classList.contains('expanded') ? 'Read less' : 'Read more';
+        });
+      });
+    }
+    
+    // Add row hover effects
+    function attachRowHover() {
+      const tableRows = document.querySelectorAll('.pet-table tbody tr');
+      tableRows.forEach(row => {
+        row.addEventListener('mouseenter', () => {
+          row.style.backgroundColor = 'rgba(139, 69, 19, 0.08)';
+        });
+        
+        row.addEventListener('mouseleave', () => {
+          row.style.backgroundColor = '';
+        });
+      });
+    }
     
     // Prevent clicks on disabled buttons
     document.querySelectorAll('.btn.disabled').forEach(btn => {
@@ -396,6 +800,10 @@
         return false;
       });
     });
+    
+    // Initial render
+    renderTable();
+    attachRowHover();
   });
 </script>
 {% endblock %}

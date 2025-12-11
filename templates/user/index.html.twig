@@ -236,8 +236,8 @@
                                 <th class="sem-table-th">ID</th>
                                 <th class="sem-table-th">Username</th>
                                 <th class="sem-table-th">Roles</th>
-                                <th class="sem-table-th">Created At</th>
                                 <th class="sem-table-th">Status</th>
+                                 <th class="sem-table-th">Created At</th>
                                 <th class="sem-table-th sem-actions-col">Actions</th>
                             </tr>
                         </thead>
@@ -257,15 +257,16 @@
                                         {% endif %}
                                     {% endfor %}
                                 </td>
-                                <td class="sem-table-td date-cell">
-                                    {% if user.createdAt %}
-                                        {{ user.createdAt|date('Y-m-d H:i:s') }}
+    
+                                <td class="sem-table-td">
+                                    <span class="status-badge status-active">Active</span>
+                                </td>
+                                     <td class="sem-table-td date-cell">
+                                    {% if user.createdAt %}                                      
+                                    {{ user.createdAt|date('F j, Y g:i A') }}   {# January 15, 2024 2:30 PM #}
                                     {% else %}
                                         <span style="color: #9ca3af; font-style: italic;">Not set</span>
                                     {% endif %}
-                                </td>
-                                <td class="sem-table-td">
-                                    <span class="status-badge status-active">Active</span>
                                 </td>
                                 <td class="sem-table-td sem-actions-td">
                                     <div class="action-buttons">

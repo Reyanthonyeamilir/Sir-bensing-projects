@@ -74,7 +74,7 @@ class ActivityLogController extends AbstractController
         foreach ($activityLogs as $log) {
             $logsArray[] = [
                 'id' => $log->getId(),
-                'user_id' => $log->getUserId() ? ['id' => $log->getUserId()->getId()] : null,
+                'user' => $log->getUser() ? ['id' => $log->getUser()->getId()] : null, // Fixed: getUser() not getUserId()
                 'username' => $log->getUsername(),
                 'role' => $log->getRole(),
                 'action' => $log->getAction(),
@@ -108,7 +108,7 @@ class ActivityLogController extends AbstractController
         $csvData = "ID,User ID,Username,Role,Action,Target Data,Created At\n";
         
         foreach ($logs as $log) {
-            $userId = $log->getUserId() ? $log->getUserId()->getId() : '';
+            $userId = $log->getUser() ? $log->getUser()->getId() : ''; // Fixed: getUser() not getUserId()
             $csvData .= sprintf(
                 "%d,%s,%s,%s,%s,\"%s\",%s\n",
                 $log->getId(),
@@ -123,7 +123,7 @@ class ActivityLogController extends AbstractController
         
         $response = new Response($csvData);
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="activity_logs_' . date('Y-m-d') . '.csv"');
+        $response->headers->set('Content-Disposition', 'attachment; filename=\"activity_logs_' . date('Y-m-d') . '.csv\"');
         
         return $response;
     }
