@@ -29,16 +29,21 @@ class RegistrationController extends AbstractController
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
+            // ENSURE ALL REGISTERED USERS ARE REGULAR USERS ONLY
+            $user->setRoles(['ROLE_USER']);
+
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
+            // Add success message
+            $this->addFlash('success', 'Registration successful! Please log in to continue.');
 
-            return $security->login($user, AppCustomAuthenticator::class, 'main');
+            // Redirect to login page instead of auto-login
+            return $this->redirectToRoute('app_login');
         }
 
-      return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form,
+        return $this->render('registration/register.html.twig', [
+            'registrationForm' => $form->createView(),
         ]);
     }
 }

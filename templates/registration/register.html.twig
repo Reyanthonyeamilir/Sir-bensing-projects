@@ -10,13 +10,20 @@
         </div>
         
         <div class="register-body">
+            {% for message in app.flashes('success') %}
+                <div class="register-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            
             {% if form_errors(registrationForm) %}
                 <div class="register-error">
                     {{ form_errors(registrationForm) }}
                 </div>
             {% endif %}
 
-            <form method="post" class="register-form">
+            {{ form_start(registrationForm, {'attr': {'class': 'register-form'}}) }}
+                
                 <!-- Username Field -->
                 <div class="register-form-group">
                     {{ form_label(registrationForm.username, 'Username', {'label_attr': {'class': 'register-form-label'}}) }}
@@ -24,6 +31,11 @@
                         'class': 'register-form-control',
                         'placeholder': 'Enter your username'
                     }}) }}
+                    {% if registrationForm.username.vars.errors|length > 0 %}
+                        <div class="form-error">
+                            {{ form_errors(registrationForm.username) }}
+                        </div>
+                    {% endif %}
                 </div>
 
                 <!-- Password Field -->
@@ -33,18 +45,32 @@
                         'class': 'register-form-control',
                         'placeholder': 'Enter your password'
                     }}) }}
+                    {% if registrationForm.plainPassword.vars.errors|length > 0 %}
+                        <div class="form-error">
+                            {{ form_errors(registrationForm.plainPassword) }}
+                        </div>
+                    {% endif %}
                 </div>
 
                 <!-- Agree Terms Checkbox -->
                 <div class="register-terms">
                     {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'register-checkbox'}}) }}
                     {{ form_label(registrationForm.agreeTerms, 'I agree to the terms and conditions') }}
+                    {% if registrationForm.agreeTerms.vars.errors|length > 0 %}
+                        <div class="form-error">
+                            {{ form_errors(registrationForm.agreeTerms) }}
+                        </div>
+                    {% endif %}
                 </div>
 
                 <button type="submit" class="register-btn">
                     Register
                 </button>
-            </form>
+                
+                <div class="register-login-link">
+                    Already have an account? <a href="{{ path('app_login') }}">Log in here</a>
+                </div>
+            {{ form_end(registrationForm) }}
         </div>
     </div>
 </div>
@@ -87,6 +113,17 @@
 /* Body */
 .register-body {
     padding: 40px 35px;
+}
+
+/* Success Messages */
+.register-success {
+    background-color: #f0fff4;
+    border: 1px solid #9ae6b4;
+    color: #22543d;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    font-size: 14px;
 }
 
 /* Error Messages */
@@ -177,9 +214,31 @@
     background: linear-gradient(135deg, #cc5404, #ff9100ff 100%);
 }
 
+/* Login Link */
+.register-login-link {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    color: #2e1504;
+    font-size: 14px;
+}
+
+.register-login-link a {
+    color: #d2691e;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.register-login-link a:hover {
+    color: #8b4513;
+    text-decoration: underline;
+}
+
 /* Form Errors */
-.register-form-group + .form-error {
-    color: #dc3545;
+.form-error {
+    color: #5c0912ff;
     font-size: 13px;
     margin-top: 5px;
     padding-left: 5px;

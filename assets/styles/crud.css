@@ -1,4 +1,4 @@
-/* USER CRUD - Shared Styles */
+/* USER CRUD - Shared Styles - Brown/Yellow/Orange Theme */
 .user-crud * {
     margin: 0;
     padding: 0;
@@ -27,17 +27,18 @@
 
 /* SEM Container (Header + Content) */
 .user-crud .sem-container {
-    background: rgba(255, 255, 255, 0.95);
+    background: white;
     border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 10px rgba(139, 69, 19, 0.08);
     overflow: hidden;
+    border: 1px solid #d4a76a;
 }
 
 /* Header Styles */
 .user-crud .sem-header {
-    background: linear-gradient(135deg, #cc5404, #b34903);
+    background: linear-gradient(to right, #8B4513 0%, #A0522D 100%);
     padding: 1.2rem 1.5rem;
-    color: white;
+    color: #fffaf0;
 }
 
 .user-crud .sem-header h1 {
@@ -45,7 +46,7 @@
     font-weight: 700;
     margin: 0;
     text-align: center;
-    color: white;
+    color: #fffaf0;
     padding-bottom: 0;
     border-bottom: none;
 }
@@ -53,6 +54,22 @@
 /* Content Area */
 .user-crud .sem-content {
     padding: 1.5rem;
+    background: #fffaf0;
+}
+
+/* DATATABLE CONTAINER */
+.user-crud .sem-datatable-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(139, 69, 19, 0.08);
+    overflow: hidden;
+    margin: 20px 0;
+    border: 2px solid #d4a76a;
+}
+
+/* DATATABLE WRAPPER */
+.user-crud .sem-datatable-wrapper {
+    padding: 0 !important;
 }
 
 /* Common Table Styles */
@@ -61,34 +78,80 @@
     margin-bottom: 1.5rem;
 }
 
+/* MAIN TABLE - Merged Styles */
 .user-crud .sem-table {
     width: 100%;
     border-collapse: collapse;
     min-width: 800px;
+    background: white;
 }
 
 .user-crud .sem-table th, 
 .user-crud .sem-table td {
     padding: 0.8rem;
     text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #f5deb3;
     vertical-align: middle;
     font-size: 0.9rem;
-    color: #333;
+    background: white;
 }
 
 .user-crud .sem-table th {
-    background: #f8f8f8;
+    background: #8b4513;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.8rem;
     letter-spacing: 0.5px;
-    color: #555;
+    color: #fffaf0;
 }
 
-.user-crud .sem-table tr:hover { 
-    background: rgba(204, 84, 4, 0.05); 
-    transition: background 0.2s ease; 
+/* TABLE HEADER - Merged */
+.user-crud .sem-table-header {
+    background: linear-gradient(to right, #8B4513 0%, #A0522D 100%);
+}
+
+.user-crud .sem-table-th {
+    padding: 16px 12px !important;
+    font-weight: 600 !important;
+    color: #fffaf0 !important;
+    text-transform: uppercase !important;
+    font-size: 13px !important;
+    letter-spacing: 0.5px !important;
+    border-bottom: 3px solid #d2691e !important;
+    background: transparent !important;
+    position: relative;
+}
+
+.user-crud .sem-table-th:not(:last-child) {
+    border-right: 1px solid rgba(255, 250, 240, 0.1) !important;
+}
+
+/* TABLE ROWS & CELLS - Merged */
+.user-crud .sem-table-row {
+    transition: all 0.25s ease;
+    border-bottom: 1px solid #f5deb3;
+    background: white;
+}
+
+.user-crud .sem-table-row:nth-child(even) {
+    background-color: #fff8e1;
+}
+
+.user-crud .sem-table-td {
+    padding: 14px 12px !important;
+    color: #5d4037 !important;
+    font-size: 14px !important;
+    vertical-align: middle !important;
+    border-bottom: 1px solid #f5deb3 !important;
+    background: inherit !important;
+}
+
+/* HOVER EFFECT - Merged */
+.user-crud .sem-table tr:hover,
+.user-crud .sem-row-hover {
+    background-color: #ffe4b5 !important;
+    border-left: 3px solid #ff9800;
+    box-shadow: 0 2px 8px rgba(139, 69, 19, 0.05);
 }
 
 /* Common Form Styles */
@@ -96,6 +159,10 @@
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #d4a76a;
 }
 
 .user-crud .sem-form-group {
@@ -106,92 +173,146 @@
     font-weight: 600;
     display: block;
     margin-bottom: 0.4rem;
-    color: #555;
+    color: #5d4037;
     font-size: 0.9rem;
 }
 
 .user-crud .sem-form-input {
     width: 100%;
     padding: 0.7rem;
-    border: 1px solid #ddd;
+    border: 2px solid #d4a76a;
     border-radius: 5px;
     font-size: 0.9rem;
-    background: #fff;
-    color: #333;
+    background: white;
+    color: #5d4037;
     transition: all 0.2s ease;
 }
 
 .user-crud .sem-form-input:focus {
     outline: none;
-    border-color: #cc5404;
-    box-shadow: 0 0 0 2px rgba(204, 84, 4, 0.1);
+    border-color: #ff9800;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+    background: #fffaf0;
 }
 
-/* Common Button Styles */
+/* Common Button Styles - Merged */
 .user-crud .sem-btn {
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
-    border: none;
-    border-radius: 5px;
+    border: 2px solid transparent;
+    border-radius: 6px;
     cursor: pointer;
     text-decoration: none;
-    color: #fff;
+    color: white;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
     transition: all 0.2s ease;
     gap: 0.5rem;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(139, 69, 19, 0.2);
 }
 
 .user-crud .sem-btn:hover { 
-    transform: translateY(-1px); 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 8px rgba(139, 69, 19, 0.3);
 }
 
-/* Button Variants */
+.user-crud .sem-btn:active {
+    transform: translateY(0);
+}
+
+/* Button Variants - Merged */
 .user-crud .sem-btn-primary { 
-    background-color: #cc5404; 
+    background: #8b4513;
+    border-color: #5d4037;
 }
 
 .user-crud .sem-btn-primary:hover { 
-    background-color: #b34903; 
+    background: #a0522d;
+    border-color: #8b4513;
 }
 
 .user-crud .sem-btn-secondary { 
-    background-color: #5a3922; 
+    background: #5d4037;
+    border-color: #3e2723;
 }
 
 .user-crud .sem-btn-secondary:hover { 
-    background-color: #4a2e1b; 
+    background: #4e342e;
+    border-color: #3e2723;
 }
 
 .user-crud .sem-btn-danger { 
-    background-color: #dc3545; 
+    background: #a52a2a;
+    border-color: #8b0000;
 }
 
 .user-crud .sem-btn-danger:hover { 
-    background-color: #c82333; 
+    background: #8b0000;
+    border-color: #660000;
 }
 
 .user-crud .sem-btn-outline { 
     background-color: transparent;
-    border: 1px solid #ddd;
-    color: #666;
+    border: 2px solid #8b4513;
+    color: #8b4513;
 }
 
 .user-crud .sem-btn-outline:hover { 
-    background-color: #f8f8f8;
-    border-color: #cc5404;
-    color: #cc5404;
+    background-color: #8b4513;
+    border-color: #8b4513;
+    color: #fffaf0;
+}
+
+/* Action Button Variants - Merged */
+.user-crud .sem-btn-view {
+    background: #8b4513;
+    border-color: #5d4037;
+    color: #fffaf0;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.user-crud .sem-btn-view:hover {
+    background: #a0522d;
+    border-color: #8b4513;
+}
+
+.user-crud .sem-btn-edit {
+    background: #d2691e;
+    border-color: #b35917;
+    color: white;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.user-crud .sem-btn-edit:hover {
+    background: #cd853f;
+    border-color: #d2691e;
+}
+
+.user-crud .sem-btn-delete {
+    background: #a52a2a;
+    border-color: #8b0000;
+    color: white;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.user-crud .sem-btn-delete:hover {
+    background: #8b0000;
+    border-color: #660000;
 }
 
 /* Info Display */
 .user-crud .sem-info-display {
-    background: #f8f8f8;
+    background: #fff8e1;
     padding: 1rem;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #d4a76a;
     margin-bottom: 1.5rem;
 }
 
@@ -200,7 +321,7 @@
     justify-content: space-between;
     margin-bottom: 0.8rem;
     padding-bottom: 0.8rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #d4a76a;
     font-size: 0.9rem;
 }
 
@@ -211,36 +332,43 @@
 }
 
 .user-crud .sem-info-label {
-    color: #555;
+    color: #5d4037;
     font-weight: 600;
 }
 
 .user-crud .sem-info-value {
-    color: #333;
+    color: #8b4513;
     text-align: right;
+    font-weight: 500;
 }
 
-/* Role Badges */
+/* Role Badges - Updated with theme colors */
 .user-crud .sem-role-badge {
     display: inline-block;
-    padding: 0.2rem 0.6rem;
-    border-radius: 10px;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
     font-size: 0.75rem;
-    color: white;
     font-weight: 600;
     margin-left: 0.3rem;
+    text-transform: uppercase;
+    border: 1px solid;
 }
 
 .user-crud .sem-role-badge-admin {
-    background-color: #cc5404;
+    background: #ff9800;
+    color: #5d4037;
+    border-color: #ff8c00;
 }
 
 .user-crud .sem-role-badge-staff {
-    background-color: #5a3922;
+    background: #d2691e;
+   
 }
 
 .user-crud .sem-role-badge-user {
-    background-color: #4ECDC4;
+    background: #cd853f;
+    color: #fffaf0;
+    border-color: #a0522d;
 }
 
 /* Checkbox Group */
@@ -256,26 +384,26 @@
     align-items: center;
     gap: 0.7rem;
     padding: 0.6rem;
-    background: #f8f8f8;
+    background: #fff8e1;
     border-radius: 5px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #d4a76a;
     transition: all 0.2s ease;
 }
 
 .user-crud .sem-checkbox-item:hover {
-    background: rgba(204, 84, 4, 0.05);
-    border-color: rgba(204, 84, 4, 0.3);
+    background: rgba(255, 152, 0, 0.1);
+    border-color: #ff9800;
 }
 
 .user-crud .sem-checkbox-item-input {
     width: 16px;
     height: 16px;
-    accent-color: #cc5404;
+    accent-color: #ff9800;
     cursor: pointer;
 }
 
 .user-crud .sem-checkbox-item-label {
-    color: #333;
+    color: #5d4037;
     font-weight: 500;
     cursor: pointer;
     flex: 1;
@@ -287,17 +415,19 @@
     display: block;
     margin-top: 0.3rem;
     font-size: 0.8rem;
-    color: #888;
+    color: #8b4513;
+    font-style: italic;
 }
 
 /* Form Actions */
 .user-crud .sem-form-actions {
     margin-top: 1.5rem;
     padding-top: 1rem;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #d4a76a;
+    background: white;
 }
 
-/* Action Buttons Container */
+/* Action Buttons Container - Merged */
 .user-crud .sem-action-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -305,38 +435,66 @@
     justify-content: center;
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #d4a76a;
+    background: white;
 }
 
-/* New Button Container */
-.user-crud .sem-new-btn-container { 
-    text-align: center; 
-    margin-top: 1.5rem; 
+/* For datatable action buttons specifically */
+.user-crud .sem-actions-td .sem-action-buttons {
+    justify-content: flex-start;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    gap: 6px;
+    background: transparent;
 }
 
+.user-crud .sem-actions-td {
+    min-width: 180px;
+}
+
+/* Create Button - Merged */
 .user-crud .sem-create-btn {
-    background-color: #cc5404;
-    padding: 0.7rem 1.5rem;
+    background: linear-gradient(to right, #8b4513 0%, #d2691e 100%);
+    color: #fffaf0;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: 600;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
+    transition: all 0.3s ease;
+    border: 2px solid #5d4037;
+    box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
 }
 
 .user-crud .sem-create-btn:hover { 
-    background-color: #b34903; 
+    background: linear-gradient(to right, #d2691e 0%, #ff8c00 100%);
     transform: translateY(-2px); 
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 20px rgba(210, 105, 30, 0.4);
+    color: white;
 }
 
 .user-crud .sem-create-btn::before {
     content: "+";
     font-size: 1.1rem;
     font-weight: bold;
+}
+
+/* New Button Container - Merged */
+.user-crud .sem-new-btn-container { 
+    text-align: center; 
+    margin-top: 1.5rem; 
+    background: white;
+}
+
+.user-crud .sem-datatable-container .sem-new-btn-container {
+    padding: 20px;
+    text-align: right;
+    border-top: 2px solid #d4a76a;
+    background: #fff8e1;
 }
 
 /* Back Link */
@@ -347,16 +505,21 @@
     gap: 0.5rem;
     text-align: center;
     margin-top: 1rem;
-    color: #666;
+    color: #8b4513;
     text-decoration: none;
     padding: 0.6rem;
     font-weight: 500;
     font-size: 0.9rem;
+    background: #fff8e1;
+    border-radius: 5px;
+    border: 1px solid #d4a76a;
 }
 
 .user-crud .sem-back-link:hover {
-    color: #cc5404;
-    text-decoration: underline;
+    color: #ff9800;
+    background: #fffaf0;
+    text-decoration: none;
+    border-color: #ff9800;
 }
 
 /* Alert Messages */
@@ -364,7 +527,7 @@
     padding: 0.8rem 1rem;
     border-radius: 5px;
     margin-bottom: 1rem;
-    border: 1px solid transparent;
+    border: 2px solid;
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -373,47 +536,167 @@
 }
 
 .user-crud .sem-alert-success {
-    color: #155724;
-    background: #d4edda;
-    border-color: #c3e6cb;
+    color: #5d4037;
+    background: #e8f5e9;
+    border-color: #8bc34a;
 }
 
 .user-crud .sem-alert-error {
-    color: #721c24;
-    background: #f8d7da;
-    border-color: #f5c6cb;
+    color: #5d4037;
+    background: #ffebee;
+    border-color: #f44336;
 }
 
 /* Password Display */
 .user-crud .sem-password-hash {
     font-family: monospace;
     font-size: 0.8rem;
-    color: #666;
-    background: #f8f8f8;
+    color: #5d4037;
+    background: #fff8e1;
     padding: 0.5rem;
     border-radius: 5px;
     display: inline-block;
     word-break: break-all;
+    border: 1px solid #d4a76a;
 }
 
 .user-crud .sem-password-note {
     font-size: 0.8rem;
-    color: #888;
+    color: #8b4513;
     font-style: italic;
     margin-top: 0.5rem;
 }
 
-/* Empty State */
+/* Empty State - Merged */
 .user-crud .sem-empty-row {
     text-align: center;
     padding: 2rem !important;
-    color: #666;
+    color: #5d4037;
+    background: #fff8e1;
 }
 
-.user-crud .sem-empty-row a {
-    color: #cc5404;
-    text-decoration: underline;
-    font-weight: 500;
+.user-crud .sem-empty-td {
+    padding: 40px 20px !important;
+    text-align: center !important;
+    color: #5d4037 !important;
+    font-size: 16px !important;
+    background: #fff8e1 !important;
+    border-bottom: 1px solid #d4a76a !important;
+}
+
+.user-crud .sem-empty-row a,
+.user-crud .sem-link {
+    color: #d2691e;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+    border-bottom: 1px dotted #ff9800;
+}
+
+.user-crud .sem-empty-row a:hover,
+.user-crud .sem-link:hover {
+    color: #ff9800;
+    border-bottom-style: solid;
+}
+
+/* STATUS BADGES - Theme consistent */
+.user-crud .sem-status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 70px;
+    text-align: center;
+    border: 1px solid;
+}
+
+.user-crud .sem-status-active {
+    background: #ffd700;
+    color: #5d4037;
+    border-color: #ffc107;
+}
+
+.user-crud .sem-status-inactive {
+    background: #bc8f8f;
+    color: #fffaf0;
+    border-color: #a0522d;
+}
+
+/* DATATABLE CONTROLS */
+.user-crud .sem-dt-length,
+.user-crud .sem-dt-filter,
+.user-crud .sem-dt-info,
+.user-crud .sem-dt-paginate {
+    padding: 15px 20px;
+    margin: 0 !important;
+    border-top: 2px solid #d4a76a;
+    background: #fff8e1;
+    color: #5d4037;
+}
+
+/* SEARCH INPUT */
+.user-crud .sem-dt-search {
+    padding: 9px 18px;
+    border: 2px solid #d4a76a;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: white;
+    margin-left: 10px;
+    color: #5d4037;
+}
+
+.user-crud .sem-dt-search:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
+    outline: none;
+    background: #fffaf0;
+}
+
+/* LENGTH SELECT */
+.user-crud .sem-dt-select {
+    padding: 9px 18px;
+    border: 2px solid #d4a76a;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 10px;
+    color: #5d4037;
+}
+
+.user-crud .sem-dt-select:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
+    outline: none;
+    background: #fffaf0;
+}
+
+/* PAGINATION */
+.user-crud .sem-paginate-btn {
+    padding: 8px 16px !important;
+    margin: 0 5px !important;
+    border: 2px solid #d4a76a !important;
+    border-radius: 6px !important;
+    background: white !important;
+    color: #5d4037 !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+.user-crud .sem-paginate-btn:hover {
+    background: #fff8e1 !important;
+    border-color: #ff9800 !important;
+    color: #8b4513 !important;
+}
+
+.user-crud .sem-paginate-current {
+    background: linear-gradient(to right, #8b4513 0%, #d2691e 100%) !important;
+    color: #fffaf0 !important;
+    border-color: #5d4037 !important;
+    box-shadow: 0 2px 8px rgba(139, 69, 19, 0.4) !important;
 }
 
 /* Mobile Responsiveness */
@@ -432,6 +715,12 @@
     .user-crud .sem-table td { 
         font-size: 0.8rem; 
         padding: 0.6rem;
+    }
+    
+    .user-crud .sem-table-th,
+    .user-crud .sem-table-td {
+        padding: 12px 8px !important;
+        font-size: 12px !important;
     }
     
     .user-crud .sem-btn {
@@ -468,5 +757,60 @@
     .user-crud .sem-info-value {
         width: 100%;
         text-align: left;
+    }
+    
+    .user-crud .sem-datatable-container {
+        border-radius: 6px;
+        margin: 10px 0;
+        border-width: 1px;
+    }
+    
+    .user-crud .sem-actions-td {
+        min-width: 150px;
+    }
+    
+    .user-crud .sem-role-badge,
+    .user-crud .sem-status-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    
+    .user-crud .sem-dt-length,
+    .user-crud .sem-dt-filter,
+    .user-crud .sem-dt-info,
+    .user-crud .sem-dt-paginate {
+        padding: 10px;
+    }
+}
+
+/* PRINT STYLES */
+@media print {
+    .user-crud .sem-datatable-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .user-crud .sem-btn,
+    .user-crud .sem-new-btn-container,
+    .user-crud .sem-dt-length,
+    .user-crud .sem-dt-filter,
+    .user-crud .sem-dt-paginate,
+    .user-crud .sem-action-buttons {
+        display: none !important;
+    }
+    
+    .user-crud .sem-table-row {
+        border-bottom: 1px solid #ccc;
+    }
+    
+    .user-crud .sem-table th,
+    .user-crud .sem-table td {
+        color: #000 !important;
+        background: white !important;
+    }
+    
+    .user-crud .sem-table-header {
+        background: #ddd !important;
+        color: #000 !important;
     }
 }

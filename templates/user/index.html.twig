@@ -4,7 +4,160 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/user/crud.css') }}">
+    <!-- DataTables CSS (add if not in base.html.twig) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <style>
+        /* Button Design Styles - Orange-Brown/Brown theme with right alignment */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+            justify-content: flex-end;
+            width: 100%;
+        }
+        
+        /* VIEW BUTTON - Orange Brown */
+        .btn-view {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #D2691E 0%, #CD853F 100%);
+            color: white;
+            border: 1px solid #A0522D;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(210, 105, 30, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        
+        .btn-view:hover {
+            background: linear-gradient(135deg, #CD853F 0%, #D2691E 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(205, 133, 63, 0.25);
+            color: white;
+            border-color: #8B4513;
+        }
+        
+        /* EDIT BUTTON - Brown */
+        .btn-edit {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+            color: white;
+            border: 1px solid #5D4037;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(139, 69, 19, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(160, 82, 45, 0.25);
+            color: white;
+            border-color: #3E2723;
+        }
+        
+        /* Focus states for accessibility */
+        .btn-view:focus,
+        .btn-edit:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.3);
+        }
+        
+        /* Table action cell adjustments */
+        .sem-actions-td {
+            min-width: 200px;
+        }
+        
+        .sem-actions-td .action-buttons {
+            justify-content: flex-end;
+            padding-right: 0;
+        }
+        
+        /* Align actions column header to the right */
+        .sem-actions-col {
+            text-align: right !important;
+        }
+        
+        .sem-table-th.sem-actions-col {
+            text-align: right !important;
+            padding-right: 1.5rem !important;
+        }
+        
+        /* Responsive adjustments for buttons */
+        @media (max-width: 768px) {
+            .action-buttons {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .btn-view, .btn-edit {
+                min-width: 80px;
+                padding: 0.625rem 0.75rem;
+                font-size: 0.875rem;
+                flex: 1;
+                max-width: 120px;
+            }
+            
+            .sem-actions-td {
+                min-width: auto;
+            }
+            
+            .sem-actions-td .action-buttons {
+                justify-content: center;
+            }
+            
+            .sem-table-th.sem-actions-col {
+                text-align: center !important;
+                padding-right: 12px !important;
+            }
+        }
+        
+        /* For small mobile screens */
+        @media (max-width: 480px) {
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn-view, .btn-edit {
+                max-width: 100%;
+                width: 100%;
+                min-width: 100%;
+            }
+        }
+        
+        /* Align the "Add New User" button to the right */
+        .sem-new-btn-container { 
+            text-align: right; 
+            margin-top: 1.5rem; 
+            background: white;
+            padding: 1rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .sem-new-btn-container {
+                text-align: center;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -18,43 +171,47 @@
             </div>
             
             <div class="sem-content">
-                <div class="sem-table-container">
-                    <table class="sem-table" id="userTable">
+                <div class="sem-table-container sem-datatable-container">
+                    <table class="sem-table sem-datatable" id="userTable">
                         <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Username</th>
-                                <th>Roles</th>
-                                <th>Actions</th>
+                            <tr class="sem-table-header">
+                                <th class="sem-table-th">ID</th>
+                                <th class="sem-table-th">Username</th>
+                                <th class="sem-table-th">Roles</th>
+                                <th class="sem-table-th">Status</th>
+                                <th class="sem-table-th sem-actions-col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                         {% for user in users %}
-                            <tr>
-                                <td>#{{ user.id }}</td>
-                                <td>{{ user.username }}</td>
-                                <td>
+                            <tr class="sem-table-row">
+                                <td class="sem-table-td">#{{ user.id }}</td>
+                                <td class="sem-table-td">{{ user.username }}</td>
+                                <td class="sem-table-td">
                                     {% for role in user.roles %}
                                         {% if role == 'ROLE_ADMIN' %}
-                                            <span class="sem-role-badge sem-role-badge-admin">Admin</span>
+                                            <span class="">Admin</span>
                                         {% elseif role == 'ROLE_staff' %}
-                                            <span class="sem-role-badge sem-role-badge-staff">Staff</span>
+                                            <span class="">Staff</span>
                                         {% elseif role == 'ROLE_USER' %}
-                                            <span class="sem-role-badge sem-role-badge-user">User</span>
+                                            <span class="">User</span>
                                         {% endif %}
                                     {% endfor %}
                                 </td>
-                                <td>
-                                    <div class="sem-action-buttons" style="margin: 0; padding: 0; border: none; justify-content: flex-start;">
-                                        <a href="{{ path('app_user_show', {'id': user.id}) }}" class="sem-btn sem-btn-primary">View</a>
-                                        <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="sem-btn sem-btn-secondary">Edit</a>
+                                <td class="sem-table-td">
+                                    <span class="">Active</span>
+                                </td>
+                                <td class="sem-table-td sem-actions-td">
+                                    <div class="action-buttons">
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn-view">View</a>
+                                        <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn-edit">Edit</a>
                                     </div>
                                 </td>
                             </tr>
                         {% else %}
-                            <tr>
-                                <td colspan="4" class="sem-empty-row">
-                                    No users found. <a href="{{ path('app_user_new') }}">Create the first user</a>
+                            <tr class="sem-empty-row">
+                                <td colspan="5" class="sem-empty-td">
+                                    No users found. <a href="{{ path('app_user_new') }}" class="sem-link">Create the first user</a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -69,19 +226,119 @@
         </div>
     </main>
 </div>
+{% endblock %}
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const tableRows = document.querySelectorAll('.sem-table tbody tr');
-        tableRows.forEach(row => {
-            row.addEventListener('mouseenter', () => {
-                row.style.backgroundColor = 'rgba(204, 84, 4, 0.05)';
+{% block javascripts %}
+    {{ parent() }}
+    <!-- jQuery and DataTables JS (add if not in base.html.twig) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize DataTable
+        if ($.fn.DataTable) {
+            $('#userTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 100],
+                order: [[0, 'desc']],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search users...",
+                    lengthMenu: "Show _MENU_ entries",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "No users found",
+                    infoFiltered: "(filtered from _MAX_ total users)",
+                    zeroRecords: "No matching users found",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                },
+                columnDefs: [
+                    {
+                        targets: 4, // Actions column
+                        orderable: false,
+                        searchable: false,
+                        className: 'dt-body-right sem-actions-td' // Add right alignment for DataTable
+                    },
+                    {
+                        targets: 0, // ID column
+                        className: 'dt-body-left'
+                    },
+                    {
+                        targets: [1, 2, 3], // Other columns
+                        className: 'dt-body-left'
+                    }
+                ],
+                initComplete: function() {
+                    // Add custom classes to DataTable elements
+                    $('.dataTables_wrapper').addClass('sem-datatable-wrapper');
+                    $('.dataTables_length').addClass('sem-dt-length');
+                    $('.dataTables_filter').addClass('sem-dt-filter');
+                    $('.dataTables_info').addClass('sem-dt-info');
+                    $('.dataTables_paginate').addClass('sem-dt-paginate');
+                    
+                    // Style the search input
+                    $('.dataTables_filter input').addClass('sem-dt-search');
+                    
+                    // Style the length select
+                    $('.dataTables_length select').addClass('sem-dt-select');
+                    
+                    // Style pagination buttons
+                    $('.paginate_button').addClass('sem-paginate-btn');
+                    $('.paginate_button.current').addClass('sem-paginate-current');
+                    
+                    // Ensure Actions header is right-aligned
+                    $('th.sem-actions-col').css('text-align', 'right');
+                },
+                drawCallback: function() {
+                    // Reapply hover effects after DataTable redraws
+                    $('.sem-table tbody tr').hover(
+                        function() {
+                            $(this).addClass('sem-row-hover');
+                        },
+                        function() {
+                            $(this).removeClass('sem-row-hover');
+                        }
+                    );
+                    
+                    // Ensure action buttons are right-aligned in each row
+                    $('td.sem-actions-td .action-buttons').css('justify-content', 'flex-end');
+                }
             });
             
-            row.addEventListener('mouseleave', () => {
-                row.style.backgroundColor = '';
+            // Add custom hover effect
+            $('.sem-table tbody').on('mouseenter', 'tr', function() {
+                $(this).addClass('sem-row-hover');
+            }).on('mouseleave', 'tr', function() {
+                $(this).removeClass('sem-row-hover');
             });
-        });
+            
+        } else {
+            console.warn('DataTables not loaded, using basic functionality');
+            
+            // Fallback hover effects
+            const tableRows = document.querySelectorAll('.sem-table tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', () => {
+                    row.classList.add('sem-row-hover');
+                });
+                
+                row.addEventListener('mouseleave', () => {
+                    row.classList.remove('sem-row-hover');
+                });
+            });
+            
+            // Ensure action buttons are right-aligned
+            document.querySelectorAll('.sem-actions-td .action-buttons').forEach(buttons => {
+                buttons.style.justifyContent = 'flex-end';
+            });
+        }
     });
-</script>
+    </script>
 {% endblock %}

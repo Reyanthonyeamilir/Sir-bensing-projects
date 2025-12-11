@@ -488,7 +488,8 @@
         
         <!-- Navigation -->
         <ul class="nav">
-            <!-- Dashboard - All logged-in users can see -->
+            <!-- Dashboard - Only for Staff and Admin -->
+            {% if is_granted('ROLE_staff') or is_granted('ROLE_ADMIN') %}
             <li>
                 <a href="{{ path('app_dashboard') }}"
                    class="{% if app.request.attributes.get('_route') == 'app_dashboard' %}active{% endif %}">
@@ -496,6 +497,7 @@
                     <span>Dashboard</span>
                 </a>
             </li>
+            {% endif %}
             
             <!-- My Profile - All logged-in users can see -->
             <li>
@@ -506,7 +508,8 @@
                 </a>
             </li>
             
-            <!-- Products - All logged-in users can see (Admin, Staff, Regular Users) -->
+            <!-- Products - Only for Staff and Admin -->
+            {% if is_granted('ROLE_staff') or is_granted('ROLE_ADMIN') %}
             <li>
                 <a href="{{ path('app_petproducts_index') }}"
                    class="{% if app.request.attributes.get('_route') starts with 'app_petproducts' %}active{% endif %}">
@@ -517,6 +520,7 @@
                     {% endif %}
                 </a>
             </li>
+            {% endif %}
             
             <!-- Users Management - ONLY FOR ADMIN -->
             {% if is_granted('ROLE_ADMIN') %}

@@ -111,10 +111,13 @@ h1, h2, h3,h4, h5, h6 {
         /* Optional: your theme color */
   letter-spacing: 0.5px;
 }
+headerscnt{
+      color: #8b4513
 
+}
 /* Use Poppins for body text */
 body, p, a, li, span, input, textarea, button {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins',sans-serif;
 }
 
 

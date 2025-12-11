@@ -174,7 +174,7 @@ body, html {
 .hamburger div {
   width: 25px;
   height: 3px;
-  background-color: #fff;
+  background-color: #cdda23;
   border-radius: 2px;
   transition: all 0.3s ease;
 }
@@ -249,7 +249,7 @@ footer {
   border: none;
   border-radius: 5px;
   background-color: #cc5404;
-  color: #fff;
+  color: #fdc713;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -341,7 +341,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #fff;
+  color: #e4ba02;
   overflow: hidden;
 }
 
@@ -361,19 +361,19 @@ footer {
 .hero-text h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #ffe6c9;
+  color: #f3bd0b;
   margin-bottom: 20px;
 }
 
 .hero-text p {
   font-size: 1.1rem;
   line-height: 1.5;
-  color: #f3d8b4;
+  color: #f3bd0b;
   margin-bottom: 25px;
 }
 .btnraprimary {
   background-color: #cc5404;
-  color: #fff;
+  color: #fae6a4;
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 600;
