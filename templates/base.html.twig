@@ -10,6 +10,17 @@
   <link rel="stylesheet" href="{{ asset('styles/index.css') }}">
    {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
+        <style>
+            /* Remove hover animations from select options */
+            select option:hover {
+                background: none !important;
+                outline: none !important;
+            }
+
+            select option:checked {
+                background: none !important;
+            }
+        </style>
     {% endblock %}
 
     <link rel="stylesheet" href="{{ asset('css/jquery.dataTables.min.css') }}">

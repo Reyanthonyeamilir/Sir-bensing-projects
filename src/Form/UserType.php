@@ -28,9 +28,9 @@ class UserType extends AbstractType
                     'Staff' => 'ROLE_staff',
                     'User' => 'ROLE_USER',
                 ],
-                'multiple' => true,
-                'expanded' => true,
-                'required' => false,
+                'multiple' => false,
+                'expanded' => false,
+                'required' => true,
                 'label' => 'Roles',
                 'attr' => ['class' => 'form-checkboxes']
             ])

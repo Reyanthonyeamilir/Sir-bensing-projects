@@ -89,7 +89,7 @@
           <div class="product-info">
             <h3 class="product-name">{{ petproduct.productName}}</h3>
             <p class="category">{{ petproduct.category }} — {{ petproduct.subCategory }}</p>
-            <p class="price">$ {{ petproduct.price }}</p>
+            <p class="price">₱ {{ petproduct.price }}</p>
             
             {# Condition: Show Breed for DOG, Brand for others #}
             {% if petproduct.category|upper == 'DOG' %}

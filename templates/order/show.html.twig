@@ -287,22 +287,19 @@
                         <span class="detail-label">Order ID:</span>
                         <span class="detail-value">#{{ order.id }}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Status:</span>
-                        <span class="detail-value">
-                            {% if order.status == 'pending' %}
-                                <span class="status-badge status-pending">{{ order.status }}</span>
-                            {% elseif order.status == 'processing' %}
-                                <span class="status-badge status-processing">{{ order.status }}</span>
-                            {% elseif order.status == 'completed' %}
-                                <span class="status-badge status-completed">{{ order.status }}</span>
-                            {% elseif order.status == 'cancelled' %}
-                                <span class="status-badge status-cancelled">{{ order.status }}</span>
-                            {% else %}
-                                <span class="status-badge">{{ order.status }}</span>
-                            {% endif %}
-                        </span>
-                    </div>
+                    {# Update the status badge section #}
+<div class="detail-row">
+    <span class="detail-label">Status:</span>
+    <span class="detail-value">
+        {% if order.status == 'pending' %}
+            <span class="status-badge status-pending">{{ order.status }}</span>
+        {% elseif order.status == 'completed' %}
+            <span class="status-badge status-completed">{{ order.status }}</span>
+        {% else %}
+            <span class="status-badge">{{ order.status }}</span>
+        {% endif %}
+    </span>
+</div>
                     <div class="detail-row">
                         <span class="detail-label">Quantity:</span>
                         <span class="detail-value">{{ order.quantity }}</span>

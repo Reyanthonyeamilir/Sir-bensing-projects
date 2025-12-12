@@ -319,18 +319,8 @@
     color: #856404;
   }
   
-  .status-processing {
-    background-color: #17a2b8;
-    color: white;
-  }
-  
   .status-completed {
     background-color: #28a745;
-    color: white;
-  }
-  
-  .status-cancelled {
-    background-color: #dc3545;
     color: white;
   }
   
@@ -530,19 +520,16 @@
                               <td data-sort="product" class="product-cell">{{ order.product.productName }}</td>
                                 <td data-sort="quantity">{{ order.quantity }}</td>
                                 <td data-sort="amount" class="amount-cell">₱{{ order.amount|number_format(2) }}</td>
-                                <td data-sort="status">
-                                    {% if order.status == 'pending' %}
-                                        <span class="status-badge status-pending">{{ order.status }}</span>
-                                    {% elseif order.status == 'processing' %}
-                                        <span class="status-badge status-processing">{{ order.status }}</span>
-                                    {% elseif order.status == 'completed' %}
-                                        <span class="status-badge status-completed">{{ order.status }}</span>
-                                    {% elseif order.status == 'cancelled' %}
-                                        <span class="status-badge status-cancelled">{{ order.status }}</span>
-                                    {% else %}
-                                        <span class="status-badge">{{ order.status }}</span>
-                                    {% endif %}
-                                </td>
+                                {# Update the status badge section #}
+<td data-sort="status">
+    {% if order.status == 'pending' %}
+        <span class="status-badge status-pending">{{ order.status }}</span>
+    {% elseif order.status == 'completed' %}
+        <span class="status-badge status-completed">{{ order.status }}</span>
+    {% else %}
+        <span class="status-badge">{{ order.status }}</span>
+    {% endif %}
+</td>
                                 <td data-sort="created">{{ order.createdAt|date('Y-m-d H:i') }}</td>
                                 <td class="actions-cell">
                                     <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn view-btn">View</a>

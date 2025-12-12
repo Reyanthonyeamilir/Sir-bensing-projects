@@ -1,3 +1,7 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create New Order{% endblock %}
+
 {% block stylesheets %}
 {{ parent() }}
 <style>
@@ -9,8 +13,9 @@
   }
   
   body, html { 
-    background: transparent !important; 
+    background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%) !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    min-height: 100vh;
   }
   
   .dashboard-container { 
@@ -21,93 +26,396 @@
   
   .main-content { 
     flex: 1; 
-    padding: 1.5rem; 
-    background: transparent; 
+    padding: 2rem; 
+    background: rgba(245, 245, 220, 0.95); /* Beige background */
     margin-left: 280px; 
     max-width: calc(100% - 280px);
+    border-radius: 15px 0 0 15px;
+    box-shadow: -5px 0 20px rgba(139, 69, 19, 0.3);
   }
   
   .new-heading { 
-    font-size: 1.6rem; 
+    font-size: 1.8rem; 
     font-weight: 700; 
-    color: #e9d311c5; 
-    margin-bottom: 1.5rem; 
+    color: #8B4513; /* Saddle Brown */
+    margin-bottom: 2rem; 
     text-align: center; 
-    padding-bottom: 0.8rem;
-    border-bottom: 2px solid #ff7b35;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #D2691E; /* Chocolate */
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
   }
   
-  /* Add form styles */
-  .sem-form {
-    max-width: 600px;
+  /* FORM STYLING */
+  .order-form {
+    max-width: 800px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 248, 220, 0.9); /* Cornsilk with transparency */
     padding: 2rem;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(139, 69, 19, 0.2);
+    border: 2px solid #D2691E;
   }
   
-  .sem-form-group {
-    margin-bottom: 1.5rem;
+  .form-group {
+    margin-bottom: 1.8rem;
+    background: #FFF8DC; /* Cornsilk */
+    padding: 1.2rem;
+    border-radius: 10px;
+    border-left: 4px solid #D2691E;
+    box-shadow: 0 3px 10px rgba(139, 69, 19, 0.1);
   }
   
-  .sem-form-input {
-    width: 100%;
-    padding: 0.8rem;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    color: white;
-    font-size: 1rem;
-  }
-  
-  .sem-form-input:focus {
-    outline: none;
-    border-color: #ff7b35;
-    box-shadow: 0 0 0 2px rgba(255, 123, 53, 0.2);
-  }
-  
-  .sem-form-text {
+  .form-label {
     display: block;
-    margin-top: 0.4rem;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.6rem;
+    font-weight: 700;
+    color: #8B4513; /* Saddle Brown */
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   
-  .sem-form-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  
-  .sem-btn {
-    padding: 0.8rem 1.5rem;
-    border: none;
+  .form-input {
+    width: 100%;
+    padding: 0.85rem;
+    border: 2px solid #D2691E; /* Chocolate */
     border-radius: 6px;
-    font-weight: 600;
+    font-size: 1rem;
+    background: #FAEBD7; /* Antique White */
+    color: #8B4513;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #8B4513; /* Saddle Brown */
+    box-shadow: 0 0 0 4px rgba(210, 105, 30, 0.2);
+    background: #FFEBCD; /* Blanched Almond */
+  }
+  
+  .form-help {
+    color: #A0522D; /* Sienna */
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    font-style: italic;
+    padding-left: 0.5rem;
+  }
+  
+  .form-errors {
+    color: #B22222; /* Firebrick */
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid #B22222;
+    background: rgba(178, 34, 34, 0.1);
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  select.form-input {
+    appearance: none;
+    padding-right: 3rem;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+  }
+  
+
+  
+  /* Custom scrollbar for selects */
+  .form-input::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  .form-input::-webkit-scrollbar-track {
+    background: #F5DEB3;
+    border-radius: 5px;
+  }
+  
+  .form-input::-webkit-scrollbar-thumb {
+    background: #D2691E;
+    border-radius: 5px;
+  }
+  
+  .form-input::-webkit-scrollbar-thumb:hover {
+    background: #8B4513;
+  }
+  
+  /* Form Actions */
+  .form-actions {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    justify-content: center;
+  }
+  
+  .btn-create {
+    background: linear-gradient(45deg, #D2691E, #8B4513);
+    color: #FFF8DC;
+    border: 2px solid #A0522D;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(139, 69, 19, 0.4);
+  }
+  
+  .btn-create:hover {
+    background: linear-gradient(45deg, #8B4513, #D2691E);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(139, 69, 19, 0.5);
+  }
+  
+  .btn-back {
+    background: linear-gradient(45deg, #A0522D, #8B4513);
+    color: #FFF8DC;
+    border: 2px solid #8B4513;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
     text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(139, 69, 19, 0.4);
   }
   
-  .sem-btn-primary {
-    background: #ff7b35;
-    color: white;
+  .btn-back:hover {
+    background: linear-gradient(45deg, #8B4513, #A0522D);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(139, 69, 19, 0.5);
   }
   
-  .sem-btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+  /* Animation for form groups */
+  .form-group {
+    animation: slideIn 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateX(-20px);
   }
   
-  .sem-btn-primary:hover {
-    background: #ff6a1a;
+  @keyframes slideIn {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
   
-  .sem-btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.2);
+  /* Stagger animations for each group */
+  .form-group:nth-child(1) { animation-delay: 0.1s; }
+  .form-group:nth-child(2) { animation-delay: 0.2s; }
+  .form-group:nth-child(3) { animation-delay: 0.3s; }
+  .form-group:nth-child(4) { animation-delay: 0.4s; }
+  
+  /* Staff note styling */
+  .staff-note {
+    background: linear-gradient(45deg, #FFEBCD, #F5DEB3);
+    border: 2px solid #D2691E;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+    color: #8B4513;
+    box-shadow: 0 3px 8px rgba(139, 69, 19, 0.2);
+  }
+  
+  /* Alert styling */
+  .alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+  
+  .alert-error {
+    background-color: #FFEBEE;
+    color: #C62828;
+    border: 2px solid #EF9A9A;
+  }
+  
+  .alert-success {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+    border: 2px solid #A5D6A7;
+  }
+  
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 0;
+      max-width: 100%;
+      padding: 1rem;
+      border-radius: 0;
+    }
+    
+    .order-form {
+      padding: 1.5rem;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .btn-create, .btn-back {
+      width: 100%;
+      text-align: center;
+    }
   }
 </style>
+{% endblock %}
+
+{% block body %}
+<div class="dashboard-container">
+    {% include 'dashboard/sidebar.html.twig' %}
+    
+    <div class="main-content">
+        <h1 class="new-heading">Create New Order</h1>
+        
+        {% for flash_error in app.flashes('error') %}
+            <div class="alert alert-error">
+                {{ flash_error }}
+            </div>
+        {% endfor %}
+        
+        {% for flash_success in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ flash_success }}
+            </div>
+        {% endfor %}
+        
+        {# Staff notification #}
+        {% if is_granted('ROLE_staff') and not is_granted('ROLE_ADMIN') %}
+            <div class="staff-note">
+                ⓘ Note: As staff, you can only create orders for yourself. The customer field is automatically set to your account.
+            </div>
+        {% endif %}
+        
+        <div class="order-form">
+            {{ form_start(form, {'attr': {'class': 'create-order-form'}}) }}
+            
+            {# Customer Field - Hidden for staff, visible for admin #}
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="form-group">
+                    {{ form_label(form.customer, 'Customer', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.customer, {
+                        'attr': {'class': 'form-input'}
+                    }) }}
+                    {% if form.customer.vars.errors|length > 0 %}
+                        <div class="form-errors">
+                            {{ form_errors(form.customer) }}
+                        </div>
+                    {% endif %}
+                    <div class="form-help">Select the customer for this order</div>
+                </div>
+            {% else %}
+                {# For staff, hide the customer field but still include it #}
+                {{ form_widget(form.customer, {'attr': {'class': 'd-none'}}) }}
+            {% endif %}
+            
+            {# Product Selection #}
+            <div class="form-group">
+                {{ form_label(form.product, 'Product', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.product, {
+                    'attr': {'class': 'form-input'}
+                }) }}
+                {% if form.product.vars.errors|length > 0 %}
+                    <div class="form-errors">
+                        {{ form_errors(form.product) }}
+                    </div>
+                {% endif %}
+                <div class="form-help">Select the product to order (only products with available stock are shown)</div>
+            </div>
+            
+            {# Quantity #}
+            <div class="form-group">
+                {{ form_label(form.quantity, 'Quantity', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.quantity, {
+                    'attr': {'class': 'form-input', 'min': '1', 'value': '1'}
+                }) }}
+                {% if form.quantity.vars.errors|length > 0 %}
+                    <div class="form-errors">
+                        {{ form_errors(form.quantity) }}
+                    </div>
+                {% endif %}
+                <div class="form-help">Enter the quantity of products</div>
+            </div>
+            
+            {# Status #}
+            <div class="form-group">
+                {{ form_label(form.status, 'Order Status', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.status, {
+                    'attr': {'class': 'form-input'}
+                }) }}
+                {% if form.status.vars.errors|length > 0 %}
+                    <div class="form-errors">
+                        {{ form_errors(form.status) }}
+                    </div>
+                {% endif %}
+                <div class="form-help">Select the initial status for this order</div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-create">Create Order</button>
+                <a href="{{ path('app_order_index') }}" class="btn-back">Back to Orders</a>
+            </div>
+            
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-update stock information when product changes
+    const productSelect = document.querySelector('#{{ form.product.vars.id }}');
+    const quantityInput = document.querySelector('#{{ form.quantity.vars.id }}');
+    
+    if (productSelect && quantityInput) {
+        productSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.text.includes('₱')) {
+                // Extract stock information from option text if available
+                const optionText = selectedOption.text;
+                // You could parse stock info here if included in option text
+                console.log('Selected product:', optionText);
+            }
+        });
+        
+        // Validate quantity doesn't exceed stock
+        quantityInput.addEventListener('change', function() {
+            const quantity = parseInt(this.value);
+            if (quantity < 1) {
+                this.value = 1;
+            }
+        });
+    }
+    
+    // Disable submit button on form submission to prevent double submission
+    const form = document.querySelector('.create-order-form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            const submitButton = this.querySelector('.btn-create');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = 'Creating...';
+                submitButton.style.opacity = '0.7';
+            }
+        });
+    }
+
+    // Debug: log status select options to help diagnose unexpected option
+    try {
+      const statusSelect = document.querySelector('#{{ form.status.vars.id }}');
+      if (statusSelect) {
+        const opts = Array.from(statusSelect.options).map(o => ({value: o.value, text: o.text}));
+        console.info('Status select options:', opts);
+      } else {
+        console.info('Status select not found in DOM.');
+      }
+    } catch (e) {
+      console.error('Error logging status select options', e);
+    }
+});
+</script>
 {% endblock %}

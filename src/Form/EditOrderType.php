@@ -67,14 +67,11 @@ class EditOrderType extends AbstractType
             ->add('status', ChoiceType::class, [
                 'choices' => [
                     'Pending' => 'pending',
-                    'Processing' => 'processing',
-                    'Shipped' => 'shipped',
-                    'Delivered' => 'delivered',
-                    'Cancelled' => 'cancelled',
+                    'Completed' => 'completed',
                 ],
                 'required' => true,
                 'placeholder' => 'Select status',
-                'attr' => ['class' => 'FORM-CONTROL']
+                'attr' => ['class' => 'FORM-CONTROL', 'autocomplete' => 'off']
             ]);
     }
 

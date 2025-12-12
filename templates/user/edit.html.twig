@@ -490,7 +490,8 @@
           {{ form_errors(form.isActive) }}
           <small class="user-edit-form-hint">Toggle to activate or deactivate this account</small>
         </div>
-
+            {{ form_label(form.roles) }}
+             {{ form_widget(form.roles, {'attr': {'class': 'user-edit-form-input'}}) }}
         <!-- Password Field -->
         <div class="user-edit-form-field">
           {{ form_label(form.password) }}

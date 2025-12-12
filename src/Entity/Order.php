@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\OrderRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
@@ -30,6 +31,7 @@ class Order
     private ?string $amount = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\Choice(choices: ['pending', 'completed'], message: "Choose a valid status.")]
     private ?string $status = null;
 
     #[ORM\Column]

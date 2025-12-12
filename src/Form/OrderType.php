@@ -58,14 +58,11 @@ class OrderType extends AbstractType
             ->add('status', ChoiceType::class, [
                 'choices' => [
                     'Pending' => 'pending',
-                    'Processing' => 'processing',
-                    'Shipped' => 'shipped',
-                    'Delivered' => 'delivered',
-                    'Cancelled' => 'cancelled',
+                    'Completed' => 'completed',
                 ],
                 'required' => true,
                 'placeholder' => 'Select status',
-                'attr' => ['class' => 'sem-form-input']
+                'attr' => ['class' => 'sem-form-input', 'autocomplete' => 'off']
             ]);
     }
 

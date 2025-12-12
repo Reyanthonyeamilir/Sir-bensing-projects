@@ -5,6 +5,317 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/user/crud.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .user-crud {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+        }
+        
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .sem-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .sem-container:hover {
+            transform: translateY(-5px);
+        }
+        
+        .sem-header {
+            background: linear-gradient(90deg, #e7a92cff 0%, #2c3e50 100%);
+            color: white;
+            padding: 1.8rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sem-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .sem-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .sem-header h1 i {
+            margin-right: 12px;
+            font-size: 1.6rem;
+        }
+        
+        .sem-content {
+            padding: 2.5rem;
+        }
+        
+        .user-profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e7a92cff 0%, #2c3e50 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-right: 1.5rem;
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.3);
+        }
+        
+        .user-name-info h2 {
+            margin: 0 0 5px 0;
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+        
+        .sem-info-display {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.8rem;
+            margin-bottom: 2.5rem;
+            border-left: 4px solid #e7a92cff;
+        }
+        
+        .sem-info-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .sem-info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .sem-info-label {
+            flex: 0 0 150px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sem-info-label i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+            color: #e7a92cff;
+        }
+        
+        .sem-info-value {
+            flex: 1;
+            color: #34495e;
+            font-size: 1.05rem;
+        }
+        
+        .sem-role-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 5px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sem-role-badge-admin {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .sem-role-badge-staff {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+            color: white;
+        }
+        
+        .sem-role-badge-user {
+            background: linear-gradient(90deg, #e7a92cff, #e7a92cff);
+            color: white;
+        }
+        
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid #e7a92cff;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card i {
+            font-size: 2rem;
+            color: #e7a92cff;
+            margin-bottom: 0.8rem;
+        }
+        
+        .stat-card h3 {
+            margin: 0 0 5px 0;
+            font-size: 2rem;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+        
+        .stat-card p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sem-action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .sem-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.85rem 1.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .sem-btn i {
+            margin-right: 8px;
+        }
+        
+        .sem-btn-outline {
+            background: white;
+            color: #e7a92cff;
+            border: 2px solid #e7a92cff;
+        }
+        
+        .sem-btn-outline:hover {
+            background: #e7a92cff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .sem-btn-primary {
+            background: linear-gradient(90deg, #e7a92cff, #e7a92cff);
+            color: white;
+            border: none;
+        }
+        
+        .sem-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .delete-form {
+            margin: 0;
+        }
+        
+        .btn-delete {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+        }
+        
+        .btn-delete:hover {
+            background: linear-gradient(90deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .user-crud {
+                padding: 10px;
+            }
+            
+            .sem-content {
+                padding: 1.5rem;
+            }
+            
+            .user-profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .sem-info-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .sem-info-label {
+                flex: none;
+                margin-bottom: 5px;
+            }
+            
+            .sem-action-buttons {
+                flex-direction: column;
+            }
+            
+            .sem-btn {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+            
+            .user-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -14,48 +325,80 @@
     <main class="main-content">
         <div class="sem-container">
             <div class="sem-header">
-                <h1>User Details</h1>
+                <h1><i class="fas fa-user-circle"></i>User Details</h1>
             </div>
             
             <div class="sem-content">
+                <!-- User Profile Header -->
+                <div class="user-profile-header">
+                    <div class="user-avatar">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <div class="user-name-info">
+                        <h2>{{ user.username }}</h2>
+                    </div>
+                </div>
+                
+                <!-- User Stats -->
+                <div class="user-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-id-badge"></i>
+                        <h3>#{{ user.id }}</h3>
+                        <p>User ID</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-user-tag"></i>
+                        <h3>{{ user.roles|length }}</h3>
+                        <p>Roles</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>
+                            {% if 'ROLE_ADMIN' in user.roles %}
+                                Admin
+                            {% elseif 'ROLE_staff' in user.roles %}
+                                Staff
+                            {% else %}
+                                User
+                            {% endif %}
+                        </h3>
+                        <p>Primary Role</p>
+                    </div>
+                </div>
+                
+                <!-- Detailed Information -->
                 <div class="sem-info-display">
                     <div class="sem-info-row">
-                        <span class="sem-info-label">User ID:</span>
+                        <span class="sem-info-label"><i class="fas fa-id-card"></i>User ID:</span>
                         <span class="sem-info-value">#{{ user.id }}</span>
                     </div>
                     <div class="sem-info-row">
-                        <span class="sem-info-label">Username:</span>
+                        <span class="sem-info-label"><i class="fas fa-user"></i>Username:</span>
                         <span class="sem-info-value">{{ user.username }}</span>
                     </div>
                     <div class="sem-info-row">
-                        <span class="sem-info-label">Roles:</span>
+                        <span class="sem-info-label"><i class="fas fa-user-shield"></i>Roles:</span>
                         <div class="sem-info-value">
                             {% for role in user.roles %}
                                 {% if role == 'ROLE_ADMIN' %}
-                                    <span class="sem-role-badge sem-role-badge-admin">Admin</span>
+                                    <span class="sem-role-badge sem-role-badge-admin"><i class="fas fa-crown"></i> Admin</span>
                                 {% elseif role == 'ROLE_staff' %}
-                                    <span class="sem-role-badge sem-role-badge-staff">Staff</span>
+                                    <span class="sem-role-badge sem-role-badge-staff"><i class="fas fa-user-tie"></i> Staff</span>
                                 {% elseif role == 'ROLE_USER' %}
-                                    <span class="sem-role-badge sem-role-badge-user">User</span>
+                                    <span class="sem-role-badge sem-role-badge-user"><i class="fas fa-user"></i> User</span>
                                 {% endif %}
                             {% endfor %}
                         </div>
                     </div>
-                    <div class="sem-info-row">
-                        <span class="sem-info-label">Password Hash:</span>
-                        <div class="sem-info-value">
-                            <span class="sem-password-hash">{{ user.password|slice(0, 20) }}...</span>
-                            <div class="sem-password-note">(hashed - not readable)</div>
-                        </div>
-                    </div>
                 </div>
-
+                
+                <!-- Action Buttons -->
                 <div class="sem-action-buttons">
                     <a href="{{ path('app_user_index') }}" class="sem-btn sem-btn-outline">
-                        <span>←</span> Back to List
+                        <i class="fas fa-arrow-left"></i> Back to List
                     </a>
                     <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="sem-btn sem-btn-primary">
-                        <span>✏️</span> Edit User
+                        <i class="fas fa-edit"></i> Edit User
                     </a>
                     {{ include('user/_delete_form.html.twig') }}
                 </div>
