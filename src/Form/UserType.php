@@ -7,8 +7,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextType; // FIXED THIS LINE
 use Symfony\Component\Form\CallbackTransformer;
 
 class UserType extends AbstractType
@@ -17,12 +18,14 @@ class UserType extends AbstractType
     {
         $builder
             ->add('username', TextType::class, [
-                'attr' => ['class' => 'form-input']
+                'attr' => ['class' => 'form-input'],
+                'label' => 'Username',
+                'required' => true,
             ])
             ->add('roles', ChoiceType::class, [
                 'choices' => [
                     'Admin' => 'ROLE_ADMIN',
-                    'Staff' => 'ROLE_staff',  // CHANGED: 'Editor' => 'ROLE_EDITOR' to 'Staff' => 'ROLE_staff'
+                    'Staff' => 'ROLE_staff',
                     'User' => 'ROLE_USER',
                 ],
                 'multiple' => true,
@@ -31,11 +34,17 @@ class UserType extends AbstractType
                 'label' => 'Roles',
                 'attr' => ['class' => 'form-checkboxes']
             ])
+            ->add('isActive', CheckboxType::class, [
+                'required' => false,
+                'label' => 'Active Account',
+                'attr' => ['class' => 'form-checkbox'],
+                'help' => 'Uncheck to deactivate this account'
+            ])
             ->add('password', PasswordType::class, [
                 'required' => false,
                 'label' => 'Password',
-                'mapped' => false,  // ADD THIS: Password field is not mapped to entity
-                'empty_data' => '', // ADD THIS: Allow empty password
+                'mapped' => false,
+                'empty_data' => '',
                 'attr' => [
                     'class' => 'form-input',
                     'placeholder' => 'Leave blank to keep current password'
@@ -48,11 +57,9 @@ class UserType extends AbstractType
         $builder->get('roles')
             ->addModelTransformer(new CallbackTransformer(
                 function ($rolesArray) {
-                    // Transform array to array for choice field
                     return $rolesArray ?? [];
                 },
                 function ($rolesArray) {
-                    // Transform array back to array
                     return array_values(array_unique($rolesArray ?? []));
                 }
             ));

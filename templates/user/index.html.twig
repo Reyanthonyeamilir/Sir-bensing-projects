@@ -73,9 +73,68 @@
             border-color: #3E2723;
         }
         
+        /* ACTIVATE/DEACTIVATE BUTTONS */
+        .btn-activate {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            color: white;
+            border: 1px solid #15803d;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(34, 197, 94, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        
+        .btn-activate:hover {
+            background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
+            color: white;
+            border-color: #166534;
+        }
+        
+        .btn-deactivate {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: white;
+            border: 1px solid #b91c1c;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        
+        .btn-deactivate:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25);
+            color: white;
+            border-color: #991b1b;
+        }
+        
         /* Focus states for accessibility */
         .btn-view:focus,
-        .btn-edit:focus {
+        .btn-edit:focus,
+        .btn-activate:focus,
+        .btn-deactivate:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.3);
         }
@@ -166,7 +225,7 @@
                 gap: 0.5rem;
             }
             
-            .btn-view, .btn-edit {
+            .btn-view, .btn-edit, .btn-activate, .btn-deactivate {
                 min-width: 80px;
                 padding: 0.625rem 0.75rem;
                 font-size: 0.875rem;
@@ -195,7 +254,7 @@
                 align-items: stretch;
             }
             
-            .btn-view, .btn-edit {
+            .btn-view, .btn-edit, .btn-activate, .btn-deactivate {
                 max-width: 100%;
                 width: 100%;
                 min-width: 100%;
@@ -259,7 +318,11 @@
                                 </td>
     
                                 <td class="sem-table-td">
-                                    <span class="status-badge status-active">Active</span>
+                                    {% if user.isActive %}
+                                        <span class="status-badge status-active">Active</span>
+                                    {% else %}
+                                        <span class="status-badge status-inactive">Inactive</span>
+                                    {% endif %}
                                 </td>
                                      <td class="sem-table-td date-cell">
                                     {% if user.createdAt %}                                      
@@ -272,6 +335,17 @@
                                     <div class="action-buttons">
                                         <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn-view">View</a>
                                         <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn-edit">Edit</a>
+                                        
+                                        {% if is_granted('ROLE_ADMIN') and user.id != app.user.id %}
+                                            <form method="post" action="{{ path('app_user_toggle_status', {'id': user.id}) }}" 
+                                                  style="display: inline;" 
+                                                  onsubmit="return confirm('Are you sure you want to {{ user.isActive ? 'deactivate' : 'activate' }} {{ user.username }}?')">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('toggle_status' ~ user.id) }}">
+                                                <button type="submit" class="{{ user.isActive ? 'btn-deactivate' : 'btn-activate' }}">
+                                                    {{ user.isActive ? 'Deactivate' : 'Activate' }}
+                                                </button>
+                                            </form>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -328,7 +402,7 @@
                 },
                 columnDefs: [
                     {
-                        targets: 5, // Actions column (changed from 4 to 5)
+                        targets: 5, // Actions column
                         orderable: false,
                         searchable: false,
                         className: 'dt-body-right sem-actions-td'
@@ -342,12 +416,21 @@
                         className: 'dt-body-left'
                     },
                     {
-                        targets: 3, // Created At column
+                        targets: 4, // Created At column
                         type: 'date', // Enable date sorting
                         render: function(data, type, row) {
                             if (type === 'sort') {
                                 // Return timestamp for sorting
                                 return new Date(data).getTime();
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        targets: 3, // Status column
+                        render: function(data, type, row) {
+                            if (type === 'sort' || type === 'type') {
+                                return data.includes('Active') ? 1 : 0;
                             }
                             return data;
                         }

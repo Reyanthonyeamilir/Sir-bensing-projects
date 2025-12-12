@@ -1,6 +1,28 @@
-<form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" onsubmit="return confirm('Are you sure you want to delete this user?');">
+<form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" 
+      onsubmit="return confirmUserDeletion({{ user.orders|length }}, '{{ user.username|escape('js') }}');"
+      class="delete-user-form">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-    <button class="sem-btn sem-btn-danger">
-        <span></span> Delete User
+    <button type="submit" class="sem-btn sem-btn-danger" 
+            {% if app.user and app.user.id == user.id %}disabled title="You cannot delete your own account"{% endif %}>
+        <span>🗑️</span> Delete User
     </button>
 </form>
+
+<script>
+function confirmUserDeletion(orderCount, username) {
+    // Prevent deleting own account
+    const currentUserId = {{ app.user.id|default('null') }};
+    const userId = {{ user.id }};
+    
+    if (currentUserId === userId) {
+        alert('You cannot delete your own account.');
+        return false;
+    }
+    
+    if (orderCount > 0) {
+        return confirm(`⚠️ WARNING!\n\nUser "${username}" has ${orderCount} order(s).\n\nDeleting this user will also delete all their orders.\n\nAre you sure you want to proceed?`);
+    } else {
+        return confirm(`Are you sure you want to delete user "${username}"?`);
+    }
+}
+</script>

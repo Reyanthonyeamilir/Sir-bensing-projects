@@ -35,9 +35,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    // ADD THIS FIELD: ---------------------------------------------------------
     #[ORM\Column(type: 'datetime', nullable: false)]
     private ?\DateTimeInterface $createdAt = null;
+
+    // ADD THIS FIELD for user status
+    #[ORM\Column(type: 'boolean', nullable: false)]
+    private bool $isActive = true;
 
     /**
      * @var Collection<int, Order>
@@ -48,9 +51,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->orders = new ArrayCollection();
+        // Set default values
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
+        $this->isActive = true;
     }
-
-    
 
     public function getId(): ?int
     {
@@ -116,7 +120,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // ADD THESE GETTER/SETTER FOR createdAt: ---------------------------------
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
@@ -128,7 +131,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    // -------------------------------------------------------------------------
+
+    // Add getter and setter for isActive
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
 
     /**
      * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
@@ -137,22 +152,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $data = (array) $this;
         $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
-        $data["\0".self::class."\0createdAt"] = $this->createdAt; // Add this line
+        $data["\0".self::class."\0createdAt"] = $this->createdAt;
+        $data["\0".self::class."\0isActive"] = $this->isActive; // Add this line
 
         return $data;
     }
 
-public function __unserialize(array $data): void
-{
-    $this->id = $data["\0".self::class."\0id"] ?? null;
-    $this->username = $data["\0".self::class."\0username"] ?? null;
-    $this->roles = $data["\0".self::class."\0roles"] ?? [];
-    $this->password = null; // Password remains null for security
-    
-    // RESTORE the original createdAt, don't create a new one!
-    $this->createdAt = $data["\0".self::class."\0createdAt"] ?? null;
-}
-    // -------------------------------------------------------------------------
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data["\0".self::class."\0id"] ?? null;
+        $this->username = $data["\0".self::class."\0username"] ?? null;
+        $this->roles = $data["\0".self::class."\0roles"] ?? [];
+        $this->password = null; // Password remains null for security
+        $this->createdAt = $data["\0".self::class."\0createdAt"] ?? null;
+        $this->isActive = $data["\0".self::class."\0isActive"] ?? true; // Add this line
+    }
 
     #[\Deprecated]
     public function eraseCredentials(): void
@@ -189,11 +203,9 @@ public function __unserialize(array $data): void
 
         return $this;
     }
-    // ADD THIS METHOD TO FIX "Object could not be converted to string" ERROR
+    
     public function __toString(): string
     {
         return $this->username ?? (string)$this->id ?? '';
     }
-
-
 }

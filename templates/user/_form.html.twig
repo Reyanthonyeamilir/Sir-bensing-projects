@@ -1,3 +1,4 @@
+{# templates/user/_form.html.twig #}
 {{ form_start(form, {'attr': {'class': 'sem-form'}}) }}
     <div class="sem-form-group">
         {{ form_label(form.username) }}
@@ -28,10 +29,22 @@
     </div>
 
     <div class="sem-form-group">
+        {{ form_label(form.isActive) }}
+        <div class="sem-checkbox-item">
+            {{ form_widget(form.isActive, {'attr': {'class': 'sem-checkbox-item-input'}}) }}
+            <label for="{{ form.isActive.vars.id }}" class="sem-checkbox-item-label">
+                Active Account
+            </label>
+        </div>
+        {{ form_errors(form.isActive) }}
+        <small class="sem-form-text">Uncheck to deactivate this account</small>
+    </div>
+
+    <div class="sem-form-group">
         {{ form_label(form.password) }}
         {{ form_widget(form.password, {'attr': {'class': 'sem-form-input'}}) }}
         {{ form_errors(form.password) }}
-        <small class="sem-form-text">Enter password for this user</small>
+        <small class="sem-form-text">Enter password for this user (leave blank to keep current)</small>
     </div>
 
     <div class="sem-form-actions">

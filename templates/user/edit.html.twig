@@ -4,6 +4,7 @@
 
 {% block body %}
 <style>
+  /* User Edit Page Styles - Unique class names to prevent conflicts */
   * {
     margin: 0;
     padding: 0;
@@ -15,13 +16,13 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
   }
   
-  .dashboard-container { 
+  .user-edit-page-container { 
     display: flex; 
     min-height: 100vh; 
     background: transparent; 
   }
   
-  .main-content { 
+  .user-edit-main-section { 
     flex: 1; 
     padding: 1.5rem; 
     background: transparent; 
@@ -29,7 +30,7 @@
     max-width: calc(100% - 280px);
   }
   
-  h1 { 
+  .user-edit-page-title { 
     font-size: 1.6rem; 
     font-weight: 700; 
     color: #e9d311c5; 
@@ -39,7 +40,7 @@
     border-bottom: 2px solid #ff7b35;
   }
   
-  .form-container {
+  .user-edit-form-wrapper {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 10px;
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
@@ -48,7 +49,7 @@
     margin: 0 auto;
   }
   
-  .user-info-display {
+  .user-edit-info-panel {
     background: #f8f8f8;
     padding: 1rem;
     border-radius: 8px;
@@ -56,7 +57,7 @@
     margin-bottom: 1.5rem;
   }
   
-  .info-row {
+  .user-edit-info-item {
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.8rem;
@@ -65,33 +66,33 @@
     font-size: 0.9rem;
   }
   
-  .info-row:last-child {
+  .user-edit-info-item:last-child {
     margin-bottom: 0;
     padding-bottom: 0;
     border-bottom: none;
   }
   
-  .info-label {
+  .user-edit-info-label {
     color: #555;
     font-weight: 600;
   }
   
-  .info-value {
+  .user-edit-info-value {
     color: #333;
     text-align: right;
   }
   
-  .user-form {
+  .user-edit-form-layout {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
   }
   
-  .form-group {
+  .user-edit-form-field {
     margin-bottom: 0.5rem;
   }
   
-  .form-group label {
+  .user-edit-form-field label {
     font-weight: 600;
     display: block;
     margin-bottom: 0.4rem;
@@ -99,7 +100,7 @@
     font-size: 0.9rem;
   }
   
-  .form-input {
+  .user-edit-form-input {
     width: 100%;
     padding: 0.7rem;
     border: 1px solid #ddd;
@@ -110,25 +111,25 @@
     transition: all 0.2s ease;
   }
   
-  .form-input:focus {
+  .user-edit-form-input:focus {
     outline: none;
     border-color: #cc5404;
     box-shadow: 0 0 0 2px rgba(204, 84, 4, 0.1);
   }
   
-  .form-input::placeholder {
+  .user-edit-form-input::placeholder {
     color: #888;
     opacity: 0.7;
   }
   
-  .checkbox-group {
+  .user-edit-roles-container {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     margin-top: 0.5rem;
   }
   
-  .checkbox-item {
+  .user-edit-role-option {
     display: flex;
     align-items: center;
     gap: 0.7rem;
@@ -139,19 +140,19 @@
     transition: all 0.2s ease;
   }
   
-  .checkbox-item:hover {
+  .user-edit-role-option:hover {
     background: rgba(204, 84, 4, 0.05);
     border-color: rgba(204, 84, 4, 0.3);
   }
   
-  .checkbox-item-input {
+  .user-edit-role-checkbox {
     width: 16px;
     height: 16px;
     accent-color: #cc5404;
     cursor: pointer;
   }
   
-  .checkbox-item-label {
+  .user-edit-role-label {
     color: #333;
     font-weight: 500;
     cursor: pointer;
@@ -159,32 +160,32 @@
     font-size: 0.9rem;
   }
   
-  .checkbox-item[data-role="admin"] {
+  .user-edit-role-option[data-role="admin"] {
     border-left: 3px solid #cc5404;
   }
   
-  .checkbox-item[data-role="staff"] {
+  .user-edit-role-option[data-role="staff"] {
     border-left: 3px solid #5a3922;
   }
   
-  .checkbox-item[data-role="user"] {
+  .user-edit-role-option[data-role="user"] {
     border-left: 3px solid #4ECDC4;
   }
   
-  .form-text {
+  .user-edit-form-hint {
     display: block;
     margin-top: 0.3rem;
     font-size: 0.8rem;
     color: #888;
   }
   
-  .form-actions {
+  .user-edit-form-actions {
     margin-top: 1.5rem;
     padding-top: 1rem;
     border-top: 1px solid #e0e0e0;
   }
   
-  .btn {
+  .user-edit-button {
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
     border: none;
@@ -200,21 +201,21 @@
     gap: 0.5rem;
   }
   
-  .btn:hover { 
+  .user-edit-button:hover { 
     transform: translateY(-1px); 
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
   
-  .action-btn { 
+  .user-edit-submit-button { 
     background-color: #cc5404; 
     width: 100%;
   }
   
-  .action-btn:hover { 
+  .user-edit-submit-button:hover { 
     background-color: #b34903; 
   }
   
-  .back-link {
+  .user-edit-back-link {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -228,27 +229,27 @@
     font-size: 0.9rem;
   }
   
-  .back-link:hover {
+  .user-edit-back-link:hover {
     color: #cc5404;
     text-decoration: underline;
   }
   
-  .delete-form {
+  .user-edit-delete-section {
     margin-top: 1.5rem;
     padding-top: 1rem;
     border-top: 1px solid #e0e0e0;
   }
   
-  .delete-form .btn {
+  .user-edit-delete-button {
     background-color: #dc3545;
     width: 100%;
   }
   
-  .delete-form .btn:hover {
+  .user-edit-delete-button:hover {
     background-color: #c82333;
   }
   
-  .alert {
+  .user-edit-message {
     padding: 0.8rem 1rem;
     border-radius: 5px;
     margin-bottom: 1rem;
@@ -260,19 +261,19 @@
     font-size: 0.9rem;
   }
   
-  .alert-success {
+  .user-edit-message-success {
     color: #155724;
     background: #d4edda;
     border-color: #c3e6cb;
   }
   
-  .alert-error {
+  .user-edit-message-error {
     color: #721c24;
     background: #f8d7da;
     border-color: #f5c6cb;
   }
   
-  .role-badge {
+  .user-edit-role-badge {
     display: inline-block;
     padding: 0.2rem 0.6rem;
     border-radius: 10px;
@@ -282,85 +283,173 @@
     margin-left: 0.3rem;
   }
   
-  .role-badge.admin {
+  .user-edit-role-badge-admin {
     background-color: #cc5404;
   }
   
-  .role-badge.staff {
+  .user-edit-role-badge-staff {
     background-color: #5a3922;
   }
   
-  .role-badge.user {
+  .user-edit-role-badge-user {
     background-color: #4ECDC4;
   }
   
+  /* User Edit Active/Inactive toggle styles - Unique names */
+  .user-edit-status-toggle {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem;
+    background: #f8f8f8;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .user-edit-status-label {
+    font-weight: 600;
+    color: #333;
+    flex: 1;
+  }
+  
+  .user-edit-status-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+  
+  .user-edit-status-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .user-edit-status-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #dc2626; /* Red for inactive */
+    transition: .4s;
+    border-radius: 34px;
+  }
+  
+  .user-edit-status-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  
+  .user-edit-status-switch input:checked + .user-edit-status-slider {
+    background-color: #16a34a; /* Green for active */
+  }
+  
+  .user-edit-status-switch input:checked + .user-edit-status-slider:before {
+    transform: translateX(30px);
+  }
+  
   @media (max-width: 768px) {
-    .main-content {
+    .user-edit-main-section {
       margin-left: 0;
       max-width: 100%;
       padding: 1rem;
     }
     
-    .form-container {
+    .user-edit-form-wrapper {
       padding: 1rem;
     }
     
-    .form-input {
+    .user-edit-form-input {
       padding: 0.6rem;
       font-size: 0.85rem;
     }
     
-    .checkbox-item {
+    .user-edit-role-option {
       padding: 0.5rem;
     }
     
-    .btn {
+    .user-edit-button {
       padding: 0.5rem 1rem;
       font-size: 0.85rem;
+    }
+    
+    .user-edit-status-switch {
+      width: 50px;
+      height: 26px;
+    }
+    
+    .user-edit-status-slider:before {
+      height: 18px;
+      width: 18px;
+      left: 4px;
+      bottom: 4px;
+    }
+    
+    .user-edit-status-switch input:checked + .user-edit-status-slider:before {
+      transform: translateX(24px);
     }
   }
 </style>
 
-<div class="dashboard-container">
+<div class="user-edit-page-container">
   {% include 'dashboard/sidebar.html.twig' %}
 
-  <main class="main-content">
-    <h1>Edit User</h1>
+  <main class="user-edit-main-section">
+    <h1 class="user-edit-page-title">Edit User</h1>
     
-    <div class="form-container">
+    <div class="user-edit-form-wrapper">
       <!-- Flash Messages -->
       {% for message in app.flashes('success') %}
-        <div class="alert alert-success">
+        <div class="user-edit-message user-edit-message-success">
           <span>✓</span> {{ message }}
         </div>
       {% endfor %}
       
       {% for message in app.flashes('error') %}
-        <div class="alert alert-error">
+        <div class="user-edit-message user-edit-message-error">
           <span>⚠</span> {{ message }}
         </div>
       {% endfor %}
 
       <!-- User Information Display -->
-      <div class="user-info-display">
-        <div class="info-row">
-          <span class="info-label">User ID:</span>
-          <span class="info-value">#{{ user.id }}</span>
+      <div class="user-edit-info-panel">
+        <div class="user-edit-info-item">
+          <span class="user-edit-info-label">User ID:</span>
+          <span class="user-edit-info-value">#{{ user.id }}</span>
         </div>
-        <div class="info-row">
-          <span class="info-label">Current Username:</span>
-          <span class="info-value">{{ user.username }}</span>
+        <div class="user-edit-info-item">
+          <span class="user-edit-info-label">Current Username:</span>
+          <span class="user-edit-info-value">{{ user.username }}</span>
         </div>
-        <div class="info-row">
-          <span class="info-label">Current Roles:</span>
-          <div class="info-value">
+        <div class="user-edit-info-item">
+          <span class="user-edit-info-label">Current Status:</span>
+          <div class="user-edit-info-value">
+            {% if user.isActive %}
+              <span style="color: #16a34a; font-weight: 600;">Active</span>
+            {% else %}
+              <span style="color: #dc2626; font-weight: 600;">Inactive</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="user-edit-info-item">
+          <span class="user-edit-info-label">Current Roles:</span>
+          <div class="user-edit-info-value">
             {% for role in user.roles %}
               {% if role == 'ROLE_ADMIN' %}
-                <span class="role-badge admin">Admin</span>
+                <span class="user-edit-role-badge user-edit-role-badge-admin">Admin</span>
               {% elseif role == 'ROLE_staff' %}
-                <span class="role-badge staff">Staff</span>
+                <span class="user-edit-role-badge user-edit-role-badge-staff">Staff</span>
               {% elseif role == 'ROLE_USER' %}
-                <span class="role-badge user">User</span>
+                <span class="user-edit-role-badge user-edit-role-badge-user">User</span>
               {% endif %}
             {% endfor %}
           </div>
@@ -368,37 +457,51 @@
       </div>
 
       <!-- Edit Form -->
-      {{ form_start(form, {'attr': {'class': 'user-form'}}) }}
+      {{ form_start(form, {'attr': {'class': 'user-edit-form-layout'}}) }}
           
         <!-- Username Field -->
-        <div class="form-group">
+        <div class="user-edit-form-field">
           {{ form_label(form.username) }}
-          {{ form_widget(form.username, {'attr': {'class': 'form-input'}}) }}
+          {{ form_widget(form.username, {'attr': {'class': 'user-edit-form-input'}}) }}
           {{ form_errors(form.username) }}
-          <small class="form-text">Enter the new username for this user</small>
+          <small class="user-edit-form-hint">Enter the new username for this user</small>
         </div>
 
-        <!-- Roles Field - Using Symfony Form Widget -->
-        <div class="form-group">
+        <!-- Roles Field -->
+        <div class="user-edit-form-field">
           {{ form_label(form.roles) }}
-          <div class="checkbox-group">
-            {{ form_widget(form.roles, {'attr': {'class': 'checkbox-group'}}) }}
+          <div class="user-edit-roles-container">
+            {{ form_widget(form.roles, {'attr': {'class': 'user-edit-roles-container'}}) }}
           </div>
           {{ form_errors(form.roles) }}
-          <small class="form-text">Select roles assigned to this user</small>
+          <small class="user-edit-form-hint">Select roles assigned to this user</small>
+        </div>
+
+        <!-- Active Status Field with Toggle -->
+        <div class="user-edit-form-field">
+          <label class="user-edit-status-label">Account Status</label>
+          <div class="user-edit-status-toggle">
+            <span class="user-edit-status-label">{{ form.isActive.vars.data ? 'Active' : 'Inactive' }}</span>
+            <label class="user-edit-status-switch">
+              {{ form_widget(form.isActive, {'attr': {'class': 'user-edit-status-checkbox'}}) }}
+              <span class="user-edit-status-slider"></span>
+            </label>
+          </div>
+          {{ form_errors(form.isActive) }}
+          <small class="user-edit-form-hint">Toggle to activate or deactivate this account</small>
         </div>
 
         <!-- Password Field -->
-        <div class="form-group">
+        <div class="user-edit-form-field">
           {{ form_label(form.password) }}
-          {{ form_widget(form.password, {'attr': {'class': 'form-input'}}) }}
+          {{ form_widget(form.password, {'attr': {'class': 'user-edit-form-input'}}) }}
           {{ form_errors(form.password) }}
-          <small class="form-text">Leave blank to keep current password</small>
+          <small class="user-edit-form-hint">Leave blank to keep current password</small>
         </div>
 
         <!-- Form Actions -->
-        <div class="form-actions">
-          <button type="submit" class="btn action-btn">
+        <div class="user-edit-form-actions">
+          <button type="submit" class="user-edit-button user-edit-submit-button">
             <span>💾</span> Update User
           </button>
         </div>
@@ -406,13 +509,13 @@
       {{ form_end(form) }}
       
       <!-- Back Link -->
-      <a href="{{ path('app_user_index') }}" class="back-link">
+      <a href="{{ path('app_user_index') }}" class="user-edit-back-link">
         <span>←</span> Back to User List
       </a>
       
       <!-- Delete Form -->
       {% if is_granted('ROLE_ADMIN') %}
-        <div class="delete-form">
+        <div class="user-edit-delete-section">
           {{ include('user/_delete_form.html.twig') }}
         </div>
       {% endif %}
@@ -422,26 +525,26 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Auto-hide alerts after 5 seconds
+    // Auto-hide messages after 5 seconds
     setTimeout(() => {
-      const alerts = document.querySelectorAll('.alert');
-      alerts.forEach(alert => {
-        alert.style.opacity = '0';
-        alert.style.transition = 'opacity 0.5s ease';
+      const messages = document.querySelectorAll('.user-edit-message');
+      messages.forEach(message => {
+        message.style.opacity = '0';
+        message.style.transition = 'opacity 0.5s ease';
         setTimeout(() => {
-          alert.style.display = 'none';
+          message.style.display = 'none';
         }, 500);
       });
     }, 5000);
     
     // Add data-role attributes to checkboxes for styling
-    const checkboxItems = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
-    checkboxItems.forEach(checkbox => {
+    const roleCheckboxes = document.querySelectorAll('.user-edit-roles-container input[type="checkbox"]');
+    roleCheckboxes.forEach(checkbox => {
       const label = document.querySelector(`label[for="${checkbox.id}"]`);
       if (label) {
         const roleText = label.textContent.trim().toLowerCase();
         const wrapper = document.createElement('div');
-        wrapper.className = 'checkbox-item';
+        wrapper.className = 'user-edit-role-option';
         wrapper.setAttribute('data-role', roleText);
         
         // Wrap the checkbox and label
@@ -450,6 +553,21 @@
         wrapper.appendChild(label);
       }
     });
+    
+    // Update status label when toggle is switched
+    const statusCheckbox = document.querySelector('.user-edit-status-checkbox');
+    const statusLabel = document.querySelector('.user-edit-status-toggle .user-edit-status-label');
+    
+    if (statusCheckbox && statusLabel) {
+      statusCheckbox.addEventListener('change', function() {
+        statusLabel.textContent = this.checked ? 'Active' : 'Inactive';
+      });
+    }
+    
+    // Initialize the toggle switch state
+    if (statusCheckbox) {
+      statusCheckbox.dispatchEvent(new Event('change'));
+    }
   });
 </script>
 {% endblock %}

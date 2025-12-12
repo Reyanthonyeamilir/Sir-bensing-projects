@@ -1,335 +1,58 @@
-{{ form_start(form, {'attr': {'class': 'order-form', 'id': 'order-form'}}) }}
-<style>
-  /* Form styling */
-  .order-form-container {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    padding: 2rem;
-    max-width: 700px;
-    margin: 0 auto;
-  }
-  
-  .form-title {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #e9d311c5;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    padding-bottom: 0.8rem;
-    border-bottom: 2px solid #ff7b35;
-  }
-  
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-  
-  .form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #555;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .form-control {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    transition: all 0.2s ease;
-    background-color: white;
-  }
-  
-  .form-control:focus {
-    outline: none;
-    border-color: #ff7b35;
-    box-shadow: 0 0 0 3px rgba(255, 123, 53, 0.1);
-  }
-  
-  .form-control[readonly] {
-    background-color: #f8f9fa;
-    cursor: not-allowed;
-  }
-  
-  select.form-control {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-    background-position: right 1rem center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-    padding-right: 3rem;
-  }
-  
-  .form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #eee;
-  }
-  
-  .btn {
-    padding: 0.8rem 2rem;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none;
-    color: #fff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    font-weight: 500;
-    min-width: 140px;
-  }
-  
-  .btn:hover { 
-    transform: translateY(-2px); 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  
-  .save-btn { 
-    background-color: #28a745; 
-  }
-  
-  .save-btn:hover { 
-    background-color: #218838; 
-  }
-  
-  .cancel-btn { 
-    background-color: #6c757d; 
-  }
-  
-  .cancel-btn:hover { 
-    background-color: #5a6268; 
-  }
-  
-  /* Product info display */
-  .product-info {
-    background: #fff5e6;
-    border-radius: 6px;
-    padding: 1rem;
-    margin-top: 0.5rem;
-    border-left: 3px solid #ff7b35;
-    display: none;
-  }
-  
-  .product-info.show {
-    display: block;
-    animation: fadeIn 0.3s ease;
-  }
-  
-  .product-detail {
-    margin: 0.3rem 0;
-    font-size: 0.9rem;
-    color: #555;
-  }
-  
-  .product-detail strong {
-    color: #333;
-    font-weight: 600;
-  }
-  
-  /* Stock validation */
-  .stock-message {
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    padding: 0.5rem;
-    border-radius: 4px;
-    display: none;
-  }
-  
-  .stock-good {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-  }
-  
-  .stock-low {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-  }
-  
-  /* Amount display */
-  .amount-display {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #cc5404;
-    margin-top: 0.5rem;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .order-form-container {
-      padding: 1.5rem;
-    }
-    
-    .form-actions {
-      flex-direction: column;
-    }
-    
-    .btn {
-      width: 100%;
-      margin-bottom: 0.5rem;
-    }
-  }
-</style>
+{# templates/user/_form.html.twig #}
+{{ form_start(form, {'attr': {'class': 'sem-form'}}) }}
+    <div class="sem-form-group">
+        {{ form_label(form.username) }}
+        {{ form_widget(form.username, {'attr': {'class': 'sem-form-input'}}) }}
+        {{ form_errors(form.username) }}
+        <small class="sem-form-text">Enter username for this user</small>
+    </div>
 
-<div class="order-form-container">
-    <h2 class="form-title">{{ button_label|default('Create New Order') }}</h2>
-    
-    <div class="form-group">
-        {{ form_label(form.customer, null, {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.customer, {'attr': {'class': 'form-control'}}) }}
+    <div class="sem-form-group">
+        {{ form_label(form.roles) }}
+        <div class="sem-checkbox-group">
+            {% for choice in form.roles.vars.choices %}
+                <div class="sem-checkbox-item" data-role="{{ choice.label|lower }}">
+                    <input type="checkbox" 
+                           id="{{ form.roles.vars.id }}_{{ loop.index0 }}"
+                           name="{{ form.roles.vars.full_name }}[]"
+                           value="{{ choice.value }}"
+                           class="sem-checkbox-item-input"
+                           {% if choice.value in form.roles.vars.value %}checked{% endif %}>
+                    <label for="{{ form.roles.vars.id }}_{{ loop.index0 }}" class="sem-checkbox-item-label">
+                        {{ choice.label }}
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+        {{ form_errors(form.roles) }}
+        <small class="sem-form-text">Select roles assigned to this user</small>
     </div>
-    
-    <div class="form-group">
-        {{ form_label(form.product, null, {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.product, {'attr': {'class': 'form-control product-select'}}) }}
-        <div id="product-info" class="product-info"></div>
-        <div id="stock-message" class="stock-message"></div>
+
+    {# FIXED: Check if isActive field exists before rendering it #}
+    {% if form.isActive is defined %}
+    <div class="sem-form-group">
+        {{ form_label(form.isActive) }}
+        <div class="sem-checkbox-item">
+            {{ form_widget(form.isActive, {'attr': {'class': 'sem-checkbox-item-input'}}) }}
+            <label for="{{ form.isActive.vars.id }}" class="sem-checkbox-item-label">
+                Active Account
+            </label>
+        </div>
+        {{ form_errors(form.isActive) }}
+        <small class="sem-form-text">Uncheck to deactivate this account</small>
     </div>
-    
-    <div class="form-group">
-        {{ form_label(form.quantity, null, {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.quantity, {'attr': {'class': 'form-control quantity-input', 'min': '1', 'value': '1'}}) }}
+    {% endif %}
+
+    <div class="sem-form-group">
+        {{ form_label(form.password) }}
+        {{ form_widget(form.password, {'attr': {'class': 'sem-form-input'}}) }}
+        {{ form_errors(form.password) }}
+        <small class="sem-form-text">Enter password for this user (leave blank to keep current)</small>
     </div>
-    
-    <div class="form-group">
-        {{ form_label(form.amount, null, {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.amount, {'attr': {'class': 'form-control amount-input', 'readonly': 'readonly'}}) }}
-        <div id="amount-display" class="amount-display"></div>
+
+    <div class="sem-form-actions">
+        <button type="submit" class="sem-btn sem-btn-primary">
+            <span>💾</span> {{ button_label|default('Save') }}
+        </button>
     </div>
-    
-    <div class="form-group">
-        {{ form_label(form.status, null, {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
-    </div>
-    
-    <div class="form-actions">
-        <button type="submit" class="btn save-btn">{{ button_label|default('Save Order') }}</button>
-        <a href="{{ path('app_order_index') }}" class="btn cancel-btn">Cancel</a>
-    </div>
-</div>
 {{ form_end(form) }}
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const productSelect = document.querySelector('.product-select');
-    const quantityInput = document.querySelector('.quantity-input');
-    const amountInput = document.querySelector('.amount-input');
-    const amountDisplay = document.getElementById('amount-display');
-    const productInfo = document.getElementById('product-info');
-    const stockMessage = document.getElementById('stock-message');
-    
-    // Store product data
-    let products = {};
-    
-    // Parse product options
-    productSelect.querySelectorAll('option').forEach(option => {
-        if (option.value && option.textContent) {
-            const text = option.textContent;
-            // Extract product details from option text
-            products[option.value] = {
-                name: text.split(' - ')[0] || text,
-                fullText: text
-            };
-        }
-    });
-    
-    // Function to calculate amount
-    function calculateAmount() {
-        const productId = productSelect.value;
-        const quantity = parseInt(quantityInput.value) || 1;
-        
-        if (productId) {
-            // Fetch product details via AJAX
-            fetch(`/product/${productId}/details`)
-                .then(response => response.json())
-                .then(product => {
-                    const amount = product.price * quantity;
-                    amountInput.value = amount.toFixed(2);
-                    amountDisplay.textContent = `Total: ₱${amount.toFixed(2)}`;
-                    
-                    // Update product info
-                    productInfo.innerHTML = `
-                        <div class="product-detail"><strong>Product:</strong> ${product.name}</div>
-                        <div class="product-detail"><strong>Price:</strong> ₱${product.price.toFixed(2)}</div>
-                        <div class="product-detail"><strong>Stock:</strong> ${product.stock} units</div>
-                        <div class="product-detail"><strong>Category:</strong> ${product.category}</div>
-                        ${product.brand ? `<div class="product-detail"><strong>Brand:</strong> ${product.brand}</div>` : ''}
-                    `;
-                    productInfo.classList.add('show');
-                    
-                    // Stock validation
-                    if (quantity > product.stock) {
-                        stockMessage.textContent = `Only ${product.stock} available in stock!`;
-                        stockMessage.className = 'stock-message stock-low';
-                        stockMessage.style.display = 'block';
-                    } else {
-                        stockMessage.textContent = `${product.stock} available in stock`;
-                        stockMessage.className = 'stock-message stock-good';
-                        stockMessage.style.display = 'block';
-                    }
-                    
-                    // Set max quantity
-                    quantityInput.max = product.stock;
-                })
-                .catch(error => {
-                    console.error('Error fetching product details:', error);
-                    amountInput.value = '0.00';
-                    amountDisplay.textContent = '';
-                    productInfo.classList.remove('show');
-                    stockMessage.style.display = 'none';
-                });
-        } else {
-            amountInput.value = '0.00';
-            amountDisplay.textContent = '';
-            productInfo.classList.remove('show');
-            stockMessage.style.display = 'none';
-        }
-    }
-    
-    // Event listeners
-    productSelect.addEventListener('change', calculateAmount);
-    quantityInput.addEventListener('input', calculateAmount);
-    
-    // Form validation
-    document.getElementById('order-form').addEventListener('submit', function(e) {
-        const productId = productSelect.value;
-        const quantity = parseInt(quantityInput.value) || 0;
-        
-        if (!productId) {
-            e.preventDefault();
-            alert('Please select a product.');
-            productSelect.focus();
-            return false;
-        }
-        
-        if (quantity < 1) {
-            e.preventDefault();
-            alert('Quantity must be at least 1.');
-            quantityInput.focus();
-            return false;
-        }
-        
-        return true;
-    });
-    
-    // Initial calculation
-    calculateAmount();
-});
-</script>

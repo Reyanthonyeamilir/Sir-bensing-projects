@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/user')]
 final class UserController extends AbstractController
@@ -59,13 +60,18 @@ final class UserController extends AbstractController
 
             // Set creation date with Manila time
             $user->setCreatedAt(new \DateTime('now', new \DateTimeZone('Asia/Manila')));
+            
+            // Set isActive from form (defaults to true)
+            $isActive = $form->get('isActive')->getData();
+            $user->setIsActive($isActive ?? true);
 
             $entityManager->persist($user);
             $entityManager->flush();
 
             $this->activityLogService->logCreate('User', $user->getId(), $this->getUser(), [
                 'username' => $user->getUsername(),
-                'roles' => $user->getRoles()
+                'roles' => $user->getRoles(),
+                'is_active' => $user->isActive()
             ]);
 
             $this->addFlash('success', 'User created successfully.');
@@ -94,6 +100,7 @@ final class UserController extends AbstractController
 
         $oldUsername = $user->getUsername();
         $oldRoles = $user->getRoles();
+        $oldIsActive = $user->isActive();
         
         $form = $this->createForm(ProfileType::class, $user);
         $form->handleRequest($request);
@@ -115,6 +122,17 @@ final class UserController extends AbstractController
                 if ($existingUser && $existingUser->getId() !== $user->getId()) {
                     $this->addFlash('error', 'Username already taken!');
                     return $this->redirectToRoute('app_user_profile');
+                }
+            }
+
+            // Check if active status changed (if allowed in profile form)
+            if ($form->has('isActive')) {
+                $newIsActive = $form->get('isActive')->getData();
+                if ($oldIsActive !== $newIsActive) {
+                    $changes['is_active'] = [
+                        'old' => $oldIsActive ? 'Active' : 'Inactive',
+                        'new' => $newIsActive ? 'Active' : 'Inactive'
+                    ];
                 }
             }
 
@@ -172,7 +190,6 @@ final class UserController extends AbstractController
 
             // Log changes
             if (!empty($changes)) {
-                // Use logUpdate instead of logProfileUpdate
                 $this->activityLogService->logUpdate('User', $user->getId(), $user, $changes);
                 
                 $this->addFlash('success', 'Profile updated successfully!');
@@ -224,6 +241,7 @@ final class UserController extends AbstractController
     {
         $oldUsername = $user->getUsername();
         $oldRoles = $user->getRoles();
+        $oldIsActive = $user->isActive();
 
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -248,6 +266,7 @@ final class UserController extends AbstractController
 
             $newUsername = $user->getUsername();
             $newRoles = $user->getRoles();
+            $newIsActive = $form->get('isActive')->getData();
 
             if ($oldUsername !== $newUsername) {
                 $changes['username'] = [
@@ -267,7 +286,6 @@ final class UserController extends AbstractController
                     'new' => $newRoles
                 ];
                 
-                // Log role change using logActivity instead of logRoleChange
                 $this->activityLogService->logActivity(
                     'ROLE_CHANGE',
                     sprintf('Changed roles for user %s', $user->getUsername()),
@@ -276,6 +294,25 @@ final class UserController extends AbstractController
                         'user_id' => $user->getId(),
                         'old_roles' => $oldRoles,
                         'new_roles' => $newRoles
+                    ]
+                );
+            }
+            
+            // Check if active status changed
+            if ($oldIsActive !== $newIsActive) {
+                $changes['is_active'] = [
+                    'old' => $oldIsActive ? 'Active' : 'Inactive',
+                    'new' => $newIsActive ? 'Active' : 'Inactive'
+                ];
+                
+                $this->activityLogService->logActivity(
+                    'STATUS_CHANGE',
+                    sprintf('%s user %s', $newIsActive ? 'Activated' : 'Deactivated', $user->getUsername()),
+                    $this->getUser(),
+                    [
+                        'user_id' => $user->getId(),
+                        'old_status' => $oldIsActive,
+                        'new_status' => $newIsActive
                     ]
                 );
             }
@@ -318,30 +355,115 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+   #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
+public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+{
+    // Prevent self-deletion
+    $currentUser = $this->getUser();
+    if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
+        $this->addFlash('error', 'You cannot delete your own account.');
+        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
+        // Check if user has orders
+        $hasOrders = $user->getOrders()->count() > 0;
+        
+        if ($hasOrders) {
+            // Delete all orders associated with this user first
+            foreach ($user->getOrders() as $order) {
+                $entityManager->remove($order);
+            }
+            $entityManager->flush(); // Flush order deletions first
+        }
+        
+        $userInfo = [
+            'id' => $user->getId(),
+            'username' => $user->getUsername(),
+            'roles' => $user->getRoles(),
+            'is_active' => $user->isActive(),
+            'had_orders' => $hasOrders,
+            'order_count' => $user->getOrders()->count()
+        ];
+
+        // Log before deletion
+        $logMessage = sprintf('Deleted user %s', $userInfo['username']);
+        if ($hasOrders) {
+            $logMessage .= sprintf(' (and %d associated order(s))', $userInfo['order_count']);
+        }
+        
+        $this->activityLogService->logDelete(
+            'User', 
+            $userInfo['id'], 
+            $this->getUser(),
+            $logMessage,
+            $userInfo
+        );
+        
+        // Now delete the user
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'User deleted successfully.');
+    } else {
+        $this->addFlash('error', 'Invalid security token.');
+    }
+
+    return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+}
+    
+    #[Route('/{id}/toggle-status', name: 'app_user_toggle_status', methods: ['POST'])]
+    public function toggleStatus(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
-            $userInfo = [
-                'id' => $user->getId(),
-                'username' => $user->getUsername(),
-                'roles' => $user->getRoles()
-            ];
-
-            // Log before deletion
-            $this->activityLogService->logDelete(
-                'User', 
-                $userInfo['id'], 
-                $this->getUser(),
-                sprintf('Deleted user %s', $userInfo['username'])
-            );
-            
-            $entityManager->remove($user);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'User deleted successfully.');
+        // Only admins can toggle user status
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException('Only administrators can toggle user status.');
         }
 
-        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        // Prevent users from deactivating themselves
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
+            $this->addFlash('error', 'You cannot deactivate your own account.');
+            return $this->redirectToRoute('app_user_index');
+        }
+
+        if ($this->isCsrfTokenValid('toggle_status' . $user->getId(), $request->getPayload()->getString('_token'))) {
+            $oldStatus = $user->isActive();
+            $newStatus = !$oldStatus;
+            
+            $user->setIsActive($newStatus);
+            $entityManager->flush();
+            
+            $statusText = $newStatus ? 'activated' : 'deactivated';
+            
+            // Log the status change
+            $this->activityLogService->logActivity(
+                'STATUS_CHANGE',
+                sprintf('%s user %s (ID: %d)', 
+                    $newStatus ? 'Activated' : 'Deactivated', 
+                    $user->getUsername(), 
+                    $user->getId()
+                ),
+                $this->getUser(),
+                [
+                    'user_id' => $user->getId(),
+                    'old_status' => $oldStatus,
+                    'new_status' => $newStatus
+                ]
+            );
+            
+            $this->activityLogService->logUpdate('User', $user->getId(), $this->getUser(), [
+                'is_active' => [
+                    'old' => $oldStatus ? 'Active' : 'Inactive',
+                    'new' => $newStatus ? 'Active' : 'Inactive'
+                ]
+            ]);
+            
+            $this->addFlash('success', sprintf('User %s has been %s.', $user->getUsername(), $statusText));
+        } else {
+            $this->addFlash('error', 'Invalid security token.');
+        }
+
+        return $this->redirectToRoute('app_user_index');
     }
 }
