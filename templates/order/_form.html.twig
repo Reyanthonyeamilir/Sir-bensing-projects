@@ -1,58 +1,41 @@
-{# templates/user/_form.html.twig #}
+{# templates/order/_form.html.twig #}
 {{ form_start(form, {'attr': {'class': 'sem-form'}}) }}
+    
     <div class="sem-form-group">
-        {{ form_label(form.username) }}
-        {{ form_widget(form.username, {'attr': {'class': 'sem-form-input'}}) }}
-        {{ form_errors(form.username) }}
-        <small class="sem-form-text">Enter username for this user</small>
+        {{ form_label(form.customer) }}
+        {{ form_widget(form.customer, {'attr': {'class': 'sem-form-input'}}) }}
+        {{ form_errors(form.customer) }}
+        <small class="sem-form-text">Select the customer for this order</small>
     </div>
 
     <div class="sem-form-group">
-        {{ form_label(form.roles) }}
-        <div class="sem-checkbox-group">
-            {% for choice in form.roles.vars.choices %}
-                <div class="sem-checkbox-item" data-role="{{ choice.label|lower }}">
-                    <input type="checkbox" 
-                           id="{{ form.roles.vars.id }}_{{ loop.index0 }}"
-                           name="{{ form.roles.vars.full_name }}[]"
-                           value="{{ choice.value }}"
-                           class="sem-checkbox-item-input"
-                           {% if choice.value in form.roles.vars.value %}checked{% endif %}>
-                    <label for="{{ form.roles.vars.id }}_{{ loop.index0 }}" class="sem-checkbox-item-label">
-                        {{ choice.label }}
-                    </label>
-                </div>
-            {% endfor %}
-        </div>
-        {{ form_errors(form.roles) }}
-        <small class="sem-form-text">Select roles assigned to this user</small>
+        {{ form_label(form.product) }}
+        {{ form_widget(form.product, {'attr': {'class': 'sem-form-input'}}) }}
+        {{ form_errors(form.product) }}
+        <small class="sem-form-text">Select the product to order (only active products with stock > 0 are shown)</small>
     </div>
 
-    {# FIXED: Check if isActive field exists before rendering it #}
-    {% if form.isActive is defined %}
     <div class="sem-form-group">
-        {{ form_label(form.isActive) }}
-        <div class="sem-checkbox-item">
-            {{ form_widget(form.isActive, {'attr': {'class': 'sem-checkbox-item-input'}}) }}
-            <label for="{{ form.isActive.vars.id }}" class="sem-checkbox-item-label">
-                Active Account
-            </label>
-        </div>
-        {{ form_errors(form.isActive) }}
-        <small class="sem-form-text">Uncheck to deactivate this account</small>
+        {{ form_label(form.quantity) }}
+        {{ form_widget(form.quantity, {'attr': {'class': 'sem-form-input'}}) }}
+        {{ form_errors(form.quantity) }}
+        <small class="sem-form-text">Enter quantity of products</small>
     </div>
-    {% endif %}
 
     <div class="sem-form-group">
-        {{ form_label(form.password) }}
-        {{ form_widget(form.password, {'attr': {'class': 'sem-form-input'}}) }}
-        {{ form_errors(form.password) }}
-        <small class="sem-form-text">Enter password for this user (leave blank to keep current)</small>
+        {{ form_label(form.status) }}
+        {{ form_widget(form.status, {'attr': {'class': 'sem-form-input'}}) }}
+        {{ form_errors(form.status) }}
+        <small class="sem-form-text">Select order status</small>
     </div>
 
     <div class="sem-form-actions">
         <button type="submit" class="sem-btn sem-btn-primary">
-            <span>💾</span> {{ button_label|default('Save') }}
+            <span>💾</span> {{ button_label|default('Create Order') }}
         </button>
+        <a href="{{ path('app_order_index') }}" class="sem-btn sem-btn-secondary">
+            <span>←</span> Back to List
+        </a>
     </div>
+
 {{ form_end(form) }}

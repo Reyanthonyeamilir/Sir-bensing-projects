@@ -140,6 +140,12 @@ class Petproducts
         return $this->imageUrl;
     }
 
+    // In Petproducts.php entity, add this method:
+public function __toString(): string
+{
+    return $this->product_name . ' - ₱' . number_format($this->price, 2);
+}
+
     public function setImageUrl(?string $imageUrl): static
     {
         $this->imageUrl = $imageUrl;

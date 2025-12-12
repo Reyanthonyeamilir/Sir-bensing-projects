@@ -527,7 +527,7 @@
                                         <span style="font-size: 0.7rem; color: #8B4513; margin-left: 5px;">(Your Order)</span>
                                     {% endif %}
                                 </td>
-                                <td data-sort="product" class="product-cell">{{ order.product.productName }}</td>
+                              <td data-sort="product" class="product-cell">{{ order.product.productName }}</td>
                                 <td data-sort="quantity">{{ order.quantity }}</td>
                                 <td data-sort="amount" class="amount-cell">₱{{ order.amount|number_format(2) }}</td>
                                 <td data-sort="status">

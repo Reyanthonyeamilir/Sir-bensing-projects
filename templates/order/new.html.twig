@@ -1,7 +1,3 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Create New Order{% endblock %}
-
 {% block stylesheets %}
 {{ parent() }}
 <style>
@@ -40,17 +36,78 @@
     padding-bottom: 0.8rem;
     border-bottom: 2px solid #ff7b35;
   }
+  
+  /* Add form styles */
+  .sem-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .sem-form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .sem-form-input {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: white;
+    font-size: 1rem;
+  }
+  
+  .sem-form-input:focus {
+    outline: none;
+    border-color: #ff7b35;
+    box-shadow: 0 0 0 2px rgba(255, 123, 53, 0.2);
+  }
+  
+  .sem-form-text {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .sem-form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .sem-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+  }
+  
+  .sem-btn-primary {
+    background: #ff7b35;
+    color: white;
+  }
+  
+  .sem-btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  
+  .sem-btn-primary:hover {
+    background: #ff6a1a;
+  }
+  
+  .sem-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
 </style>
-{% endblock %}
-
-{% block body %}
-<div class="dashboard-container">
-    {% include 'dashboard/sidebar.html.twig' %}
-    
-    <div class="main-content">
-        <h1 class="new-heading">Create New Order</h1>
-        
-        {{ include('order/_form.html.twig') }}
-    </div>
-</div>
 {% endblock %}

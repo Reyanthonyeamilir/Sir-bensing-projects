@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Order;
 use App\Entity\User;
 use App\Form\OrderType;
+use App\Form\EditOrderType;
 use App\Repository\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,10 +26,10 @@ final class OrderController extends AbstractController
             if (!$user instanceof User) {
                 throw new AccessDeniedException('User not found.');
             }
-            $orders = $orderRepository->findBy(['customer' => $user]);
+            $orders = $orderRepository->findBy(['customer' => $user], ['createdAt' => 'DESC']);
         } else {
             // Admin sees all orders, users see all orders (but can only view)
-            $orders = $orderRepository->findAll();
+            $orders = $orderRepository->findAllSorted();
         }
 
         return $this->render('order/index.html.twig', [
@@ -67,13 +68,24 @@ final class OrderController extends AbstractController
                 }
             }
             
+            // Check stock availability
+            $product = $order->getProduct();
+            $quantity = $order->getQuantity();
+            
+            if ($product->getStock() < $quantity) {
+                $this->addFlash('error', 'Insufficient stock. Only ' . $product->getStock() . ' items available.');
+                return $this->render('order/new.html.twig', [
+                    'order' => $order,
+                    'form' => $form,
+                ]);
+            }
+            
             // Calculate amount
-            $amount = $order->getProduct()->getPrice() * $order->getQuantity();
-            $order->setAmount($amount);
+            $amount = $product->getPrice() * $quantity;
+            $order->setAmount((string) $amount);
 
             // Update product stock
-            $product = $order->getProduct();
-            $product->setStock($product->getStock() - $order->getQuantity());
+            $product->setStock($product->getStock() - $quantity);
 
             $entityManager->persist($order);
             $entityManager->flush();
@@ -84,7 +96,7 @@ final class OrderController extends AbstractController
 
         return $this->render('order/new.html.twig', [
             'order' => $order,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -124,7 +136,11 @@ final class OrderController extends AbstractController
         // Check permissions
         $this->checkOrderPermissions($order, 'edit');
         
-        $form = $this->createForm(OrderType::class, $order);
+        // Store original quantity for stock adjustment
+        $originalQuantity = $order->getQuantity();
+        $originalProduct = $order->getProduct();
+        
+        $form = $this->createForm(EditOrderType::class, $order);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -142,13 +158,44 @@ final class OrderController extends AbstractController
                 }
             }
             
-            // Update amount if quantity or product changed
-            $amount = $order->getProduct()->getPrice() * $order->getQuantity();
-            $order->setAmount($amount);
-
+            // Handle stock adjustments
+            $newProduct = $order->getProduct();
+            $newQuantity = $order->getQuantity();
+            
+            // If product changed, restore stock from old product and deduct from new product
+            if ($originalProduct && $originalProduct->getId() !== $newProduct->getId()) {
+                // Restore stock to original product
+                $originalProduct->setStock($originalProduct->getStock() + $originalQuantity);
+                
+                // Deduct stock from new product
+                if ($newProduct->getStock() < $newQuantity) {
+                    $this->addFlash('error', 'Insufficient stock for the selected product.');
+                    return $this->redirectToRoute('app_order_edit', ['id' => $order->getId()]);
+                }
+                $newProduct->setStock($newProduct->getStock() - $newQuantity);
+            } else {
+                // Same product, adjust stock based on quantity change
+                $quantityDifference = $newQuantity - $originalQuantity;
+                if ($quantityDifference > 0) {
+                    // Increasing quantity, check stock
+                    if ($newProduct->getStock() < $quantityDifference) {
+                        $this->addFlash('error', 'Insufficient stock. Only ' . $newProduct->getStock() . ' items available.');
+                        return $this->redirectToRoute('app_order_edit', ['id' => $order->getId()]);
+                    }
+                    $newProduct->setStock($newProduct->getStock() - $quantityDifference);
+                } else {
+                    // Decreasing quantity, restore stock
+                    $newProduct->setStock($newProduct->getStock() + abs($quantityDifference));
+                }
+            }
+            
+            // Update amount
+            $amount = $newProduct->getPrice() * $newQuantity;
+            $order->setAmount((string) $amount);
+            
             // Update updatedAt
             $order->setUpdatedAt(new \DateTime('now', new \DateTimeZone('Asia/Manila')));
-
+            
             $entityManager->flush();
 
             $this->addFlash('success', 'Order updated successfully!');
@@ -157,7 +204,7 @@ final class OrderController extends AbstractController
 
         return $this->render('order/edit.html.twig', [
             'order' => $order,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 

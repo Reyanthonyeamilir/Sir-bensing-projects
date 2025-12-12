@@ -1,5 +1,5 @@
 <?php
-// src/Form/OrderType.php
+// src/Form/EditOrderType.php
 
 namespace App\Form;
 
@@ -10,11 +10,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
 
-class OrderType extends AbstractType
+class EditOrderType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -30,7 +31,7 @@ class OrderType extends AbstractType
                 },
                 'placeholder' => 'Select a customer',
                 'required' => true,
-                'attr' => ['class' => 'sem-form-input']
+                'attr' => ['class' => 'FORM-CONTROL']
             ])
             ->add('product', EntityType::class, [
                 'class' => Petproducts::class,
@@ -39,20 +40,28 @@ class OrderType extends AbstractType
                 },
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('p')
-                        ->where('p.isActive = :active AND p.stock > 0')
+                        ->where('p.isActive = :active')
                         ->setParameter('active', true)
                         ->orderBy('p.product_name', 'ASC');
                 },
                 'placeholder' => 'Select a product',
                 'required' => true,
-                'attr' => ['class' => 'sem-form-input']
+                'attr' => ['class' => 'FORM-CONTROL']
             ])
             ->add('quantity', IntegerType::class, [
                 'required' => true,
                 'attr' => [
-                    'class' => 'sem-form-input',
-                    'min' => 1,
-                    'value' => 1
+                    'class' => 'FORM-CONTROL',
+                    'min' => 1
+                ]
+            ])
+            ->add('amount', NumberType::class, [
+                'required' => true,
+                'html5' => true,
+                'scale' => 2,
+                'attr' => [
+                    'class' => 'FORM-CONTROL',
+                    'readonly' => true
                 ]
             ])
             ->add('status', ChoiceType::class, [
@@ -65,7 +74,7 @@ class OrderType extends AbstractType
                 ],
                 'required' => true,
                 'placeholder' => 'Select status',
-                'attr' => ['class' => 'sem-form-input']
+                'attr' => ['class' => 'FORM-CONTROL']
             ]);
     }
 
