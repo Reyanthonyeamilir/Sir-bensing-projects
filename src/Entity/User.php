@@ -189,5 +189,11 @@ public function __unserialize(array $data): void
 
         return $this;
     }
+    // ADD THIS METHOD TO FIX "Object could not be converted to string" ERROR
+    public function __toString(): string
+    {
+        return $this->username ?? (string)$this->id ?? '';
+    }
+
 
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Entity;
 
@@ -38,7 +38,6 @@ class Order
     #[ORM\Column(nullable: true)]
     private ?\DateTime $updatedAt = null;
 
-    // ✅ YOUR CONSTRUCTOR HERE
     public function __construct() 
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
@@ -92,11 +91,11 @@ class Order
     }
 
     public function setAmount(string $amount): static
-    {
-        $this->amount = $amount;
+{
+    $this->amount = $amount;
 
-        return $this;
-    }
+    return $this;
+}
 
     public function getStatus(): ?string
     {
@@ -106,7 +105,8 @@ class Order
     public function setStatus(string $status): static
     {
         $this->status = $status;
-
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
+        
         return $this;
     }
 
@@ -132,5 +132,15 @@ class Order
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    /**
+     * Calculate total amount based on product price and quantity
+     */
+    public function calculateAmount(): void
+    {
+        if ($this->product && $this->quantity) {
+            $this->amount = (string) ($this->product->getPrice() * $this->quantity);
+        }
     }
 }

@@ -1,3 +1,4 @@
+{# templates/order/index.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Orders Management{% endblock %}
@@ -254,6 +255,14 @@
     background-color: #4a2e1b; 
   }
   
+  .delete-btn { 
+    background-color: #dc3545; 
+  }
+  
+  .delete-btn:hover:not(.disabled) { 
+    background-color: #c82333; 
+  }
+  
   .btn.disabled {
     background-color: #6c757d;
     color: #adb5bd;
@@ -339,6 +348,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  
+  /* My order indicator */
+  .my-order {
+    border-left: 3px solid #8B4513;
   }
   
   /* Responsive */
@@ -427,9 +441,11 @@
             <div class="header-container">
                 <h1 class="header-title">Orders Management</h1>
                 <div class="header-actions">
-                    <a href="{{ path('app_order_new') }}" class="create-btn">
-                        Create New Order
-                    </a>
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
+                        <a href="{{ path('app_order_new') }}" class="create-btn">
+                            Create New Order
+                        </a>
+                    {% endif %}
                 </div>
             </div>
             
@@ -455,7 +471,7 @@
                     </div>
                     
                     <div class="datatable-info" id="datatable-info">
-                        Showing 0 to 0 of 0 entries
+                        Showing {{ orders|length }} orders
                     </div>
                 </div>
                 
@@ -475,9 +491,42 @@
                         </thead>
                         <tbody>
                         {% for order in orders %}
-                            <tr>
+                            {# Check if current user owns this order - SAFE VERSION #}
+                            {% set isOwner = false %}
+                            {% if app.user and order.customer %}
+                                {% if app.user is same as(order.customer) %}
+                                    {% set isOwner = true %}
+                                {% endif %}
+                            {% endif %}
+                            
+                            {# Permission logic #}
+                            {% set canEdit = false %}
+                            {% set canDelete = false %}
+                            
+                            {% if is_granted('ROLE_ADMIN') %}
+                                {# Admin can edit/delete all orders #}
+                                {% set canEdit = true %}
+                                {% set canDelete = true %}
+                            {% elseif is_granted('ROLE_staff') %}
+                                {# Staff can only edit/delete orders they created #}
+                                {% if isOwner %}
+                                    {% set canEdit = true %}
+                                    {% set canDelete = true %}
+                                {% endif %}
+                            {% elseif is_granted('ROLE_USER') %}
+                                {# Regular users can only view #}
+                                {% set canEdit = false %}
+                                {% set canDelete = false %}
+                            {% endif %}
+                            
+                            <tr {% if isOwner and is_granted('ROLE_staff') %}class="my-order"{% endif %}>
                                 <td data-sort="id">#{{ order.id }}</td>
-                                <td data-sort="customer" class="customer-cell">{{ order.customer.username }}</td>
+                                <td data-sort="customer" class="customer-cell">
+                                    {{ order.customer.username|default('Unknown') }}
+                                    {% if isOwner and is_granted('ROLE_staff') %}
+                                        <span style="font-size: 0.7rem; color: #8B4513; margin-left: 5px;">(Your Order)</span>
+                                    {% endif %}
+                                </td>
                                 <td data-sort="product" class="product-cell">{{ order.product.productName }}</td>
                                 <td data-sort="quantity">{{ order.quantity }}</td>
                                 <td data-sort="amount" class="amount-cell">₱{{ order.amount|number_format(2) }}</td>
@@ -497,27 +546,41 @@
                                 <td data-sort="created">{{ order.createdAt|date('Y-m-d H:i') }}</td>
                                 <td class="actions-cell">
                                     <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn view-btn">View</a>
-                                    <a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn edit-btn">Edit</a>
+                                    
+                                    {% if canEdit %}
+                                        <a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn edit-btn">Edit</a>
+                                    {% else %}
+                                        <button class="btn edit-btn disabled" title="{% if is_granted('ROLE_staff') and not isOwner %}You can only edit orders you created{% else %}Edit not allowed{% endif %}">Edit</button>
+                                    {% endif %}
+                                    
+                                    {% if canDelete %}
+                                        <form method="post" action="{{ path('app_order_delete', {'id': order.id}) }}" 
+                                              onsubmit="return confirm('Are you sure you want to delete order #{{ order.id }}?');" 
+                                              style="display: inline;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
+                                            <button class="btn delete-btn">Delete</button>
+                                        </form>
+                                    {% else %}
+                                        <button class="btn delete-btn disabled" title="{% if is_granted('ROLE_staff') and not isOwner %}You can only delete orders you created{% else %}Delete not allowed{% endif %}">Delete</button>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% else %}
                             <tr>
                                 <td colspan="8" class="text-center py-4" style="text-align: center; padding: 2rem; color: #666;">
-                                    No orders found. Create your first order!
+                                    {% if is_granted('ROLE_staff') and not is_granted('ROLE_ADMIN') %}
+                                        You haven't created any orders yet.
+                                    {% else %}
+                                        No orders found.
+                                    {% endif %}
+                                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
+                                        Create your first order!
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
-                </div>
-                
-                <!-- Pagination -->
-                <div class="datatable-pagination" id="datatable-pagination">
-                    <button class="pagination-btn" id="first-page" disabled>First</button>
-                    <button class="pagination-btn" id="prev-page" disabled>Previous</button>
-                    <span id="page-numbers"></span>
-                    <button class="pagination-btn" id="next-page" disabled>Next</button>
-                    <button class="pagination-btn" id="last-page" disabled>Last</button>
                 </div>
             </div>
         </div>
@@ -526,20 +589,17 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Simple DataTable implementation (no CDN)
     let currentPage = 1;
     let itemsPerPage = 10;
     let currentData = [];
     let filteredData = [];
-    let sortColumn = 'created'; // Default sort by created date
-    let sortDirection = 'desc'; // Default descending
+    let sortColumn = 'created';
+    let sortDirection = 'desc';
     
-    // Initialize data from table
     const table = document.getElementById('orders-datatable');
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
     
-    // Store data
     rows.forEach((row, index) => {
         const cells = row.querySelectorAll('td');
         const statusBadge = cells[5].querySelector('.status-badge');
@@ -560,17 +620,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     filteredData = [...currentData];
-    
-    // Apply default sort
     sortData(sortColumn, sortDirection);
     
-    // Sort functionality
     const sortableHeaders = table.querySelectorAll('th.sortable');
     sortableHeaders.forEach(header => {
         header.addEventListener('click', () => {
             const column = header.dataset.sort;
             
-            // Update sorting UI
             sortableHeaders.forEach(h => {
                 h.classList.remove('sorting-asc', 'sorting-desc');
                 h.classList.add('sorting');
@@ -586,13 +642,11 @@ document.addEventListener('DOMContentLoaded', () => {
             header.classList.remove('sorting');
             header.classList.add(`sorting-${sortDirection}`);
             
-            // Sort data
             sortData(column, sortDirection);
             renderTable();
         });
     });
     
-    // Set initial sort indicator
     const createdHeader = table.querySelector('th[data-sort="created"]');
     if (createdHeader) {
         createdHeader.classList.remove('sorting');
@@ -604,9 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let aValue = a.data[column];
             let bValue = b.data[column];
             
-            // Handle different data types
             if (column === 'created') {
-                // Parse date for proper sorting
                 aValue = new Date(aValue.replace(',', ''));
                 bValue = new Date(bValue.replace(',', ''));
                 return direction === 'asc' 
@@ -624,7 +676,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Search functionality
     const searchInput = document.getElementById('datatable-search');
     searchInput.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
@@ -640,11 +691,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         currentPage = 1;
-        sortData(sortColumn, sortDirection); // Re-sort filtered data
+        sortData(sortColumn, sortDirection);
         renderTable();
     });
     
-    // Items per page
     const lengthSelect = document.getElementById('datatable-length');
     lengthSelect.addEventListener('change', (e) => {
         itemsPerPage = e.target.value === '-1' ? filteredData.length : parseInt(e.target.value);
@@ -652,145 +702,28 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTable();
     });
     
-    // Pagination functionality
     function renderTable() {
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         const pageData = filteredData.slice(startIndex, endIndex);
         
-        // Clear current rows
         while (tbody.firstChild) {
             tbody.removeChild(tbody.firstChild);
         }
         
-        // Add paginated rows
         pageData.forEach(item => {
             tbody.appendChild(item.element);
         });
         
-        // Update info
         const total = filteredData.length;
         const start = total === 0 ? 0 : startIndex + 1;
         const end = Math.min(endIndex, total);
         document.getElementById('datatable-info').textContent = 
             `Showing ${start} to ${end} of ${total} orders`;
         
-        // Update pagination
-        updatePagination(total);
+        attachRowHover();
     }
     
-    function updatePagination(totalItems) {
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-        const pageNumbers = document.getElementById('page-numbers');
-        const firstBtn = document.getElementById('first-page');
-        const prevBtn = document.getElementById('prev-page');
-        const nextBtn = document.getElementById('next-page');
-        const lastBtn = document.getElementById('last-page');
-        
-        // Clear page numbers
-        pageNumbers.innerHTML = '';
-        
-        // Generate page numbers (show limited pages)
-        let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(totalPages, currentPage + 2);
-        
-        // Adjust if at the beginning
-        if (currentPage <= 3) {
-            endPage = Math.min(5, totalPages);
-        }
-        
-        // Adjust if at the end
-        if (currentPage >= totalPages - 2) {
-            startPage = Math.max(1, totalPages - 4);
-        }
-        
-        // Add first page button if needed
-        if (startPage > 1) {
-            const firstBtn = document.createElement('button');
-            firstBtn.className = 'pagination-btn';
-            firstBtn.textContent = '1';
-            firstBtn.addEventListener('click', () => {
-                currentPage = 1;
-                renderTable();
-            });
-            pageNumbers.appendChild(firstBtn);
-            
-            if (startPage > 2) {
-                const ellipsis = document.createElement('span');
-                ellipsis.textContent = '...';
-                ellipsis.style.padding = '0.4rem 0.8rem';
-                pageNumbers.appendChild(ellipsis);
-            }
-        }
-        
-        // Add page numbers
-        for (let i = startPage; i <= endPage; i++) {
-            const btn = document.createElement('button');
-            btn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
-            btn.textContent = i;
-            btn.addEventListener('click', () => {
-                currentPage = i;
-                renderTable();
-            });
-            pageNumbers.appendChild(btn);
-        }
-        
-        // Add last page button if needed
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                const ellipsis = document.createElement('span');
-                ellipsis.textContent = '...';
-                ellipsis.style.padding = '0.4rem 0.8rem';
-                pageNumbers.appendChild(ellipsis);
-            }
-            
-            const lastBtn = document.createElement('button');
-            lastBtn.className = 'pagination-btn';
-            lastBtn.textContent = totalPages;
-            lastBtn.addEventListener('click', () => {
-                currentPage = totalPages;
-                renderTable();
-            });
-            pageNumbers.appendChild(lastBtn);
-        }
-        
-        // Update button states
-        firstBtn.disabled = currentPage === 1 || totalPages === 0;
-        prevBtn.disabled = currentPage === 1 || totalPages === 0;
-        nextBtn.disabled = currentPage === totalPages || totalPages === 0;
-        lastBtn.disabled = currentPage === totalPages || totalPages === 0;
-        
-        // Add event listeners
-        firstBtn.onclick = () => {
-            if (!firstBtn.disabled) {
-                currentPage = 1;
-                renderTable();
-            }
-        };
-        
-        prevBtn.onclick = () => {
-            if (!prevBtn.disabled) {
-                currentPage--;
-                renderTable();
-            }
-        };
-        
-        nextBtn.onclick = () => {
-            if (!nextBtn.disabled) {
-                currentPage++;
-                renderTable();
-            }
-        };
-        
-        lastBtn.onclick = () => {
-            if (!lastBtn.disabled) {
-                currentPage = totalPages;
-                renderTable();
-            }
-        };
-    }
-    
-    // Add row hover effects
     function attachRowHover() {
         const tableRows = document.querySelectorAll('.orders-table tbody tr');
         tableRows.forEach(row => {
@@ -804,7 +737,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Prevent clicks on disabled buttons
     document.querySelectorAll('.btn.disabled').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -813,9 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Initial render
     renderTable();
-    attachRowHover();
 });
 </script>
 {% endblock %}

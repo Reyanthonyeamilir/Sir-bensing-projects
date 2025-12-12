@@ -1,4 +1,5 @@
 <?php
+// src/Entity/ActivityLog.php
 
 namespace App\Entity;
 
@@ -7,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ActivityLogRepository::class)]
 #[ORM\Table(name: 'activity_log')]
+#[ORM\HasLifecycleCallbacks]
 class ActivityLog
 {
     #[ORM\Id]
@@ -24,18 +26,26 @@ class ActivityLog
     #[ORM\Column(length: 50)]
     private ?string $role = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $action = null;
+    #[ORM\Column(length: 20)]
+    private ?string $action = null; // CREATE, UPDATE, DELETE, VIEW
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text')]
     private ?string $targetData = null;
 
-    #[ORM\Column(name: 'created_at')]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $entityType = null; // NEW FIELD: e.g., 'User', 'Petproducts', 'Order'
 
-    public function __construct()
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $ipAddress = null; // NEW FIELD
+
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
     {
-        $this->createdAt = new \DateTimeImmutable();
+        // Set Manila time
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
     }
 
     public function getId(): ?int
@@ -92,18 +102,42 @@ class ActivityLog
         return $this->targetData;
     }
 
-    public function setTargetData(?string $targetData): static
+    public function setTargetData(string $targetData): static
     {
         $this->targetData = $targetData;
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    // NEW GETTER/SETTER FOR entityType
+    public function getEntityType(): ?string
+    {
+        return $this->entityType;
+    }
+
+    public function setEntityType(?string $entityType): static
+    {
+        $this->entityType = $entityType;
+        return $this;
+    }
+
+    // NEW GETTER/SETTER FOR ipAddress
+    public function getIpAddress(): ?string
+    {
+        return $this->ipAddress;
+    }
+
+    public function setIpAddress(?string $ipAddress): static
+    {
+        $this->ipAddress = $ipAddress;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
         return $this;

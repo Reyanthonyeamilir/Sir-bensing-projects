@@ -1,11 +1,12 @@
 <?php
+// src/Repository/ActivityLogRepository.php
 
 namespace App\Repository;
 
 use App\Entity\ActivityLog;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<ActivityLog>
@@ -17,114 +18,95 @@ class ActivityLogRepository extends ServiceEntityRepository
         parent::__construct($registry, ActivityLog::class);
     }
 
-    /**
-     * Get paginated activity logs with optional filters
-     *
-     * @param int $page Current page number (starting from 1)
-     * @param int $limit Number of items per page
-     * @param array $filters Array of filters (username, role, action, date)
-     * @return Paginator
-     */
     public function findPaginated(int $page, int $limit, array $filters = []): Paginator
     {
-        $queryBuilder = $this->createQueryBuilder('a')
-            ->orderBy('a.createdAt', 'DESC');
-        
+        $queryBuilder = $this->createQueryBuilder('al')
+            ->orderBy('al.createdAt', 'DESC');
+
         // Apply filters
         if (!empty($filters['username'])) {
-            $queryBuilder->andWhere('a.username LIKE :username')
+            $queryBuilder->andWhere('al.username LIKE :username')
                 ->setParameter('username', '%' . $filters['username'] . '%');
         }
-        
+
         if (!empty($filters['role'])) {
-            $queryBuilder->andWhere('a.role = :role')
-                ->setParameter('role', $filters['role']);
+            // Handle both uppercase and lowercase for staff
+            if ($filters['role'] === 'ROLE_staff') {
+                $queryBuilder->andWhere('al.role = :role')
+                    ->setParameter('role', 'ROLE_staff'); // lowercase
+            } else {
+                $queryBuilder->andWhere('al.role = :role')
+                    ->setParameter('role', $filters['role']);
+            }
         }
-        
+
         if (!empty($filters['action'])) {
-            $queryBuilder->andWhere('a.action = :action')
+            $queryBuilder->andWhere('al.action = :action')
                 ->setParameter('action', $filters['action']);
         }
-        
-        if (!empty($filters['date'])) {
-            $queryBuilder->andWhere('DATE(a.createdAt) = :date')
-                ->setParameter('date', $filters['date']);
+
+        if (!empty($filters['entityType'])) {
+            $queryBuilder->andWhere('al.entityType = :entityType')
+                ->setParameter('entityType', $filters['entityType']);
         }
-        
+
+        if (!empty($filters['date'])) {
+            $startDate = new \DateTime($filters['date'] . ' 00:00:00');
+            $endDate = new \DateTime($filters['date'] . ' 23:59:59');
+            $queryBuilder->andWhere('al.createdAt BETWEEN :start AND :end')
+                ->setParameter('start', $startDate)
+                ->setParameter('end', $endDate);
+        }
+
+        $query = $queryBuilder->getQuery();
+
         // Pagination
-        $queryBuilder->setFirstResult(($page - 1) * $limit)
+        $query->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
-        
-        return new Paginator($queryBuilder);
+
+        return new Paginator($query, true);
     }
 
-    /**
-     * Find activity logs with filters
-     *
-     * @param array $filters Array of filters (username, role, action, date)
-     * @return ActivityLog[]
-     */
     public function findByFilters(array $filters = []): array
     {
-        $queryBuilder = $this->createQueryBuilder('a')
-            ->orderBy('a.createdAt', 'DESC');
-        
-        // Apply filters
-        if (!empty($filters['username'])) {
-            $queryBuilder->andWhere('a.username LIKE :username')
-                ->setParameter('username', '%' . $filters['username'] . '%');
-        }
-        
-        if (!empty($filters['role'])) {
-            $queryBuilder->andWhere('a.role = :role')
-                ->setParameter('role', $filters['role']);
-        }
-        
-        if (!empty($filters['action'])) {
-            $queryBuilder->andWhere('a.action = :action')
-                ->setParameter('action', $filters['action']);
-        }
-        
-        if (!empty($filters['date'])) {
-            $queryBuilder->andWhere('DATE(a.createdAt) = :date')
-                ->setParameter('date', $filters['date']);
-        }
-        
-        return $queryBuilder->getQuery()->getResult();
-    }
+        $queryBuilder = $this->createQueryBuilder('al')
+            ->orderBy('al.createdAt', 'DESC');
 
-    /**
-     * Count total logs (optionally with filters)
-     *
-     * @param array $filters Array of filters (username, role, action, date)
-     * @return int
-     */
-    public function countLogs(array $filters = []): int
-    {
-        $queryBuilder = $this->createQueryBuilder('a')
-            ->select('COUNT(a.id)');
-        
         // Apply filters
         if (!empty($filters['username'])) {
-            $queryBuilder->andWhere('a.username LIKE :username')
+            $queryBuilder->andWhere('al.username LIKE :username')
                 ->setParameter('username', '%' . $filters['username'] . '%');
         }
-        
+
         if (!empty($filters['role'])) {
-            $queryBuilder->andWhere('a.role = :role')
-                ->setParameter('role', $filters['role']);
+            // Handle both uppercase and lowercase for staff
+            if ($filters['role'] === 'ROLE_staff') {
+                $queryBuilder->andWhere('al.role = :role')
+                    ->setParameter('role', 'ROLE_staff'); // lowercase
+            } else {
+                $queryBuilder->andWhere('al.role = :role')
+                    ->setParameter('role', $filters['role']);
+            }
         }
-        
+
         if (!empty($filters['action'])) {
-            $queryBuilder->andWhere('a.action = :action')
+            $queryBuilder->andWhere('al.action = :action')
                 ->setParameter('action', $filters['action']);
         }
-        
-        if (!empty($filters['date'])) {
-            $queryBuilder->andWhere('DATE(a.createdAt) = :date')
-                ->setParameter('date', $filters['date']);
+
+        if (!empty($filters['entityType'])) {
+            $queryBuilder->andWhere('al.entityType = :entityType')
+                ->setParameter('entityType', $filters['entityType']);
         }
-        
-        return (int) $queryBuilder->getQuery()->getSingleScalarResult();
+
+        if (!empty($filters['date'])) {
+            $startDate = new \DateTime($filters['date'] . ' 00:00:00');
+            $endDate = new \DateTime($filters['date'] . ' 23:59:59');
+            $queryBuilder->andWhere('al.createdAt BETWEEN :start AND :end')
+                ->setParameter('start', $startDate)
+                ->setParameter('end', $endDate);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

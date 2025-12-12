@@ -1,3 +1,4 @@
+{# templates/order/show.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Order Details - #{{ order.id }}{% endblock %}
@@ -5,7 +6,6 @@
 {% block stylesheets %}
 {{ parent() }}
 <style>
-  /* COMPLETELY OFFLINE - NO NETWORK DEPENDENCIES */
   * {
     margin: 0;
     padding: 0;
@@ -104,7 +104,6 @@
     color: #333;
   }
   
-  /* Status badge */
   .status-badge {
     display: inline-block;
     padding: 0.4rem 1rem;
@@ -153,7 +152,6 @@
     color: #cc5404;
   }
   
-  /* Actions section */
   .order-actions {
     display: flex;
     gap: 1rem;
@@ -208,6 +206,18 @@
     background-color: #c82333; 
   }
   
+  .btn.disabled {
+    background-color: #6c757d;
+    color: #adb5bd;
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+  
+  .btn.disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
   .btn::before {
     margin-right: 0.5rem;
   }
@@ -224,13 +234,11 @@
     content: "🗑";
   }
   
-  /* Delete form */
   .delete-form {
     margin-top: 1rem;
     text-align: center;
   }
   
-  /* Responsive */
   @media (max-width: 768px) {
     .main-content {
       margin-left: 0;
@@ -268,6 +276,9 @@
         
         <div class="order-card">
             <div class="order-id">Order #{{ order.id }}</div>
+            
+            {% set canEdit = is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
+            {% set canDelete = is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
             
             <div class="order-details-grid">
                 <div class="order-section">
@@ -350,12 +361,25 @@
             </div>
             
             <div class="order-actions">
-                <a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn edit-btn">Edit Order</a>
+                {% if canEdit %}
+                    <a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn edit-btn">Edit Order</a>
+                {% else %}
+                    <button class="btn edit-btn disabled" title="Edit not allowed">Edit Order</button>
+                {% endif %}
+                
                 <a href="{{ path('app_order_index') }}" class="btn back-btn">Back to Orders</a>
             </div>
             
             <div class="delete-form">
-                {{ include('order/_delete_form.html.twig') }}
+                {% if canDelete %}
+                    <form method="post" action="{{ path('app_order_delete', {'id': order.id}) }}" 
+                          onsubmit="return confirm('Are you sure you want to delete order #{{ order.id }}? This action cannot be undone.');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
+                        <button type="submit" class="btn delete-btn">Delete Order</button>
+                    </form>
+                {% else %}
+                    <button class="btn delete-btn disabled" title="Delete not allowed">Delete Order</button>
+                {% endif %}
             </div>
         </div>
     </div>

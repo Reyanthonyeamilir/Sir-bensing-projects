@@ -1,4 +1,5 @@
 <?php
+// src/Controller/ActivityLogController.php
 
 namespace App\Controller;
 
@@ -24,6 +25,7 @@ class ActivityLogController extends AbstractController
             'username' => $request->query->get('username'),
             'role' => $request->query->get('role'),
             'action' => $request->query->get('action'),
+            'entityType' => $request->query->get('entityType'),
             'date' => $request->query->get('date'),
         ];
         
@@ -56,6 +58,7 @@ class ActivityLogController extends AbstractController
             'username' => $request->query->get('username'),
             'role' => $request->query->get('role'),
             'action' => $request->query->get('action'),
+            'entityType' => $request->query->get('entityType'),
             'date' => $request->query->get('date'),
         ];
         
@@ -74,11 +77,13 @@ class ActivityLogController extends AbstractController
         foreach ($activityLogs as $log) {
             $logsArray[] = [
                 'id' => $log->getId(),
-                'user' => $log->getUser() ? ['id' => $log->getUser()->getId()] : null, // Fixed: getUser() not getUserId()
+                'user_id' => $log->getUserId() ? ['id' => $log->getUserId()->getId()] : null,
                 'username' => $log->getUsername(),
                 'role' => $log->getRole(),
                 'action' => $log->getAction(),
+                'entityType' => $log->getEntityType(),
                 'target_data' => $log->getTargetData(),
+                'ip_address' => $log->getIpAddress(),
                 'created_at' => $log->getCreatedAt()->format('c'),
             ];
         }
@@ -96,34 +101,39 @@ class ActivityLogController extends AbstractController
     #[Route('/activity-log/export', name: 'app_activity_log_export')]
     public function export(ActivityLogRepository $activityLogRepository, Request $request): Response
     {
+        // Get filter parameters from request
         $filters = [
             'username' => $request->query->get('username'),
             'role' => $request->query->get('role'),
             'action' => $request->query->get('action'),
+            'entityType' => $request->query->get('entityType'),
             'date' => $request->query->get('date'),
         ];
         
+        // Get logs with filters
         $logs = $activityLogRepository->findByFilters($filters);
         
-        $csvData = "ID,User ID,Username,Role,Action,Target Data,Created At\n";
+        $csvData = "ID,User ID,Username,Role,Action,Entity Type,Target Data,IP Address,Created At (Manila)\n";
         
         foreach ($logs as $log) {
-            $userId = $log->getUser() ? $log->getUser()->getId() : ''; // Fixed: getUser() not getUserId()
+            $userId = $log->getUserId() ? $log->getUserId()->getId() : '';
             $csvData .= sprintf(
-                "%d,%s,%s,%s,%s,\"%s\",%s\n",
+                "%d,%s,%s,%s,%s,%s,\"%s\",%s,%s\n",
                 $log->getId(),
                 $userId,
                 $log->getUsername(),
                 $log->getRole(),
                 $log->getAction(),
+                $log->getEntityType() ?? 'N/A',
                 str_replace('"', '""', $log->getTargetData()),
+                $log->getIpAddress() ?? 'N/A',
                 $log->getCreatedAt()->format('Y-m-d H:i:s')
             );
         }
         
         $response = new Response($csvData);
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename=\"activity_logs_' . date('Y-m-d') . '.csv\"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="activity_logs_' . date('Y-m-d') . '.csv"');
         
         return $response;
     }

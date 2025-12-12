@@ -1,11 +1,29 @@
 # config/services.yaml
 parameters:
-  uploads_directory: '%kernel.project_dir%/public/uploads'
+    uploads_directory: '%kernel.project_dir%/public/uploads'
 
 services:
-  _defaults:
-    autowire: true
-    autoconfigure: true
+    _defaults:
+        autowire: true
+        autoconfigure: true
 
-  App\:
-    resource: '../src/'
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # ActivityLogService
+    App\Service\ActivityLogService:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $requestStack: '@request_stack'
+
+    # Login Subscriber (Simplified version)
+    App\EventListener\LoginSubscriber:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $requestStack: '@request_stack'
+        tags:
+            - { name: kernel.event_subscriber }

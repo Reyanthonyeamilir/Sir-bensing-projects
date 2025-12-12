@@ -16,6 +16,7 @@
     min-height: 100vh;
     background: #f9f5f0;
     transition: margin-left 0.3s ease, width 0.3s ease;
+    overflow-x: hidden;
 }
 
 /* If your sidebar collapses, use this class */
@@ -34,21 +35,21 @@ body.sidebar-collapsed .main-content {
 }
 
 /* ========================= */
-/* Your existing dashboard styles */
+/* Dashboard styles */
 /* ========================= */
 
 .dashboard-header {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     text-align: center;
-    max-width: 1200px;
+    max-width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
 
 .dashboard-title {
     color: #3a2610;
-    font-size: 2.8rem;
-    margin-bottom: 15px;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
     font-weight: 700;
     line-height: 1.3;
     font-family: 'Chewy', cursive;
@@ -56,104 +57,156 @@ body.sidebar-collapsed .main-content {
 
 .dashboard-subtitle {
     color: #6b4f35;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-family: 'Poppins', sans-serif;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 0 auto 20px;
 }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    margin-bottom: 50px;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+    max-width: 100%;
 }
 
 .stat-card {
     background: white;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(46, 21, 4, 0.1);
-    border-left: 6px solid #ff7b35;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(46, 21, 4, 0.08);
+    border-left: 5px solid #ff7b35;
     transition: all 0.3s ease;
+    cursor: pointer;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .stat-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(46, 21, 4, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(46, 21, 4, 0.15);
 }
+
+.stat-card.primary { border-left-color: #ff7b35; }
+.stat-card.success { border-left-color: #28a745; }
+.stat-card.warning { border-left-color: #ffc107; }
+.stat-card.danger { border-left-color: #dc3545; }
+.stat-card.info { border-left-color: #17a2b8; }
 
 .stat-title {
     color: #6b4f35;
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
     font-family: 'Poppins', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .stat-value {
     color: #3a2610;
-    font-size: 2.8rem;
+    font-size: 2.2rem;
     font-weight: 700;
     font-family: 'Chewy', cursive;
     line-height: 1;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .stat-subvalue {
     color: #ff7b35;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-top: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
     font-family: 'Poppins', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.content-grid {
+/* MAIN CONTENT GRID - FIXED HEIGHT WITH SCROLL */
+.dashboard-main-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
+    gap: 25px;
+    margin-bottom: 30px;
+    max-width: 100%;
+    height: 500px; /* Fixed height for all cards */
 }
 
 .content-card {
     background: white;
-    border-radius: 16px;
-    padding: 35px;
-    box-shadow: 0 8px 25px rgba(46, 21, 4, 0.1);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(46, 21, 4, 0.08);
     transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 }
 
 .content-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(46, 21, 4, 0.12);
 }
 
 .card-title {
     color: #3a2610;
-    font-size: 1.6rem;
-    margin-bottom: 25px;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
     font-weight: 600;
     font-family: 'Poppins', sans-serif;
     border-bottom: 2px solid rgba(255, 123, 53, 0.2);
     padding-bottom: 10px;
+    flex-shrink: 0;
+}
+
+.card-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+    min-height: 0;
+}
+
+/* Custom scrollbar for card content */
+.card-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.card-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+    background: #ff7b35;
+    border-radius: 3px;
+}
+
+.card-content::-webkit-scrollbar-thumb:hover {
+    background: #e56a27;
 }
 
 .card-text {
     color: #6b4f35;
-    font-size: 1.05rem;
-    line-height: 1.7;
-    margin-bottom: 20px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
     font-family: 'Poppins', sans-serif;
 }
 
 .card-text ul {
     list-style-type: none;
     padding-left: 0;
+    margin: 0;
 }
 
 .card-text li {
@@ -173,9 +226,9 @@ body.sidebar-collapsed .main-content {
 /* Quick Links */
 .quick-links {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
 }
 
 .quick-link {
@@ -183,37 +236,270 @@ body.sidebar-collapsed .main-content {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 15px 10px;
     background: #fff8f0;
-    border-radius: 10px;
+    border-radius: 8px;
     text-decoration: none;
     color: #5a3922;
     transition: all 0.3s ease;
     border: 2px solid transparent;
+    height: 90px;
 }
 
 .quick-link:hover {
     background: #ff7b35;
     color: white;
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     border-color: #ff7b35;
 }
 
 .quick-link-icon {
-    font-size: 2rem;
-    margin-bottom: 10px;
+    font-size: 1.6rem;
+    margin-bottom: 8px;
 }
 
 .quick-link-text {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     text-align: center;
+    line-height: 1.2;
 }
 
-/* Responsive scaling */
-@media (max-width: 1024px) {
-    .dashboard-title {
-        font-size: 2.2rem;
+/* Status badges */
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.status-completed {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Table styles */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.85rem;
+}
+
+.data-table th {
+    background-color: #fff8f0;
+    padding: 10px 12px;
+    text-align: left;
+    color: #5a3922;
+    font-weight: 600;
+    border-bottom: 2px solid #ff7b35;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+}
+
+.data-table tr:hover {
+    background-color: #f9f5f0;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 5px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin: 2px;
+    white-space: nowrap;
+}
+
+.btn-complete {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-complete:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+.btn-cancel {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+}
+
+.btn-view {
+    background-color: #ff7b35;
+    color: white;
+}
+
+.btn-view:hover {
+    background-color: #e56a27;
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Stats row */
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.stat-label {
+    font-weight: 600;
+    color: #5a3922;
+}
+
+.stat-number {
+    font-weight: 700;
+    color: #ff7b35;
+}
+
+/* Alert messages */
+.alert {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Low stock warning */
+.low-stock {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.stock-warning {
+    background-color: #fff5f5;
+    border-left: 4px solid #dc3545;
+}
+
+/* LOW STOCK ALERT SECTION */
+.low-stock-alert-section {
+    margin-top: 30px;
+    max-width: 100%;
+}
+
+.low-stock-alert-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(46, 21, 4, 0.08);
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.low-stock-alert-card .card-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Table wrapper for horizontal scroll */
+.table-wrapper {
+    overflow-x: auto;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+.table-wrapper table {
+    min-width: 600px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .dashboard-main-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .dashboard-main-content {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    
+    .content-card {
+        height: 450px;
+    }
+    
+    .stat-card {
+        height: 120px;
+        padding: 15px;
+    }
+    
+    .stat-value {
+        font-size: 1.8rem;
     }
 }
 
@@ -221,77 +507,180 @@ body.sidebar-collapsed .main-content {
     .dashboard-title {
         font-size: 1.8rem;
     }
-    .stat-value {
-        font-size: 2.2rem;
+    
+    .dashboard-subtitle {
+        font-size: 1rem;
     }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .quick-links {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .content-card {
+        padding: 20px;
+        height: 400px;
+    }
+    
+    .card-title {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
     .quick-links {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    .data-table {
+        font-size: 0.8rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 8px 10px;
+    }
+    
+    .action-btn {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+        margin: 1px;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.content-card, .stat-card, .alert {
+    animation: fadeIn 0.5s ease-out;
 }
 </style>
 
 <main class="main-content" id="mainContent">
-    <div class="dashboard-content center-container">
-        <div class="centered-content">
-            <div class="dashboard-header">
-                <h1 class="dashboard-title">Dashboard Overview</h1>
-                <p class="dashboard-subtitle">
-                    Welcome back, {{ app.user.username }}!
-                    {% if is_granted('ROLE_ADMIN') %}
-                        You're logged in as Administrator
-                    {% elseif is_granted('ROLE_staff') %}
-                        You're logged in as Staff Member
-                    {% else %}
-                        Welcome to your dashboard
-                    {% endif %}
-                </p>
+    <div class="dashboard-content">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Dashboard Overview</h1>
+            <p class="dashboard-subtitle">
+                Welcome back, {{ app.user.username }}!
+                {% if is_granted('ROLE_ADMIN') %}
+                    You're logged in as Administrator
+                {% elseif is_granted('ROLE_staff') or is_granted('ROLE_STAFF') %}
+                    You're logged in as Staff Member
+                {% else %}
+                    Welcome to your dashboard
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('warning') %}
+            <div class="alert alert-warning">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <!-- STATS GRID -->
+        <div class="stats-grid">
+            <!-- Product Statistics -->
+            <div class="stat-card primary" onclick="window.location='{{ path('app_petproducts_index') }}'">
+                <div class="stat-title">Total Products</div>
+                <div class="stat-value">{{ totalProducts ?? 0 }}</div>
+                <div class="stat-subvalue">Active products</div>
             </div>
 
-            <div class="stats-grid">
-                {% if totalProducts is defined %}
-                <div class="stat-card">
-                    <div class="stat-title">Total Products</div>
-                    <div class="stat-value">{{ totalProducts }}</div>
-                    <div class="stat-subvalue">Active products in store</div>
-                </div>
-                {% endif %}
+            <div class="stat-card info" onclick="window.location='{{ path('app_petproducts_index') }}'">
+                <div class="stat-title">Total Stock</div>
+                <div class="stat-value">{{ totalStock ?? 0 }}</div>
+                <div class="stat-subvalue">Items in inventory</div>
+            </div>
 
-                {% if is_granted('ROLE_ADMIN') and totalUsers is defined %}
-                <div class="stat-card">
+            <div class="stat-card warning" onclick="window.location='{{ path('app_petproducts_index') }}'">
+                <div class="stat-title">Categories</div>
+                <div class="stat-value">{{ totalCategories ?? 0 }}</div>
+                <div class="stat-subvalue">Product categories</div>
+            </div>
+
+            <!-- ADJUSTED INVENTORY VALUE (Current - Revenue) -->
+            <div class="stat-card success">
+                <div class="stat-title">Inventory Value</div>
+                <div class="stat-value">₱{{ (totalValue ?? 0)|number_format(2, '.', ',') }}</div>
+                <div class="stat-subvalue">
+                    {% if completedRevenue > 0 %}
+                        (Adjusted: Current - Revenue)
+                    {% else %}
+                        Current stock value
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- REVENUE FROM COMPLETED ORDERS -->
+            <div class="stat-card primary">
+                <div class="stat-title">Revenue Earned</div>
+                <div class="stat-value">₱{{ (completedRevenue ?? 0)|number_format(2, '.', ',') }}</div>
+                <div class="stat-subvalue">From completed orders</div>
+            </div>
+
+            <!-- Admin Only Stats -->
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="stat-card info" onclick="window.location='{{ path('app_user_index') }}'">
                     <div class="stat-title">Total Users</div>
-                    <div class="stat-value">{{ totalUsers }}</div>
+                    <div class="stat-value">{{ totalUsers ?? 0 }}</div>
                     <div class="stat-subvalue">Registered users</div>
                 </div>
-                {% endif %}
 
-                {% if totalCategories is defined %}
-                <div class="stat-card">
-                    <div class="stat-title">Categories</div>
-                    <div class="stat-value">{{ totalCategories }}</div>
-                    <div class="stat-subvalue">Product categories</div>
+                <div class="stat-card primary" onclick="window.location='{{ path('app_order_index') }}'">
+                    <div class="stat-title">Total Orders</div>
+                    <div class="stat-value">{{ totalOrders ?? 0 }}</div>
+                    <div class="stat-subvalue">All-time orders</div>
                 </div>
-                {% endif %}
 
-                {% if totalStock is defined %}
-                <div class="stat-card">
-                    <div class="stat-title">Total Stock</div>
-                    <div class="stat-value">{{ totalStock }}</div>
-                    <div class="stat-subvalue">Items available</div>
+                <div class="stat-card success" onclick="window.location='{{ path('app_order_index') }}'">
+                    <div class="stat-title">Completed</div>
+                    <div class="stat-value">{{ completedOrders ?? 0 }}</div>
+                    <div class="stat-subvalue">Processed orders</div>
                 </div>
-                {% endif %}
 
-                {% if totalValue is defined and is_granted('ROLE_ADMIN') %}
-                <div class="stat-card">
-                    <div class="stat-title">Inventory Value</div>
-                    <div class="stat-value">${{ totalValue|number_format(2) }}</div>
-                    <div class="stat-subvalue">Total product value</div>
+                <div class="stat-card warning" onclick="window.location='{{ path('app_order_index') }}'">
+                    <div class="stat-title">Pending</div>
+                    <div class="stat-value">{{ pendingOrders ?? 0 }}</div>
+                    <div class="stat-subvalue">Awaiting processing</div>
                 </div>
-                {% endif %}
-            </div>
+                
+                <!-- Pending Orders Value -->
+                <div class="stat-card warning">
+                    <div class="stat-title">Pending Sales</div>
+                    <div class="stat-value">₱{{ (pendingValue ?? 0)|number_format(2, '.', ',') }}</div>
+                    <div class="stat-subvalue">Potential revenue</div>
+                </div>
+            {% endif %}
+        </div>
 
-            <div class="content-grid">
-                <div class="content-card">
-                    <h2 class="card-title">Quick Actions</h2>
+        <!-- MAIN CONTENT GRID -->
+        <div class="dashboard-main-content">
+            <!-- Quick Actions Card -->
+            <div class="content-card">
+                <h2 class="card-title">Quick Actions</h2>
+                <div class="card-content">
                     <div class="card-text">
                         {% if is_granted('ROLE_ADMIN') %}
                         <ul>
@@ -300,24 +689,25 @@ body.sidebar-collapsed .main-content {
                             <li>Configure application settings</li>
                             <li>Monitor activity logs</li>
                         </ul>
-                        {% elseif is_granted('ROLE_staff') %}
+                        {% elseif is_granted('ROLE_staff') or is_granted('ROLE_STAFF') %}
                         <ul>
                             <li>Add new pet products</li>
                             <li>Update product stock and details</li>
                             <li>Manage product categories</li>
-                            <li>View product inventory</li>
+                            <li>Process customer orders</li>
                         </ul>
                         {% else %}
                         <ul>
                             <li>Browse available products</li>
                             <li>View product details</li>
                             <li>Manage your account</li>
+                            <li>Track your orders</li>
                         </ul>
                         {% endif %}
                     </div>
                     
                     <div class="quick-links">
-                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
+                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') or is_granted('ROLE_STAFF') %}
                             <a href="{{ path('app_petproducts_new') }}" class="quick-link">
                                 <span class="quick-link-icon">➕</span>
                                 <span class="quick-link-text">Add Product</span>
@@ -334,10 +724,12 @@ body.sidebar-collapsed .main-content {
                                 <span class="quick-link-icon">👥</span>
                                 <span class="quick-link-text">Manage Users</span>
                             </a>
-                            
-                            <a href="{{ path('app_activity_log') }}" class="quick-link">
-                                <span class="quick-link-icon">📜</span>
-                                <span class="quick-link-text">Activity Log</span>
+                        {% endif %}
+                        
+                        {% if is_granted('ROLE_staff') or is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_order_index') }}" class="quick-link">
+                                <span class="quick-link-icon">📋</span>
+                                <span class="quick-link-text">Manage Orders</span>
                             </a>
                         {% endif %}
                         
@@ -347,27 +739,117 @@ body.sidebar-collapsed .main-content {
                         </a>
                     </div>
                 </div>
+            </div>
 
-                <div class="content-card">
-                    <h2 class="card-title">Recent Activities</h2>
+            <!-- Recent Orders Card -->
+            <div class="content-card">
+                <h2 class="card-title">Recent Orders</h2>
+                <div class="card-content">
+                    {% if recentOrders is defined and recentOrders|length > 0 %}
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recentOrders %}
+                                <tr>
+                                    <td>#{{ order.id }}</td>
+                                    <td>{{ order.customer.username|slice(0, 10) }}{{ order.customer.username|length > 10 ? '...' : '' }}</td>
+                                    <td>{{ order.product.productName|slice(0, 15) }}{{ order.product.productName|length > 15 ? '...' : '' }}</td>
+                                    <td>{{ order.quantity }}</td>
+                                    <td>₱{{ order.amount|number_format(0, '.', ',') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ order.status|lower }}">
+                                            {{ order.status|slice(0, 8) }}{{ order.status|length > 8 ? '...' : '' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if is_granted('ROLE_staff') or is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN') %}
+                                            {% if order.status == 'pending' %}
+                                                <form action="{{ path('order_complete', {'id': order.id}) }}" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('complete' ~ order.id) }}">
+                                                    <button type="submit" class="action-btn btn-complete" onclick="return confirm('Mark as completed?');">✓</button>
+                                                </form>
+                                                <form action="{{ path('order_cancel', {'id': order.id}) }}" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ order.id) }}">
+                                                    <button type="submit" class="action-btn btn-cancel" onclick="return confirm('Cancel order?');">✗</button>
+                                                </form>
+                                            {% endif %}
+                                        {% endif %}
+                                        <a href="{{ path('app_order_show', {'id': order.id}) }}" class="action-btn btn-view">👁</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="{{ path('app_order_index') }}" class="action-btn btn-primary">View All Orders</a>
+                    </div>
+                    {% else %}
                     <div class="card-text">
-                        {% if is_granted('ROLE_ADMIN') %}
-                        <strong>Administrator Panel:</strong> You have full access to manage the entire system including users, products, and activity logs.
-                        {% elseif is_granted('ROLE_staff') %}
-                        <strong>Staff Panel:</strong> You can manage products and view inventory. You have limited access compared to administrators.
-                        {% else %}
-                        <strong>User Panel:</strong> Browse and view products. Contact staff for assistance.
+                        <p>No recent orders found.</p>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <a href="{{ path('app_petproducts_index') }}" class="action-btn btn-primary">Browse Products</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Financial Summary Card -->
+            <div class="content-card">
+                <h2 class="card-title">Financial Summary</h2>
+                <div class="card-content">
+                    <div class="card-text">
+                        <div class="stats-row">
+                            <span class="stat-label">Actual Inventory:</span>
+                            <span class="stat-number">₱{{ (currentInventoryValue ?? 0)|number_format(2, '.', ',') }}</span>
+                        </div>
+                        <div class="stats-row">
+                            <span class="stat-label">Revenue Earned:</span>
+                            <span class="stat-number">₱{{ (completedRevenue ?? 0)|number_format(2, '.', ',') }}</span>
+                        </div>
+                        <div class="stats-row">
+                            <span class="stat-label">Displayed Inventory:</span>
+                            <span class="stat-number">₱{{ (totalValue ?? 0)|number_format(2, '.', ',') }}</span>
+                        </div>
+                        {% if pendingValue is defined %}
+                        <div class="stats-row">
+                            <span class="stat-label">Pending Sales:</span>
+                            <span class="stat-number">₱{{ (pendingValue ?? 0)|number_format(2, '.', ',') }}</span>
+                        </div>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN') and totalUsers is defined %}
+                        <div class="stats-row">
+                            <span class="stat-label">Total Users:</span>
+                            <span class="stat-number">{{ totalUsers ?? 0 }}</span>
+                        </div>
                         {% endif %}
                     </div>
                     
                     <div class="card-text">
-                        <strong>System Status:</strong>
+                        <strong>Dashboard Rules:</strong>
                         <ul>
-                            <li>Dashboard loaded successfully</li>
-                            <li>User session active</li>
-                            <li>Database connection established</li>
-                            <li>All systems operational</li>
+                            <li><strong>Actual Inventory</strong>: Current stock value in database</li>
+                            <li><strong>Revenue Earned</strong>: Money from completed orders</li>
+                            <li><strong>Displayed Inventory</strong>: Actual Inventory - Revenue Earned</li>
+                            <li><strong>Pending Sales</strong>: Potential future revenue</li>
+                            <li>No database stock is deducted when orders are completed</li>
                         </ul>
+                    </div>
+                    
+                    <div class="card-text">
+                        <strong>Formula:</strong> Displayed Inventory = Actual Inventory - Revenue Earned
                     </div>
                     
                     <div class="card-text">
@@ -376,6 +858,46 @@ body.sidebar-collapsed .main-content {
                 </div>
             </div>
         </div>
+
+        <!-- LOW STOCK ALERT SECTION -->
+        {% if lowStockProducts is defined and lowStockProducts|length > 0 %}
+        <div class="low-stock-alert-section">
+            <div class="low-stock-alert-card">
+                <h2 class="card-title">⚠️ Low Stock Alert</h2>
+                <div class="card-content">
+                    <div class="card-text">
+                        <p>The following products are running low on stock:</p>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Current Stock</th>
+                                    <th>Price</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in lowStockProducts %}
+                                <tr {% if product.stock < 5 %}class="stock-warning"{% endif %}>
+                                    <td><strong>{{ product.productName }}</strong></td>
+                                    <td>{{ product.category }}</td>
+                                    <td class="low-stock">{{ product.stock }} units</td>
+                                    <td>₱{{ product.price|number_format(2, '.', ',') }}</td>
+                                    <td>
+                                        <a href="{{ path('app_petproducts_edit', {'id': product.id}) }}" class="action-btn btn-view">Restock</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </main>
 
@@ -383,14 +905,26 @@ body.sidebar-collapsed .main-content {
 document.addEventListener('DOMContentLoaded', () => {
     // Add hover effects to stat cards
     document.querySelectorAll('.stat-card').forEach(card => {
-        card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-8px)');
-        card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0)');
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-5px)';
+            card.style.boxShadow = '0 8px 25px rgba(46, 21, 4, 0.15)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+            card.style.boxShadow = '0 4px 15px rgba(46, 21, 4, 0.08)';
+        });
     });
     
     // Add hover effects to content cards
     document.querySelectorAll('.content-card').forEach(card => {
-        card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-5px)');
-        card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0)');
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-3px)';
+            card.style.boxShadow = '0 6px 20px rgba(46, 21, 4, 0.12)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+            card.style.boxShadow = '0 4px 15px rgba(46, 21, 4, 0.08)';
+        });
     });
     
     // Add click effects to quick links
@@ -402,6 +936,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 150);
         });
     });
+    
+    // Auto-hide alerts after 5 seconds
+    setTimeout(() => {
+        document.querySelectorAll('.alert').forEach(alert => {
+            alert.style.opacity = '0';
+            alert.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 500);
+        });
+    }, 5000);
 });
 </script>
 

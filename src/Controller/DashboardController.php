@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Repository\PetproductsRepository;
 use App\Repository\UserRepository;
+use App\Repository\OrderRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,7 +16,8 @@ class DashboardController extends AbstractController
     #[Route('/dashboard', name: 'app_dashboard')]
     public function index(
         PetproductsRepository $petproductsRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        OrderRepository $orderRepository
     ): Response {
         // Check if user is authenticated
         if (!$this->getUser()) {
@@ -28,109 +31,211 @@ class DashboardController extends AbstractController
         // Initialize data array
         $data = [];
 
+        // 1. GET ACTUAL CURRENT INVENTORY VALUE FROM DATABASE
+        $totalProducts = $petproductsRepository->count(['isActive' => true]);
+        
+        $totalStock = $petproductsRepository->createQueryBuilder('p')
+            ->select('SUM(p.stock)')
+            ->where('p.isActive = true')
+            ->getQuery()
+            ->getSingleScalarResult();
+        $totalStock = $totalStock ?? 0;
+        
+        $totalCategories = $petproductsRepository->createQueryBuilder('p')
+            ->select('COUNT(DISTINCT p.category)')
+            ->where('p.isActive = true')
+            ->getQuery()
+            ->getSingleScalarResult();
+        $totalCategories = (int)$totalCategories;
+        
+        // CURRENT inventory value from database (actual stock * price)
+        $currentInventoryValue = $petproductsRepository->createQueryBuilder('p')
+            ->select('SUM(p.price * p.stock)')
+            ->where('p.isActive = true')
+            ->getQuery()
+            ->getSingleScalarResult();
+        $currentInventoryValue = $currentInventoryValue ?? 0;
+        
+        // 2. GET COMPLETED ORDERS VALUE (money earned from sales)
+        $completedOrdersRevenue = $orderRepository->createQueryBuilder('o')
+            ->select('SUM(o.amount)')
+            ->where('o.status = :status')
+            ->setParameter('status', 'completed')
+            ->getQuery()
+            ->getSingleScalarResult();
+        $completedOrdersRevenue = $completedOrdersRevenue ?? 0;
+        
+        // 3. GET PENDING ORDERS VALUE (potential sales)
+        $pendingOrdersValue = $orderRepository->createQueryBuilder('o')
+            ->select('SUM(o.amount)')
+            ->where('o.status = :status')
+            ->setParameter('status', 'pending')
+            ->getQuery()
+            ->getSingleScalarResult();
+        $pendingOrdersValue = $pendingOrdersValue ?? 0;
+        
+        // 4. GET LOW STOCK PRODUCTS
+        $lowStockProducts = $petproductsRepository->createQueryBuilder('p')
+            ->where('p.stock < 10')
+            ->andWhere('p.isActive = true')
+            ->orderBy('p.stock', 'ASC')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
+
+        // BASE DATA FOR ALL USERS
+        $data = [
+            'totalProducts' => $totalProducts,
+            'totalStock' => $totalStock,
+            'totalCategories' => $totalCategories,
+            'totalValue' => $currentInventoryValue, // Current actual inventory value
+            'completedRevenue' => $completedOrdersRevenue, // Money earned
+            'pendingValue' => $pendingOrdersValue, // Potential sales
+            'lowStockProducts' => $lowStockProducts,
+        ];
+
         // ADMIN DASHBOARD DATA
         if (in_array('ROLE_ADMIN', $userRoles)) {
-            $products = $petproductsRepository->findAll();
-            $totalProducts = count($products);
-            $totalPrice = array_sum(array_map(fn($p) => $p->getPrice(), $products));
-            $priceGrowth = 8.5; // Example - you might calculate this dynamically
+            $totalUsers = $userRepository->count([]);
+            $totalOrders = $orderRepository->count([]);
+            $completedOrders = $orderRepository->count(['status' => 'completed']);
+            $pendingOrders = $orderRepository->count(['status' => 'pending']);
             
-            $data = [
-                'totalProducts'   => $totalProducts,
-                'totalPrice'      => $totalPrice,
-                'priceGrowth'     => $priceGrowth,
-                'totalUsers'      => $userRepository->count([]),
-                'bookingsCount'   => 5, // Replace with actual bookings count
-                // Inventory removed from here
-            ];
+            $recentOrders = $orderRepository->findBy([], ['createdAt' => 'DESC'], 10);
+
+            $data = array_merge($data, [
+                'totalUsers' => $totalUsers,
+                'totalOrders' => $totalOrders,
+                'completedOrders' => $completedOrders,
+                'pendingOrders' => $pendingOrders,
+                'recentOrders' => $recentOrders,
+                'isAdmin' => true,
+            ]);
         }
-        // STAFF DASHBOARD DATA - FIXED: Check both uppercase and lowercase
+        // STAFF DASHBOARD DATA
         elseif (in_array('ROLE_STAFF', $userRoles) || in_array('ROLE_staff', $userRoles)) {
-            $products = $petproductsRepository->findAll();
-            $totalProducts = count($products);
+            $totalOrders = $orderRepository->count([]);
+            $completedOrders = $orderRepository->count(['status' => 'completed']);
+            $pendingOrders = $orderRepository->count(['status' => 'pending']);
             
-            $data = [
-                'totalProducts'   => $totalProducts,
-                // Inventory removed from here
-                'bookingsCount'   => 5, // Replace with actual bookings count
-            ];
+            $recentOrders = $orderRepository->findBy([], ['createdAt' => 'DESC'], 10);
+
+            $data = array_merge($data, [
+                'totalOrders' => $totalOrders,
+                'completedOrders' => $completedOrders,
+                'pendingOrders' => $pendingOrders,
+                'recentOrders' => $recentOrders,
+                'isStaff' => true,
+            ]);
         }
         // USER DASHBOARD DATA
         elseif (in_array('ROLE_USER', $userRoles)) {
-            // Get user-specific data
-            // You'll need to implement these methods based on your entities
+            $userOrders = $orderRepository->findBy(
+                ['customer' => $user],
+                ['createdAt' => 'DESC'],
+                5
+            );
             
-            // Example: Get user's orders count
-            // $userOrders = count($user->getOrders()); // Assuming User entity has getOrders()
+            $totalUserOrders = $orderRepository->count(['customer' => $user]);
+            $pendingUserOrders = $orderRepository->count([
+                'customer' => $user,
+                'status' => 'pending'
+            ]);
+            $completedUserOrders = $orderRepository->count([
+                'customer' => $user,
+                'status' => 'completed'
+            ]);
             
-            // Example: Get user's bookings count
-            // $userBookings = count($user->getBookings()); // Assuming User entity has getBookings()
-            
-            $data = [
-                'userOrders'    => 0, // Replace with actual user orders count
-                'userBookings'  => 0, // Replace with actual user bookings count
-            ];
+            $userTotalSpent = $orderRepository->createQueryBuilder('o')
+                ->select('SUM(o.amount)')
+                ->where('o.customer = :user')
+                ->andWhere('o.status = :status')
+                ->setParameter('user', $user)
+                ->setParameter('status', 'completed')
+                ->getQuery()
+                ->getSingleScalarResult();
+            $userTotalSpent = $userTotalSpent ?? 0;
+
+            $data = array_merge($data, [
+                'userOrders' => $userOrders,
+                'totalUserOrders' => $totalUserOrders,
+                'pendingUserOrders' => $pendingUserOrders,
+                'completedUserOrders' => $completedUserOrders,
+                'userTotalSpent' => $userTotalSpent,
+                'isUser' => true,
+            ]);
         }
         // NO VALID ROLE - Redirect to login
         else {
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('dashboard/index.html.twig', $data);
+        return $this->render('Dashboard/index.html.twig', $data);
     }
     
-    #[Route('/admin/dashboard', name: 'app_admin_dashboard')]
-    public function adminDashboard(
-        PetproductsRepository $petproductsRepository,
-        UserRepository $userRepository
+    /**
+     * Mark order as completed (NO DATABASE STOCK DEDUCTION)
+     */
+    #[Route('/order/{id}/complete', name: 'order_complete', methods: ['POST'])]
+    #[IsGranted('ROLE_staff')]
+    public function completeOrder(
+        int $id, 
+        OrderRepository $orderRepository, 
+        EntityManagerInterface $entityManager
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $order = $orderRepository->find($id);
         
-        // Admin-only data
-        $products = $petproductsRepository->findAll();
-        $totalProducts = count($products);
-        $totalPrice = array_sum(array_map(fn($p) => $p->getPrice(), $products));
-        
-        return $this->render('dashboard/index.html.twig', [
-            'totalProducts'   => $totalProducts,
-            'totalPrice'      => $totalPrice,
-            'priceGrowth'     => 8.5,
-            'totalUsers'      => $userRepository->count([]),
-            'bookingsCount'   => 5,
-            // Inventory removed from here
-        ]);
-    }
-    
-    #[Route('/staff/dashboard', name: 'app_staff_dashboard')]
-    public function staffDashboard(
-        PetproductsRepository $petproductsRepository
-    ): Response {
-        // FIXED: Check both uppercase and lowercase for staff role
-        if (!$this->isGranted('ROLE_STAFF') && !$this->isGranted('ROLE_staff')) {
-            return $this->redirectToRoute('app_login');
+        if (!$order) {
+            $this->addFlash('error', 'Order not found.');
+            return $this->redirectToRoute('app_dashboard');
         }
         
-        $products = $petproductsRepository->findAll();
-        $totalProducts = count($products);
+        if ($order->getStatus() === 'completed') {
+            $this->addFlash('warning', 'Order is already completed.');
+            return $this->redirectToRoute('app_dashboard');
+        }
         
-        return $this->render('dashboard/index.html.twig', [
-            'totalProducts'   => $totalProducts,
-            // Inventory removed from here
-            'bookingsCount'   => 5,
-        ]);
+        // SIMPLY MARK AS COMPLETED - NO STOCK DEDUCTION
+        $order->setStatus('completed');
+        $order->setUpdatedAt(new \DateTime('now', new \DateTimeZone('Asia/Manila')));
+        
+        $entityManager->flush();
+        
+        $this->addFlash('success', 'Order marked as completed successfully.');
+        
+        return $this->redirectToRoute('app_dashboard');
     }
     
-    #[Route('/user/dashboard', name: 'app_user_dashboard')]
-    public function userDashboard(): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+    /**
+     * Mark order as cancelled
+     */
+    #[Route('/order/{id}/cancel', name: 'order_cancel', methods: ['POST'])]
+    #[IsGranted('ROLE_staff')]
+    public function cancelOrder(
+        int $id, 
+        OrderRepository $orderRepository, 
+        EntityManagerInterface $entityManager
+    ): Response {
+        $order = $orderRepository->find($id);
         
-        // Get current user
-        $user = $this->getUser();
+        if (!$order) {
+            $this->addFlash('error', 'Order not found.');
+            return $this->redirectToRoute('app_dashboard');
+        }
         
-        return $this->render('dashboard/index.html.twig', [
-            'userOrders'    => 0, // Replace with: count($user->getOrders())
-            'userBookings'  => 0, // Replace with: count($user->getBookings())
-        ]);
+        if ($order->getStatus() === 'cancelled') {
+            $this->addFlash('warning', 'Order is already cancelled.');
+            return $this->redirectToRoute('app_dashboard');
+        }
+        
+        // SIMPLY MARK AS CANCELLED - NO STOCK RESTORATION
+        $order->setStatus('cancelled');
+        $order->setUpdatedAt(new \DateTime('now', new \DateTimeZone('Asia/Manila')));
+        
+        $entityManager->flush();
+        
+        $this->addFlash('success', 'Order cancelled successfully.');
+        
+        return $this->redirectToRoute('app_dashboard');
     }
 }

@@ -17,10 +17,17 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/user')]
 final class UserController extends AbstractController
 {
-    #[Route(name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository, ActivityLogService $activityLogService): Response
+    private ActivityLogService $activityLogService;
+
+    public function __construct(ActivityLogService $activityLogService)
     {
-        $activityLogService->logActivity('VIEW_LIST', 'Viewed user list', $this->getUser());
+        $this->activityLogService = $activityLogService;
+    }
+
+    #[Route(name: 'app_user_index', methods: ['GET'])]
+    public function index(UserRepository $userRepository): Response
+    {
+        $this->activityLogService->logActivity('VIEW_LIST', 'Viewed user list', $this->getUser());
         
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
@@ -31,8 +38,7 @@ final class UserController extends AbstractController
     public function new(
         Request $request, 
         EntityManagerInterface $entityManager, 
-        UserPasswordHasherInterface $passwordHasher,
-        ActivityLogService $activityLogService
+        UserPasswordHasherInterface $passwordHasher
     ): Response
     {
         $user = new User();
@@ -51,18 +57,22 @@ final class UserController extends AbstractController
                 $user->setPassword($hashedPassword);
             }
 
+            // Set creation date with Manila time
+            $user->setCreatedAt(new \DateTime('now', new \DateTimeZone('Asia/Manila')));
+
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $activityLogService->logCreate('User', $user->getId(), $this->getUser(), [
+            $this->activityLogService->logCreate('User', $user->getId(), $this->getUser(), [
                 'username' => $user->getUsername(),
                 'roles' => $user->getRoles()
             ]);
 
+            $this->addFlash('success', 'User created successfully.');
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        $activityLogService->logActivity('VIEW_FORM', 'Viewed new user form', $this->getUser());
+        $this->activityLogService->logActivity('VIEW_FORM', 'Viewed new user form', $this->getUser());
 
         return $this->render('user/new.html.twig', [
             'user' => $user,
@@ -74,8 +84,7 @@ final class UserController extends AbstractController
     public function profile(
         Request $request,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $passwordHasher,
-        ActivityLogService $activityLogService
+        UserPasswordHasherInterface $passwordHasher
     ): Response {
         $user = $this->getUser();
         
@@ -84,6 +93,8 @@ final class UserController extends AbstractController
         }
 
         $oldUsername = $user->getUsername();
+        $oldRoles = $user->getRoles();
+        
         $form = $this->createForm(ProfileType::class, $user);
         $form->handleRequest($request);
 
@@ -135,11 +146,25 @@ final class UserController extends AbstractController
                 
                 $changes['password'] = ['changed' => true];
                 
-                $activityLogService->logActivity(
+                $this->activityLogService->logActivity(
                     'PASSWORD_CHANGE',
                     'Changed password',
                     $user
                 );
+            }
+
+            // Check for role changes (if form allows it)
+            $newRoles = $user->getRoles();
+            $oldRolesSorted = $oldRoles;
+            $newRolesSorted = $newRoles;
+            sort($oldRolesSorted);
+            sort($newRolesSorted);
+            
+            if ($oldRolesSorted != $newRolesSorted) {
+                $changes['roles'] = [
+                    'old' => $oldRoles,
+                    'new' => $newRoles
+                ];
             }
 
             // Save changes
@@ -147,7 +172,8 @@ final class UserController extends AbstractController
 
             // Log changes
             if (!empty($changes)) {
-                $activityLogService->logProfileUpdate($user, array_keys($changes));
+                // Use logUpdate instead of logProfileUpdate
+                $this->activityLogService->logUpdate('User', $user->getId(), $user, $changes);
                 
                 $this->addFlash('success', 'Profile updated successfully!');
                 
@@ -162,7 +188,7 @@ final class UserController extends AbstractController
             return $this->redirectToRoute('app_user_profile');
         }
 
-        $activityLogService->logActivity(
+        $this->activityLogService->logActivity(
             'VIEW_PROFILE',
             'Viewed profile page',
             $user
@@ -175,9 +201,9 @@ final class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user, ActivityLogService $activityLogService): Response
+    public function show(User $user): Response
     {
-        $activityLogService->logActivity(
+        $this->activityLogService->logActivity(
             'VIEW_USER', 
             sprintf('Viewed user details for %s (ID: %d)', $user->getUsername(), $user->getId()), 
             $this->getUser()
@@ -193,8 +219,7 @@ final class UserController extends AbstractController
         Request $request, 
         User $user, 
         EntityManagerInterface $entityManager, 
-        UserPasswordHasherInterface $passwordHasher,
-        ActivityLogService $activityLogService
+        UserPasswordHasherInterface $passwordHasher
     ): Response
     {
         $oldUsername = $user->getUsername();
@@ -204,14 +229,17 @@ final class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $changes = [];
+            
             // Handle password update if provided
             $plainPassword = $form->get('password')->getData();
             if ($plainPassword) {
                 $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
                 $user->setPassword($hashedPassword);
                 
-                // Log password change (without showing the actual password)
-                $activityLogService->logActivity(
+                $changes['password'] = ['changed' => true];
+                
+                $this->activityLogService->logActivity(
                     'PASSWORD_CHANGE',
                     sprintf('Changed password for user %s', $user->getUsername()),
                     $this->getUser()
@@ -221,8 +249,6 @@ final class UserController extends AbstractController
             $newUsername = $user->getUsername();
             $newRoles = $user->getRoles();
 
-            $changes = [];
-            
             if ($oldUsername !== $newUsername) {
                 $changes['username'] = [
                     'old' => $oldUsername,
@@ -241,30 +267,46 @@ final class UserController extends AbstractController
                     'new' => $newRoles
                 ];
                 
-                $activityLogService->logRoleChange(
-                    $user,
-                    $oldRoles,
-                    $newRoles,
-                    $this->getUser()
+                // Log role change using logActivity instead of logRoleChange
+                $this->activityLogService->logActivity(
+                    'ROLE_CHANGE',
+                    sprintf('Changed roles for user %s', $user->getUsername()),
+                    $this->getUser(),
+                    [
+                        'user_id' => $user->getId(),
+                        'old_roles' => $oldRoles,
+                        'new_roles' => $newRoles
+                    ]
                 );
             }
 
             $entityManager->flush();
 
             if (!empty($changes)) {
-                $activityLogService->logUpdate('User', $user->getId(), $this->getUser(), $changes);
+                $this->activityLogService->logUpdate('User', $user->getId(), $this->getUser(), $changes);
                 
                 // Check if editing own profile
                 $currentUser = $this->getUser();
                 if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
-                    $activityLogService->logProfileUpdate($user, array_keys($changes));
+                    // Log profile update for own account
+                    $this->activityLogService->logUpdate('User', $user->getId(), $currentUser, $changes);
                 }
+                
+                $this->addFlash('success', 'User updated successfully.');
+            } else {
+                $this->addFlash('info', 'No changes were made.');
+            }
+
+            // Check if editing own profile
+            $currentUser = $this->getUser();
+            if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
+                return $this->redirectToRoute('app_user_profile');
             }
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        $activityLogService->logActivity(
+        $this->activityLogService->logActivity(
             'VIEW_EDIT_FORM', 
             sprintf('Viewed edit form for user %s (ID: %d)', $user->getUsername(), $user->getId()), 
             $this->getUser()
@@ -277,7 +319,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager, ActivityLogService $activityLogService): Response
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
             $userInfo = [
@@ -286,15 +328,18 @@ final class UserController extends AbstractController
                 'roles' => $user->getRoles()
             ];
 
-            $entityManager->remove($user);
-            $entityManager->flush();
-
-            $activityLogService->logDelete(
+            // Log before deletion
+            $this->activityLogService->logDelete(
                 'User', 
                 $userInfo['id'], 
                 $this->getUser(),
                 sprintf('Deleted user %s', $userInfo['username'])
             );
+            
+            $entityManager->remove($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'User deleted successfully.');
         }
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
