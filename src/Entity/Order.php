@@ -16,7 +16,7 @@ class Order
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')] // ADD THIS LINE
     private ?User $customer = null;
 
     #[ORM\ManyToOne]
@@ -91,11 +91,11 @@ class Order
     }
 
     public function setAmount(string $amount): static
-{
-    $this->amount = $amount;
+    {
+        $this->amount = $amount;
 
-    return $this;
-}
+        return $this;
+    }
 
     public function getStatus(): ?string
     {

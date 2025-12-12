@@ -355,62 +355,64 @@ final class UserController extends AbstractController
         ]);
     }
 
-   #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
-{
-    // Prevent self-deletion
-    $currentUser = $this->getUser();
-    if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
-        $this->addFlash('error', 'You cannot delete your own account.');
+    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        // Prevent self-deletion
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
+            $this->addFlash('error', 'You cannot delete your own account.');
+            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
+            // Check if user has orders
+            $orders = $user->getOrders();
+            $orderCount = $orders->count();
+            
+            if ($orderCount > 0) {
+                // IMPORTANT: Delete all orders associated with this user first
+                // This prevents foreign key constraint violation
+                foreach ($orders as $order) {
+                    $entityManager->remove($order);
+                }
+                $entityManager->flush(); // Flush order deletions first
+            }
+            
+            $userInfo = [
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'roles' => $user->getRoles(),
+                'is_active' => $user->isActive(),
+                'had_orders' => $orderCount > 0,
+                'order_count' => $orderCount
+            ];
+
+            // Log before deletion
+            $logMessage = sprintf('Deleted user %s', $userInfo['username']);
+            if ($orderCount > 0) {
+                $logMessage .= sprintf(' (and %d associated order(s))', $orderCount);
+            }
+            
+            $this->activityLogService->logDelete(
+                'User', 
+                $userInfo['id'], 
+                $this->getUser(),
+                $logMessage,
+                $userInfo
+            );
+            
+            // Now delete the user (safe because orders are already deleted)
+            $entityManager->remove($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'User deleted successfully.');
+        } else {
+            $this->addFlash('error', 'Invalid security token.');
+        }
+
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
-
-    if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
-        // Check if user has orders
-        $hasOrders = $user->getOrders()->count() > 0;
-        
-        if ($hasOrders) {
-            // Delete all orders associated with this user first
-            foreach ($user->getOrders() as $order) {
-                $entityManager->remove($order);
-            }
-            $entityManager->flush(); // Flush order deletions first
-        }
-        
-        $userInfo = [
-            'id' => $user->getId(),
-            'username' => $user->getUsername(),
-            'roles' => $user->getRoles(),
-            'is_active' => $user->isActive(),
-            'had_orders' => $hasOrders,
-            'order_count' => $user->getOrders()->count()
-        ];
-
-        // Log before deletion
-        $logMessage = sprintf('Deleted user %s', $userInfo['username']);
-        if ($hasOrders) {
-            $logMessage .= sprintf(' (and %d associated order(s))', $userInfo['order_count']);
-        }
-        
-        $this->activityLogService->logDelete(
-            'User', 
-            $userInfo['id'], 
-            $this->getUser(),
-            $logMessage,
-            $userInfo
-        );
-        
-        // Now delete the user
-        $entityManager->remove($user);
-        $entityManager->flush();
-
-        $this->addFlash('success', 'User deleted successfully.');
-    } else {
-        $this->addFlash('error', 'Invalid security token.');
-    }
-
-    return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-}
     
     #[Route('/{id}/toggle-status', name: 'app_user_toggle_status', methods: ['POST'])]
     public function toggleStatus(Request $request, User $user, EntityManagerInterface $entityManager): Response

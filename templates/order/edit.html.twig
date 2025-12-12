@@ -5,65 +5,310 @@
 {% block stylesheets %}
 {{ parent() }}
 <style>
-  /* Same styles as new.html.twig */
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
   
-  body, html { 
-    background: transparent !important; 
+  BODY, HTML { 
+    background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%) !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    min-height: 100vh;
   }
   
-  .dashboard-container { 
+  .DASHBOARD-CONTAINER { 
     display: flex; 
     min-height: 100vh; 
     background: transparent; 
   }
   
-  .main-content { 
+  .MAIN-CONTENT { 
     flex: 1; 
-    padding: 1.5rem; 
-    background: transparent; 
+    padding: 2rem; 
+    background: rgba(245, 245, 220, 0.95); /* Beige background */
     margin-left: 280px; 
     max-width: calc(100% - 280px);
+    border-radius: 15px 0 0 15px;
+    box-shadow: -5px 0 20px rgba(139, 69, 19, 0.3);
   }
   
-  .edit-heading { 
-    font-size: 1.6rem; 
+  .EDIT-HEADING { 
+    font-size: 1.8rem; 
     font-weight: 700; 
-    color: #e9d311c5; 
-    margin-bottom: 1.5rem; 
+    color: #8B4513; /* Saddle Brown */
+    margin-bottom: 2rem; 
     text-align: center; 
-    padding-bottom: 0.8rem;
-    border-bottom: 2px solid #ff7b35;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #D2691E; /* Chocolate */
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
   }
   
-  .order-id-badge {
-    background: #ff7b35;
-    color: white;
-    padding: 0.3rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
+  .ORDER-ID-BADGE {
+    background: linear-gradient(45deg, #D2691E, #A0522D);
+    color: #FFF8DC; /* Cornsilk */
+    padding: 0.4rem 1.2rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 700;
     margin-left: 1rem;
+    box-shadow: 0 4px 6px rgba(139, 69, 19, 0.3);
+    border: 2px solid #8B4513;
   }
+  
+  .FORM-ACTIONS {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    justify-content: center;
+  }
+  
+  .BTN-UPDATE {
+    background: linear-gradient(45deg, #D2691E, #8B4513);
+    color: #FFF8DC;
+    border: 2px solid #A0522D;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(139, 69, 19, 0.4);
+  }
+  
+  .BTN-UPDATE:hover {
+    background: linear-gradient(45deg, #8B4513, #D2691E);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(139, 69, 19, 0.5);
+  }
+  
+  .BTN-BACK {
+    background: linear-gradient(45deg, #A0522D, #8B4513);
+    color: #FFF8DC;
+    border: 2px solid #8B4513;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(139, 69, 19, 0.4);
+  }
+  
+  .BTN-BACK:hover {
+    background: linear-gradient(45deg, #8B4513, #A0522D);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(139, 69, 19, 0.5);
+  }
+  
+  /* FORM STYLING */
+  .FORM-ROW {
+    margin-bottom: 1.8rem;
+    background: rgba(255, 248, 220, 0.7); /* Cornsilk with transparency */
+    padding: 1.2rem;
+    border-radius: 10px;
+    border-left: 4px solid #D2691E;
+    box-shadow: 0 3px 10px rgba(139, 69, 19, 0.1);
+  }
+  
+  .FORM-LABEL {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 700;
+    color: #8B4513; /* Saddle Brown */
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .FORM-CONTROL {
+    width: 100%;
+    padding: 0.85rem;
+    border: 2px solid #D2691E; /* Chocolate */
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #FFF8DC; /* Cornsilk */
+    color: #8B4513;
+    transition: all 0.3s;
+  }
+  
+  .FORM-CONTROL:focus {
+    outline: none;
+    border-color: #8B4513; /* Saddle Brown */
+    box-shadow: 0 0 0 4px rgba(210, 105, 30, 0.2);
+    background: #FAEBD7; /* Antique White */
+  }
+  
+  .FORM-CONTROL[readonly] {
+    background-color: #F5DEB3; /* Wheat */
+    cursor: not-allowed;
+    color: #A0522D; /* Sienna */
+    border-color: #A0522D;
+    font-weight: 600;
+  }
+  
+  .FORM-ERRORS {
+    color: #B22222; /* Firebrick */
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid #B22222;
+    background: rgba(178, 34, 34, 0.1);
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .FORM-HELP {
+    color: #A0522D; /* Sienna */
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    font-style: italic;
+    padding-left: 0.5rem;
+  }
+  
+  select.FORM-CONTROL {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238B4513' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+    background-color: #FFF8DC;
+    padding-right: 3rem;
+    cursor: pointer;
+  }
+  
+  select.FORM-CONTROL:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23D2691E' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  }
+  
+  /* Custom scrollbar for selects */
+  .FORM-CONTROL::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  .FORM-CONTROL::-webkit-scrollbar-track {
+    background: #F5DEB3;
+    border-radius: 5px;
+  }
+  
+  .FORM-CONTROL::-webkit-scrollbar-thumb {
+    background: #D2691E;
+    border-radius: 5px;
+  }
+  
+  .FORM-CONTROL::-webkit-scrollbar-thumb:hover {
+    background: #8B4513;
+  }
+  
+  /* Animation for form rows */
+  .FORM-ROW {
+    animation: slideIn 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  
+  @keyframes slideIn {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  /* Stagger animations for each row */
+  .FORM-ROW:nth-child(1) { animation-delay: 0.1s; }
+  .FORM-ROW:nth-child(2) { animation-delay: 0.2s; }
+  .FORM-ROW:nth-child(3) { animation-delay: 0.3s; }
+  .FORM-ROW:nth-child(4) { animation-delay: 0.4s; }
+  .FORM-ROW:nth-child(5) { animation-delay: 0.5s; }
 </style>
 {% endblock %}
 
 {% block body %}
-<div class="dashboard-container">
+<DIV CLASS="DASHBOARD-CONTAINER">
     {% include 'dashboard/sidebar.html.twig' %}
     
-    <div class="main-content">
-        <h1 class="edit-heading">
+    <DIV CLASS="MAIN-CONTENT">
+        <H1 CLASS="EDIT-HEADING">
             Edit Order 
-            <span class="order-id-badge">#{{ order.id }}</span>
-        </h1>
+            <SPAN CLASS="ORDER-ID-BADGE">#{{ order.id }}</SPAN>
+        </H1>
         
-        {{ include('order/_form.html.twig', {'button_label': 'Update Order'}) }}
-    </div>
-</div>
+        {{ form_start(form, {'attr': {'class': 'edit-order-form'}}) }}
+        
+        {# Customer Selection #}
+        <DIV CLASS="FORM-ROW">
+            {{ form_label(form.customer, 'Customer', {'label_attr': {'class': 'FORM-LABEL'}}) }}
+            {{ form_widget(form.customer, {
+                'attr': {'class': 'FORM-CONTROL'}
+            }) }}
+            {% if form.customer.vars.errors|length > 0 %}
+                <DIV CLASS="FORM-ERRORS">
+                    {{ form_errors(form.customer) }}
+                </DIV>
+            {% endif %}
+        </DIV>
+        
+        {# Product Selection #}
+        <DIV CLASS="FORM-ROW">
+            {{ form_label(form.product, 'Product', {'label_attr': {'class': 'FORM-LABEL'}}) }}
+            {{ form_widget(form.product, {
+                'attr': {'class': 'FORM-CONTROL'}
+            }) }}
+            {% if form.product.vars.errors|length > 0 %}
+                <DIV CLASS="FORM-ERRORS">
+                    {{ form_errors(form.product) }}
+                </DIV>
+            {% endif %}
+        </DIV>
+        
+        {# Quantity #}
+        <DIV CLASS="FORM-ROW">
+            {{ form_label(form.quantity, 'Quantity', {'label_attr': {'class': 'FORM-LABEL'}}) }}
+            {{ form_widget(form.quantity, {
+                'attr': {'class': 'FORM-CONTROL', 'min': '1'}
+            }) }}
+            {% if form.quantity.vars.errors|length > 0 %}
+                <DIV CLASS="FORM-ERRORS">
+                    {{ form_errors(form.quantity) }}
+                </DIV>
+            {% endif %}
+        </DIV>
+        
+        {# Amount (readonly) #}
+        <DIV CLASS="FORM-ROW">
+            {{ form_label(form.amount, 'Total Amount', {'label_attr': {'class': 'FORM-LABEL'}}) }}
+            {{ form_widget(form.amount, {
+                'attr': {'class': 'FORM-CONTROL', 'readonly': true}
+            }) }}
+            <DIV CLASS="FORM-HELP">Amount is calculated automatically</DIV>
+            {% if form.amount.vars.errors|length > 0 %}
+                <DIV CLASS="FORM-ERRORS">
+                    {{ form_errors(form.amount) }}
+                </DIV>
+            {% endif %}
+        </DIV>
+        
+        {# Status #}
+        <DIV CLASS="FORM-ROW">
+            {{ form_label(form.status, 'Order Status', {'label_attr': {'class': 'FORM-LABEL'}}) }}
+            {{ form_widget(form.status, {
+                'attr': {'class': 'FORM-CONTROL'}
+            }) }}
+            {% if form.status.vars.errors|length > 0 %}
+                <DIV CLASS="FORM-ERRORS">
+                    {{ form_errors(form.status) }}
+                </DIV>
+            {% endif %}
+        </DIV>
+        
+        <DIV CLASS="FORM-ACTIONS">
+            <BUTTON TYPE="submit" CLASS="BTN-UPDATE">Update Order</BUTTON>
+            <A HREF="javascript:history.back()" CLASS="BTN-BACK">Back to Orders</A>
+        </DIV>
+        
+        {{ form_end(form) }}
+    </DIV>
+</DIV>
 {% endblock %}

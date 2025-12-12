@@ -181,6 +181,12 @@ final class OrderController extends AbstractController
                 }
             }
             
+            // Restore product stock before deleting order
+            $product = $order->getProduct();
+            if ($product) {
+                $product->setStock($product->getStock() + $order->getQuantity());
+            }
+            
             $entityManager->remove($order);
             $entityManager->flush();
             
