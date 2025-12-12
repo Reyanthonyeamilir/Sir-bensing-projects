@@ -24,6 +24,9 @@
                 </div>
             {% endfor %}
         </div>
+
+        {% do form.roles.setRendered %}
+
         {{ form_errors(form.roles) }}
         <small class="sem-form-text">Select roles assigned to this user</small>
     </div>

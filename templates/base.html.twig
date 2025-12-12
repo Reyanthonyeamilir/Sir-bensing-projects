@@ -62,7 +62,7 @@
             {# User is logged in #}
           {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
               <li><a href="{{ path('app_dashboard') }}">Dashboard</a></li>
-     a      {% endif %}
+          {% endif %}
             <li><a href="{{ path('app_logout') }}">Logout</a></li>
           {% else %}
             {# User is not logged in #}
