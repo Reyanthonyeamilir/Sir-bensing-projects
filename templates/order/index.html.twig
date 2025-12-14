@@ -521,7 +521,7 @@
                                 <td data-sort="quantity">{{ order.quantity }}</td>
                                 <td data-sort="amount" class="amount-cell">₱{{ order.amount|number_format(2) }}</td>
                                 {# Update the status badge section #}
-<td data-sort="status">
+        <td data-sort="status">
     {% if order.status == 'pending' %}
         <span class="status-badge status-pending">{{ order.status }}</span>
     {% elseif order.status == 'completed' %}
