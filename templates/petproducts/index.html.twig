@@ -266,6 +266,14 @@
     background-color: #4a2e1b; 
   }
   
+  .delete-btn { 
+    background-color: #dc3545; 
+  }
+  
+  .delete-btn:hover:not(.disabled) { 
+    background-color: #c82333; 
+  }
+  
   .btn.disabled {
     background-color: #6c757d;
     color: #adb5bd;
@@ -522,22 +530,19 @@
                     {# View button - Always enabled for everyone #}
                     <a href="{{ path('app_petproducts_show', {'id': petproduct.id}) }}" class="btn action-btn">View</a>
                     
-                    {# Edit button logic #}
-                    {% if is_granted('ROLE_ADMIN') %}
-                      {# Admin can edit everything - button enabled #}
+                    {# Edit button logic - Both Admin and Staff can edit ALL products #}
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
                       <a href="{{ path('app_petproducts_edit', {'id': petproduct.id}) }}" class="btn edit-btn">Edit</a>
-                    {% elseif is_granted('ROLE_staff') %}
-                      {# Staff can only edit their own products #}
-                      {% if petproduct.createdBy == app.user.username %}
-                        {# Staff created this - button enabled #}
-                        <a href="{{ path('app_petproducts_edit', {'id': petproduct.id}) }}" class="btn edit-btn">Edit</a>
-                      {% else %}
-                        {# Staff didn't create this - button disabled #}
-                        <span class="btn edit-btn disabled" title="You can only edit products you created">Edit</span>
-                      {% endif %}
                     {% else %}
-                      {# Regular users cannot edit #}
                       <span class="btn edit-btn disabled" title="Edit permission required">Edit</span>
+                    {% endif %}
+                    
+                    {# Delete button - Both Admin and Staff can delete ALL products #}
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
+                      <form method="post" action="{{ path('app_petproducts_delete', {'id': petproduct.id}) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ petproduct.id) }}">
+                        <button type="submit" class="btn delete-btn">Delete</button>
+                      </form>
                     {% endif %}
                   </div>
                 </td>

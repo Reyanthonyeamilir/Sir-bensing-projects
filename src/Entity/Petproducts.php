@@ -140,11 +140,10 @@ class Petproducts
         return $this->imageUrl;
     }
 
-    // In Petproducts.php entity, add this method:
-public function __toString(): string
-{
-    return $this->product_name . ' - ₱' . number_format($this->price, 2);
-}
+    public function __toString(): string
+    {
+        return $this->product_name . ' - ₱' . number_format($this->price, 2);
+    }
 
     public function setImageUrl(?string $imageUrl): static
     {
@@ -183,5 +182,20 @@ public function __toString(): string
     {
         $this->createdBy = $createdBy;
         return $this;
+    }
+    
+    // Helper method to get status text
+    public function getStatusText(): string
+    {
+        return $this->isActive ? 'Active' : 'Inactive';
+    }
+    
+    // Helper method to check if product can be deleted
+    public function getCanDeleteMessage(): string
+    {
+        if (!$this->isActive) {
+            return 'Product is already inactive.';
+        }
+        return 'You can deactivate the product instead of deleting it.';
     }
 }

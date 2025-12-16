@@ -1,4 +1,3 @@
-{# templates/order/index.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Orders Management{% endblock %}
@@ -268,12 +267,34 @@
     color: #adb5bd;
     cursor: not-allowed;
     opacity: 0.65;
+    pointer-events: none;
   }
   
-  .actions-cell { 
+  /* FIX: Ensure action buttons are always clickable */
+  .actions-cell {
     display: flex; 
     gap: 5px; 
-    justify-content: center; 
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+  }
+  
+  .actions-cell .btn {
+    position: relative;
+    z-index: 20;
+    pointer-events: auto !important;
+  }
+  
+  /* FIX: Ensure admin-order rows don't block buttons */
+  .admin-order .actions-cell .btn {
+    position: relative;
+    z-index: 30;
+    pointer-events: auto !important;
+  }
+  
+  /* Remove any pointer-events blocking */
+  .orders-table tr * {
+    pointer-events: auto;
   }
   
   .create-btn {
@@ -343,6 +364,11 @@
   /* My order indicator */
   .my-order {
     border-left: 3px solid #8B4513;
+  }
+  
+  /* Admin record indicator */
+  .admin-order {
+    border-left: 3px solid #dc3545;
   }
   
   /* Responsive */
@@ -481,93 +507,93 @@
                         </thead>
                         <tbody>
                         {% for order in orders %}
-                            {# Check if current user owns this order - SAFE VERSION #}
+                            {# Check if current user owns this order #}
                             {% set isOwner = false %}
                             {% if app.user and order.customer %}
-                                {% if app.user is same as(order.customer) %}
+                                {% if app.user.id == order.customer.id %}
                                     {% set isOwner = true %}
                                 {% endif %}
                             {% endif %}
                             
-                            {# Permission logic #}
-                            {% set canEdit = false %}
-                            {% set canDelete = false %}
-                            
-                            {% if is_granted('ROLE_ADMIN') %}
-                                {# Admin can edit/delete all orders #}
-                                {% set canEdit = true %}
-                                {% set canDelete = true %}
-                            {% elseif is_granted('ROLE_staff') %}
-                                {# Staff can only edit/delete orders they created #}
-                                {% if isOwner %}
-                                    {% set canEdit = true %}
-                                    {% set canDelete = true %}
+                            {# Check if order was created by admin #}
+                            {% set isAdminOrder = false %}
+                            {% if order.customer %}
+                                {# Use getRoles() method to get user roles #}
+                                {% set customerRoles = order.customer.roles %}
+                                {% if 'ROLE_ADMIN' in customerRoles %}
+                                    {% set isAdminOrder = true %}
                                 {% endif %}
-                            {% elseif is_granted('ROLE_USER') %}
-                                {# Regular users can only view #}
-                                {% set canEdit = false %}
-                                {% set canDelete = false %}
                             {% endif %}
                             
-                            <tr {% if isOwner and is_granted('ROLE_staff') %}class="my-order"{% endif %}>
+                            <tr {% if isOwner %}class="my-order"{% elseif isAdminOrder %}class="admin-order"{% endif %}>
                                 <td data-sort="id">#{{ order.id }}</td>
                                 <td data-sort="customer" class="customer-cell">
                                     {{ order.customer.username|default('Unknown') }}
-                                    {% if isOwner and is_granted('ROLE_staff') %}
+                                    {% if isOwner %}
                                         <span style="font-size: 0.7rem; color: #8B4513; margin-left: 5px;">(Your Order)</span>
                                     {% endif %}
+                                    {% if isAdminOrder %}
+                                        <span style="font-size: 0.7rem; color: #dc3545; margin-left: 5px;">(Admin)</span>
+                                    {% endif %}
                                 </td>
-                              <td data-sort="product" class="product-cell">{{ order.product.productName }}</td>
+                                <td data-sort="product" class="product-cell">{{ order.product.productName }}</td>
                                 <td data-sort="quantity">{{ order.quantity }}</td>
                                 <td data-sort="amount" class="amount-cell">₱{{ order.amount|number_format(2) }}</td>
-                                {# Update the status badge section #}
-        <td data-sort="status">
-    {% if order.status == 'pending' %}
-        <span class="status-badge status-pending">{{ order.status }}</span>
-    {% elseif order.status == 'completed' %}
-        <span class="status-badge status-completed">{{ order.status }}</span>
-    {% else %}
-        <span class="status-badge">{{ order.status }}</span>
-    {% endif %}
-</td>
+                                <td data-sort="status">
+                                    {% if order.status == 'pending' %}
+                                        <span class="status-badge status-pending">{{ order.status }}</span>
+                                    {% elseif order.status == 'completed' %}
+                                        <span class="status-badge status-completed">{{ order.status }}</span>
+                                    {% else %}
+                                        <span class="status-badge">{{ order.status }}</span>
+                                    {% endif %}
+                                </td>
                                 <td data-sort="created">{{ order.createdAt|date('Y-m-d H:i') }}</td>
                                 <td class="actions-cell">
-                                    <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn view-btn">View</a>
+                                    {# View button - Everyone can view (with permission checks in controller) #}
+                                    <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn view-btn" onclick="return true;">View</a>
                                     
-                                    {% if canEdit %}
-                                        <a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn edit-btn">Edit</a>
+                                    {# Edit button - Admin and Staff can edit ALL orders #}
+                                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
+                                        <a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn edit-btn" onclick="return true;">Edit</a>
                                     {% else %}
-                                        <button class="btn edit-btn disabled" title="{% if is_granted('ROLE_staff') and not isOwner %}You can only edit orders you created{% else %}Edit not allowed{% endif %}">Edit</button>
+                                        <button class="btn edit-btn disabled" title="Edit permission required">Edit</button>
                                     {% endif %}
                                     
-                                    {% if canDelete %}
+                                    {# Delete button - Admin and Staff can delete ALL orders #}
+                                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
                                         <form method="post" action="{{ path('app_order_delete', {'id': order.id}) }}" 
                                               onsubmit="return confirm('Are you sure you want to delete order #{{ order.id }}?');" 
                                               style="display: inline;">
                                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
-                                            <button class="btn delete-btn">Delete</button>
+                                            <button type="submit" class="btn delete-btn" onclick="return true;">Delete</button>
                                         </form>
                                     {% else %}
-                                        <button class="btn delete-btn disabled" title="{% if is_granted('ROLE_staff') and not isOwner %}You can only delete orders you created{% else %}Delete not allowed{% endif %}">Delete</button>
+                                        <button class="btn delete-btn disabled" title="Delete permission required">Delete</button>
                                     {% endif %}
                                 </td>
                             </tr>
                         {% else %}
                             <tr>
                                 <td colspan="8" class="text-center py-4" style="text-align: center; padding: 2rem; color: #666;">
-                                    {% if is_granted('ROLE_staff') and not is_granted('ROLE_ADMIN') %}
-                                        You haven't created any orders yet.
-                                    {% else %}
-                                        No orders found.
-                                    {% endif %}
+                                    No orders found.
                                     {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') %}
-                                        Create your first order!
+                                        <a href="{{ path('app_order_new') }}" style="color: #8B4513; text-decoration: underline;">Create your first order</a>
                                     {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="datatable-pagination" id="datatable-pagination">
+                    <button class="pagination-btn" id="first-page" disabled>First</button>
+                    <button class="pagination-btn" id="prev-page" disabled>Previous</button>
+                    <span id="page-numbers"></span>
+                    <button class="pagination-btn" id="next-page" disabled>Next</button>
+                    <button class="pagination-btn" id="last-page" disabled>Last</button>
                 </div>
             </div>
         </div>
@@ -708,7 +734,63 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('datatable-info').textContent = 
             `Showing ${start} to ${end} of ${total} orders`;
         
+        updatePagination(total);
         attachRowHover();
+    }
+    
+    function updatePagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const pageNumbers = document.getElementById('page-numbers');
+        const firstBtn = document.getElementById('first-page');
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        const lastBtn = document.getElementById('last-page');
+        
+        pageNumbers.innerHTML = '';
+        
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+            btn.textContent = i;
+            btn.addEventListener('click', () => {
+                currentPage = i;
+                renderTable();
+            });
+            pageNumbers.appendChild(btn);
+        }
+        
+        firstBtn.disabled = currentPage === 1 || totalPages === 0;
+        prevBtn.disabled = currentPage === 1 || totalPages === 0;
+        nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+        lastBtn.disabled = currentPage === totalPages || totalPages === 0;
+        
+        firstBtn.onclick = () => {
+            if (!firstBtn.disabled) {
+                currentPage = 1;
+                renderTable();
+            }
+        };
+        
+        prevBtn.onclick = () => {
+            if (!prevBtn.disabled) {
+                currentPage--;
+                renderTable();
+            }
+        };
+        
+        nextBtn.onclick = () => {
+            if (!nextBtn.disabled) {
+                currentPage++;
+                renderTable();
+            }
+        };
+        
+        lastBtn.onclick = () => {
+            if (!lastBtn.disabled) {
+                currentPage = totalPages;
+                renderTable();
+            }
+        };
     }
     
     function attachRowHover() {
@@ -724,11 +806,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // FIX: Only prevent clicks on truly disabled buttons
     document.querySelectorAll('.btn.disabled').forEach(btn => {
+        if (btn.classList.contains('disabled')) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            });
+        }
+    });
+    
+    // FIX: Ensure all other buttons work
+    document.querySelectorAll('.btn:not(.disabled)').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
+            // Allow clicks on enabled buttons
+            return true;
         });
     });
     

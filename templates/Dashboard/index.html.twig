@@ -577,7 +577,7 @@ body.sidebar-collapsed .main-content {
                 {% elseif is_granted('ROLE_staff') or is_granted('ROLE_STAFF') %}
                     You're logged in as Staff Member
                 {% else %}
-                    Welcome to your dashboard
+                    You're logged in as Customer
                 {% endif %}
             </p>
         </div>
@@ -599,7 +599,8 @@ body.sidebar-collapsed .main-content {
             </div>
         {% endfor %}
 
-        <!-- STATS GRID -->
+        <!-- STATS GRID - ONLY SHOW TO ADMINS/STAFF -->
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') or is_granted('ROLE_STAFF') %}
         <div class="stats-grid">
             <!-- Product Statistics -->
             <div class="stat-card primary" onclick="window.location='{{ path('app_petproducts_index') }}'">
@@ -674,6 +675,7 @@ body.sidebar-collapsed .main-content {
                 </div>
             {% endif %}
         </div>
+        {% endif %}
 
         <!-- MAIN CONTENT GRID -->
         <div class="dashboard-main-content">
@@ -743,7 +745,7 @@ body.sidebar-collapsed .main-content {
 
             <!-- Recent Orders Card -->
             <div class="content-card">
-                <h2 class="card-title">Recent Orders</h2>
+                <h2 class="card-title">{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') or is_granted('ROLE_STAFF') %}Recent Orders{% else %}My Recent Orders{% endif %}</h2>
                 <div class="card-content">
                     {% if recentOrders is defined and recentOrders|length > 0 %}
                     <div class="table-wrapper">
@@ -751,7 +753,9 @@ body.sidebar-collapsed .main-content {
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') or is_granted('ROLE_STAFF') %}
                                     <th>Customer</th>
+                                    {% endif %}
                                     <th>Product</th>
                                     <th>Qty</th>
                                     <th>Amount</th>
@@ -763,7 +767,9 @@ body.sidebar-collapsed .main-content {
                                 {% for order in recentOrders %}
                                 <tr>
                                     <td>#{{ order.id }}</td>
+                                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') or is_granted('ROLE_STAFF') %}
                                     <td>{{ order.customer.username|slice(0, 10) }}{{ order.customer.username|length > 10 ? '...' : '' }}</td>
+                                    {% endif %}
                                     <td>{{ order.product.productName|slice(0, 15) }}{{ order.product.productName|length > 15 ? '...' : '' }}</td>
                                     <td>{{ order.quantity }}</td>
                                     <td>₱{{ order.amount|number_format(0, '.', ',') }}</td>
@@ -793,7 +799,11 @@ body.sidebar-collapsed .main-content {
                         </table>
                     </div>
                     <div style="text-align: center; margin-top: 15px;">
-                        <a href="{{ path('app_order_index') }}" class="action-btn btn-primary">View All Orders</a>
+                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') or is_granted('ROLE_STAFF') %}
+                            <a href="{{ path('app_order_index') }}" class="action-btn btn-primary">View All Orders</a>
+                        {% else %}
+                            <a href="{{ path('app_order_index') }}" class="action-btn btn-primary">View My Orders</a>
+                        {% endif %}
                     </div>
                     {% else %}
                     <div class="card-text">
@@ -806,7 +816,8 @@ body.sidebar-collapsed .main-content {
                 </div>
             </div>
 
-            <!-- Financial Summary Card -->
+            <!-- Financial Summary Card - ONLY FOR ADMINS/STAFF -->
+            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') or is_granted('ROLE_STAFF') %}
             <div class="content-card">
                 <h2 class="card-title">Financial Summary</h2>
                 <div class="card-content">
@@ -857,10 +868,50 @@ body.sidebar-collapsed .main-content {
                     </div>
                 </div>
             </div>
+            {% else %}
+            <!-- For Regular Users: Show Product Categories or Popular Products -->
+            <div class="content-card">
+                <h2 class="card-title">Popular Products</h2>
+                <div class="card-content">
+                    <div class="card-text">
+                        <p>Check out our most popular pet products:</p>
+                        <ul>
+                            <li>Premium Dog Food</li>
+                            <li>Cat Toys & Accessories</li>
+                            <li>Pet Grooming Supplies</li>
+                            <li>Healthcare Products</li>
+                            <li>Training Equipment</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="quick-links">
+                        <a href="{{ path('app_petproducts_index') }}" class="quick-link">
+                            <span class="quick-link-icon">🐕</span>
+                            <span class="quick-link-text">Dog Products</span>
+                        </a>
+                        
+                        <a href="{{ path('app_petproducts_index') }}" class="quick-link">
+                            <span class="quick-link-icon">🐈</span>
+                            <span class="quick-link-text">Cat Products</span>
+                        </a>
+                        
+                        <a href="{{ path('app_petproducts_index') }}" class="quick-link">
+                            <span class="quick-link-icon">🐠</span>
+                            <span class="quick-link-text">Fish & Aquarium</span>
+                        </a>
+                        
+                        <a href="{{ path('app_petproducts_index') }}" class="quick-link">
+                            <span class="quick-link-icon">🐦</span>
+                            <span class="quick-link-text">Bird Supplies</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
 
-        <!-- LOW STOCK ALERT SECTION -->
-        {% if lowStockProducts is defined and lowStockProducts|length > 0 %}
+        <!-- LOW STOCK ALERT SECTION - ONLY FOR ADMINS/STAFF -->
+        {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_staff') or is_granted('ROLE_STAFF')) and lowStockProducts is defined and lowStockProducts|length > 0 %}
         <div class="low-stock-alert-section">
             <div class="low-stock-alert-card">
                 <h2 class="card-title">⚠️ Low Stock Alert</h2>
